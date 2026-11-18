@@ -78,3 +78,25 @@ One timed run on the live site: clause 1 took 33 s, clause 2 took 59 s, clause 3
 | One request per clause (label only), retry on 429 | **23 s** | 11 of 11, no 429 |
 
 The last version is live. The rate limit is shared by everyone using the site, so several people scanning at once can still get 429; the retry waits and tries again up to three times. Not tested on a real phone.
+
+## Stage A: the whole pipeline on the unseen sets (Nov 18, live site)
+
+Input: `rules/data/unseen.json`, the three unseen sets as one test agreement: 70 harmful clauses and 26 fair ones (built by `rules/build-unseen.ts`). "Caught" means the clause was marked **risk**.
+
+| Mode | Harmful caught | Set 1 | Set 2 | Set 3 | Fair wrongly flagged | Sent to cloud | Time |
+|---|---|---|---|---|---|---|---|
+| Fixed rules alone (sets 1 and 2 were used to widen the rules) | n/a | 28 of 30 | 20 of 20 | 4 of 20 | 0 of 26 | 0 | instant |
+| Desktop Chrome: rules + on-device model + cloud on trigger | **57 of 70** | 24 of 30 | 16 of 20 | 17 of 20 | 2 of 26 | 33 of 97 | 847 s |
+| No on-device model: rules + cloud on every clause | **69 of 70** | 29 of 30 | 20 of 20 | 20 of 20 | 0 of 26 | 97 of 97 | 400 s |
+
+What the numbers say:
+
+1. The model covers what the rules miss. On set 3 the rules alone caught 4 of 20; with the on-device model 17; with cloud 20. In the desktop run, 15 harmful clauses were caught by the model with no rule matching.
+2. The private path is the less accurate one. The 13 clauses the desktop run missed were all ones the on-device model called "ok" and nothing sent to cloud. For 10 of them a rule had already raised a medium finding (late interest, renewal fee, property tax, society levies, guest and family limits, sub-meter rate), shown as a tag, but a medium finding does not change the label or trigger a cloud check. The other 3 (no male visitors after 8 pm, no beef or pork, nobody but the tenant and spouse) had no rule match at all.
+3. Both false flags in the desktop run came from the on-device model alone (a fair deposit clause and a fair repainting clause).
+4. The one clause the cloud mode missed is the distant-court clause, which only the whole-agreement check can judge.
+5. The cloud mode met the free tier's rate limit 10 times in 97 clauses; every retry succeeded.
+
+Limits: every clause was written by the same author as the rules and the prompts, in clean English. Real agreements will score lower. One run per mode.
+
+What follows for Stage B: send a clause to cloud when the on-device model says "ok" but a rule raised a medium finding (would have caught 10 of the 13), and show "check this clause" for medium findings in every mode. That costs privacy: in this run it would have raised cloud use from 33 to about 43 of 97 clauses.
