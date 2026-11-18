@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { decide, finalize, toLabel, type Model } from './pipeline.ts';
+import { decide, finalize, toLabel, hasFigures, type Model } from './pipeline.ts';
 
 const NOTICE = "Either party may terminate this tenancy by giving the other party one month's (30 days) prior written notice.";
 const agree: Model = { label: 'ok', fields: { deposit: null, lockin_months: null, notice_days: 30, escalation_pct: null } };
@@ -47,4 +47,20 @@ test('rules win over cloud when both have a value, and the difference is flagged
   const f = finalize(decide(NOTICE, nano), nano, cloud);
   assert.equal(f.fields.notice_days, 30);
   assert.equal(f.check, true);
+});
+
+test('Nano ok plus a medium rule finding asks the cloud; cloud decides the label', () => {
+  const t = 'Delayed rent shall carry interest at 24% per annum.';
+  const nano: Model = { label: 'ok', fields: { deposit: null, lockin_months: null, notice_days: null, escalation_pct: null } };
+  const d = decide(t, nano);
+  assert.deepEqual(d.reasons, ['ok_but_medium:late-fee']);
+  assert.equal(finalize(d, nano, { label: 'risky', fields: null }).label, 'risky');
+  assert.equal(finalize(d, nano, null).label, 'ok'); // without cloud a medium finding does not change the label
+});
+test('a clause with no figures skips the numbers prompt without triggering cloud', () => {
+  assert.equal(hasFigures('The Lessee shall keep the premises clean.'), false);
+  assert.equal(hasFigures('Notice of thirty days is required.'), true);
+  assert.equal(hasFigures('The deposit is Rs. 40,000.'), true);
+  const d = decide('The Lessee shall keep the premises clean.', { label: 'ok', fields: {} });
+  assert.equal(d.needsCloud, false);
 });

@@ -6,7 +6,11 @@ import { analyzeClause, maxSeverity, type Finding } from './topics.ts';
 export type Label = 'ok' | 'risky';
 export type Field = 'deposit' | 'lockin_months' | 'notice_days' | 'escalation_pct';
 export const FIELDS: Field[] = ['deposit', 'lockin_months', 'notice_days', 'escalation_pct'];
-export interface Model { label: Label | null; fields: Partial<Record<Field, unknown>> | null }
+export interface Model { label: Label | null; fields: Partial<Record<Field, unknown>> | null; reason?: string }
+
+// Does the clause contain any figure at all? If not, the on-device numbers prompt is skipped (it can only invent values).
+const FIGURE = /\d|\b(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|fifty|sixty|ninety|hundred|thousand|lakhs?|lacs?|crores?|half|double|twice|triple|fortnight)\b/i;
+export const hasFigures = (text: string): boolean => FIGURE.test(text);
 
 export interface Decision {
   rules: Extraction;
@@ -42,6 +46,10 @@ export function decide(text: string, nano: Model, ctx: Ctx = {}): Decision {
     if (rules.derived[f] !== toNum(nano.fields[f])) reasons.push(`field_disagree:${f}`);
   }
   if (nano.label === 'ok' && (rules.flags.length || highTopics.length)) reasons.push(`ok_but_flagged:${[...new Set([...rules.flags, ...highTopics.map(x => x.topic)])].join(',')}`);
+  // Stage A finding: 10 of the 13 harmful clauses the desktop run missed were ones Nano called ok while a rule had
+  // raised a medium finding. A medium finding now asks the cloud for a second opinion.
+  const medium = topics.filter(x => x.severity === 'medium');
+  if (nano.label === 'ok' && !rules.flags.length && !highTopics.length && medium.length) reasons.push(`ok_but_medium:${[...new Set(medium.map(x => x.topic))].join(',')}`);
   return { rules, topics, needsCloud: reasons.length > 0, reasons };
 }
 

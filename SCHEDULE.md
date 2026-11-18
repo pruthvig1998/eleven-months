@@ -100,3 +100,13 @@ What the numbers say:
 Limits: every clause was written by the same author as the rules and the prompts, in clean English. Real agreements will score lower. One run per mode.
 
 What follows for Stage B: send a clause to cloud when the on-device model says "ok" but a rule raised a medium finding (would have caught 10 of the 13), and show "check this clause" for medium findings in every mode. That costs privacy: in this run it would have raised cloud use from 33 to about 43 of 97 clauses.
+
+## Stage B: built Nov 18, not deployed
+
+- A medium rule finding on a clause the on-device model called "ok" now asks the cloud for a second opinion (`ok_but_medium`). Offline replay on the first data set: labels still 40 of 40, cloud use 13 to 15 of 40.
+- A medium finding always shows "check this clause".
+- A clause marked risky with no fixed rule behind it now shows why, in the model's words, marked as the model's view, and adds a point to the signing sheet. The reason comes from the cloud answer when there is one, otherwise from one extra on-device prompt.
+- Cloud answers are held to a JSON schema.
+- The on-device numbers prompt is skipped for clauses with no figures (9 of 40 in the first data set).
+- Local test in desktop Chrome, 4 clauses: reasons shown for two model-only clauses, the 24% interest clause asked for cloud and showed "check this clause". Cloud calls are refused on localhost, so the schema, the cloud reason and the cloud second opinion are untested until a deploy.
+- 156 tests pass.

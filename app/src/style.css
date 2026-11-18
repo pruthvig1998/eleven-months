@@ -229,3 +229,6 @@ details.why-it-matters summary { color: var(--amber); }
 .cloud-opt { display: flex; gap: .6rem; align-items: flex-start; margin-top: .9rem; font: 400 .78rem/1.5 var(--body); color: var(--mute); }
 .cloud-opt[hidden] { display: none; }
 .cloud-opt input { margin-top: .2rem; accent-color: var(--lime); flex: none; }
+.asks.model { border-color: rgba(255, 178, 36, .35); background: rgba(255, 178, 36, .05); }
+.asks.model b { color: var(--amber); }
+.asks.model p { margin: .4rem 0 0; font-size: .86rem; }

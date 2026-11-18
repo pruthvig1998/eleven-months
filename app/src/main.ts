@@ -1,9 +1,9 @@
 import './style.css';
-import { initNano, nanoWarm, nanoJudge, nanoNames, cloudJudge, cloudLabel, cloudConfigured } from './ai.ts';
+import { initNano, nanoWarm, nanoJudge, nanoNames, nanoReason, cloudJudge, cloudLabel, cloudConfigured } from './ai.ts';
 import { splitClauses, clauseLabel } from './split.ts';
 import { readLeaseFile } from './pdf.ts';
 import { SAMPLE } from './sample.ts';
-import { decide, finalize, FIELDS, type Model } from '../../rules/pipeline.ts';
+import { decide, finalize, hasFigures, FIELDS, type Model } from '../../rules/pipeline.ts';
 import { extract } from '../../rules/extract.ts';
 import { mask } from './mask.ts';
 import { coverage } from '../../rules/topics.ts';
@@ -24,7 +24,7 @@ const FLAGS: Record<string, string> = {
 const why = (r: string) =>
   r === 'nano_label_unusable' ? 'On-device answer unusable' : r === 'nano_fields_unusable' ? 'On-device numbers unusable'
   : r.startsWith('rules_unsure') ? 'Figures unclear' : r.startsWith('field_disagree:') ? `Rules and model disagree: ${LABELS[r.split(':')[1]] ?? r.split(':')[1]}`
-  : r.startsWith('ok_but_flagged') ? 'Marked ok but rules flagged a risk' : r;
+  : r.startsWith('ok_but_flagged') ? 'Marked ok but rules flagged a risk' : r.startsWith('ok_but_medium') ? 'Marked ok but a rule raised a concern' : r;
 
 const STATUS: Record<Note['status'], string> = { law: 'law', 'model-law': 'model law, binds only where adopted', tool: "this tool's threshold", tip: 'practical tip' };
 const safeUrl = (u?: string) => (u && /^https:\/\//.test(u) ? u : '');
@@ -126,7 +126,7 @@ $('analyze').onclick = async () => {
       const el = document.createElement('article'); el.className = 'clause scanning'; el.style.setProperty('--i', String(Math.min(i, 8))); el.innerHTML = scanning(i, text);
       $('out').appendChild(el); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       let nano: Model = { label: null, fields: null }, note = '';
-      if (!rulesOnly) try { nano = await nanoJudge(text); } catch (e) { note = `On-device model failed: ${(e as Error).message}`; }
+      if (!rulesOnly) try { nano = await nanoJudge(text, hasFigures(text)); } catch (e) { note = `On-device model failed: ${(e as Error).message}`; }
       const d = decide(text, nano, { rent });
       let cloud: Model | null = null, sent = '';
       if (cloudAll) try { sent = mask(text, []); cloud = await cloudLabel(sent); cloudCalls++; } catch (e) { note ||= `Cloud check failed: ${(e as Error).message}`; sent = ''; }
@@ -146,8 +146,10 @@ $('analyze').onclick = async () => {
       const fin = cloud && rulesOnly ? { ...fin0, label: flagged ? ('risky' as const) : fin0.label } : rulesOnly ? { ...fin0, label: d.rules.flags.length || d.topics.some(x => x.severity === 'high') ? ('risky' as const) : null, check: d.topics.some(x => x.severity === 'medium') } : fin0;
       if (!d.rules.flags.length && !d.topics.some(x => x.severity !== 'info')) unmatched++;
       const unresolved = !rulesOnly && d.needsCloud && !cloud, label = fin.label ?? 'unknown';
+      // A medium rule finding always asks for a closer look, whatever the models said.
+      const look = fin.check || unresolved || (fin.label !== 'risky' && d.topics.some(x => x.severity === 'medium'));
       if (fin.label === 'risky') risky++;
-      if (fin.check || unresolved) checks++;
+      if (look) checks++;
       const clauseRent = extract(text).rent;
       const rentCell = clauseRent !== null ? `<div class="cell"><dt>Monthly rent (Rs.)</dt><dd>${fmt(clauseRent)}<span class="src rules">rules</span></dd></div>` : '';
       const cells = rentCell + FIELDS.filter(f => fin.fields[f] !== null).map(f => {
@@ -164,15 +166,23 @@ $('analyze').onclick = async () => {
         ...shownFlags.map(f => ({ title: FLAGS[f] ?? f, ask: askForFlag(f) })),
         ...d.topics.map(x => ({ title: x.title, ask: askForFinding(x) })),
       ].filter((a): a is { title: string; ask: string } => !!a.ask).filter((a, k, arr) => arr.findIndex(b => b.ask === a.ask) === k).map(a => ({ no, excerpt, ...a }));
+      // Marked risky with no fixed rule behind it: say why, in the model's own words, and give the tenant something to ask.
+      let modelWhy = '';
+      if (fin.label === 'risky' && !clauseAsks.length) {
+        let reason = cloud?.reason;
+        if (!reason && !rulesOnly) try { reason = await nanoReason(text); } catch { /* the label still stands without a reason */ }
+        clauseAsks.push({ no, excerpt, title: 'Flagged by the model', ask: 'Ask the landlord to explain this clause, and to change or remove it if it works only against you.' });
+        modelWhy = `<div class="asks model"><b>Why the model flagged this</b><p>${esc(reason ?? 'The model marked this clause as unfavourable to the tenant but gave no reason.')}</p><p class="nsrc">The model's view, not a fixed rule. It can be wrong.</p></div>`;
+      }
       sheetAsks.push(...clauseAsks);
-      const asksHtml = clauseAsks.length ? `<div class="asks"><b>Ask for this instead</b><ul>${clauseAsks.map(a => `<li>${esc(a.ask)}</li>`).join('')}</ul></div>` : '';
+      const asksHtml = modelWhy + (clauseAsks.length ? `<div class="asks"><b>Ask for this instead</b><ul>${clauseAsks.map(a => `<li>${esc(a.ask)}</li>`).join('')}</ul></div>` : '');
       el.className = `clause ${label}`;
       el.innerHTML = `
         <div class="rail"><span class="node"></span></div>
         <div class="body">
           <div class="head"><span class="no">${esc(clauseLabel(text, i))}</span>
             <span class="chip ${label}">${label === 'risky' ? 'risk' : label === 'ok' ? 'clear' : rulesOnly ? 'no rule hit' : 'unknown'}</span>
-            ${fin.check || unresolved ? '<span class="chip check">check this clause</span>' : ''}
+            ${look ? '<span class="chip check">check this clause</span>' : ''}
             ${trace(nano.label !== null, cloud ? 'on' : unresolved ? 'wait' : 'off')}</div>
           <p class="text">${esc(text)}</p>
           ${cells ? `<dl class="data">${cells}</dl>` : '<p class="empty">No numbers to extract in this clause.</p>'}
