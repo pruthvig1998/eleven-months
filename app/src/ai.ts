@@ -34,13 +34,14 @@ export const initNano = (onProgress: (v: number) => void) => nano.initializeDevi
 // One throwaway prompt loads the model into memory, so the first real clause does not pay the load time (measured: about 19 s).
 export const nanoWarm = () => nano.generateContent('Reply with the word ok.').then(() => undefined);
 
-async function judge(m: typeof nano, text: string): Promise<Model> {
-  const c = await run(m, CLS(text));
-  const f = await run(m, FLD(text));
+// Cloud runs the label and the numbers prompts at the same time (about half the wait). The on-device model
+// takes one prompt at a time, so those stay in sequence.
+async function judge(m: typeof nano, text: string, together = false): Promise<Model> {
+  const [c, f] = together ? await Promise.all([run(m, CLS(text)), run(m, FLD(text))]) : [await run(m, CLS(text)), await run(m, FLD(text))];
   return { label: toLabel(c?.label), fields: f && typeof f === 'object' ? f : null };
 }
 export const nanoJudge = (text: string) => judge(nano, text);
-export const cloudJudge = (text: string) => judge(cloud, text);
+export const cloudJudge = (text: string) => judge(cloud, text, true);
 export const nanoNames = async (text: string): Promise<string[]> => {
   const r = await run(nano, NAMES(text));
   return Array.isArray(r?.names) ? r.names.map(String).filter(Boolean) : [];
