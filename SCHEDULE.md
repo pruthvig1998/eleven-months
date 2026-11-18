@@ -173,3 +173,10 @@ Stage D deployed (Nov 18). Lighthouse (mobile) on the live site after deploy: ac
 - **ID detection:** `rules/pii.ts` (precise) and `app/src/mask.ts` (broad) stay separate on purpose; a test now checks that every ID the precise detector finds is removed by the mask.
 - **Clause labelling** moved out of the page code into `present()` in `rules/pipeline.ts`, with tests for the three modes.
 - **Bug found and fixed while testing:** with the on-device model's answer unusable and the cloud call failed, a clause with a high rule finding ("No receipt, no proof of rent paid") showed "unknown" instead of "risk". A high finding or numeric flag now marks the clause risky whatever the models returned. Offline replay unchanged (40 of 40).
+
+### Stage E deployed (Nov 18), live checks
+
+- Headers confirmed on the live site: Content-Security-Policy, X-Content-Type-Options, Referrer-Policy, Permissions-Policy.
+- Phone width, cloud check ticked, sample: 6 of 11, 11 of 11 cloud calls returned 200, reCAPTCHA (www.google.com, www.gstatic.com) loaded with 200, no Content-Security-Policy violations, 65 s.
+- Desktop Chrome with the on-device model under the policy: tested locally only (sample scan and photo reading, no violations). Not re-run on the live site because the Chrome connection dropped.
+- Remote Config fetch under the policy: not observed in the live run (the settings may have been served from the browser's cache). The policy allows all *.googleapis.com connections, which covers it.
