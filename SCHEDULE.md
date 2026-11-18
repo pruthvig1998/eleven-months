@@ -64,3 +64,7 @@ Not changed: the two on-device calls per clause. Skipping the numbers call for c
 - Photo and scanned-PDF upload on the live site: both read in about 3.5 s and scanned correctly (clean rendered pages, not camera photos).
 - Public repository: https://github.com/pruthvig1998/eleven-months (Apache-2.0).
 - Official hackathon rules read: see `HACKATHON-RULES.md`.
+
+### After deploying the background model load (Nov 18)
+
+One timed run on the live site: clause 1 took 33 s, clause 2 took 59 s, clause 3 took 36 s. No improvement, and slower than the run before the change. The machine was still under load from other programs, so this run does not show whether the change helps. It does show the cold start is not the whole cause. To settle it: time the scan on an idle machine, and if it is still slow, cut the on-device calls per clause from two to one.
