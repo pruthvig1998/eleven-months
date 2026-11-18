@@ -28,20 +28,30 @@ const NAMES = (t: string) => `List every person's name in this text, exactly as 
 
 // Nano wraps JSON in code fences; empty or template echoes become null and trigger cloud.
 const parse = (t: string): any => { try { return JSON.parse(t); } catch { const m = t.match(/\{[\s\S]*\}/); try { return m ? JSON.parse(m[0]) : null; } catch { return null; } } };
-const run = async (m: typeof nano, prompt: string) => parse((await m.generateContent(prompt)).response.text());
+// The free cloud tier allows only about 10 to 15 requests a minute (measured: HTTP 429 above that), so a 429 waits and retries.
+const run = async (m: typeof nano, prompt: string) => {
+  for (let attempt = 0; ; attempt++) {
+    try { return parse((await m.generateContent(prompt)).response.text()); }
+    catch (e) { if (attempt >= 3 || !/429|RESOURCE_EXHAUSTED|quota/i.test(String((e as Error).message))) throw e; await new Promise(r => setTimeout(r, 8000 * (attempt + 1))); }
+  }
+};
 
 export const initNano = (onProgress: (v: number) => void) => nano.initializeDeviceModel(onProgress);
 // One throwaway prompt loads the model into memory, so the first real clause does not pay the load time (measured: about 19 s).
 export const nanoWarm = () => nano.generateContent('Reply with the word ok.').then(() => undefined);
 
-// Cloud runs the label and the numbers prompts at the same time (about half the wait). The on-device model
-// takes one prompt at a time, so those stay in sequence.
-async function judge(m: typeof nano, text: string, together = false): Promise<Model> {
-  const [c, f] = together ? await Promise.all([run(m, CLS(text)), run(m, FLD(text))]) : [await run(m, CLS(text)), await run(m, FLD(text))];
+// The two prompts run one after the other. Sending the cloud pair together was tried and hit the free tier's
+// requests-per-minute limit (5 of 11 clauses failed with HTTP 429), so it was reverted.
+async function judge(m: typeof nano, text: string): Promise<Model> {
+  const c = await run(m, CLS(text));
+  const f = await run(m, FLD(text));
   return { label: toLabel(c?.label), fields: f && typeof f === 'object' ? f : null };
 }
 export const nanoJudge = (text: string) => judge(nano, text);
-export const cloudJudge = (text: string) => judge(cloud, text, true);
+export const cloudJudge = (text: string) => judge(cloud, text);
+// Label only: used when every clause goes to cloud (no on-device model). The rules already extract the numbers,
+// so one request per clause instead of two keeps a whole agreement inside the free tier's rate limit.
+export const cloudLabel = async (text: string): Promise<Model> => ({ label: toLabel((await run(cloud, CLS(text)))?.label), fields: null });
 export const nanoNames = async (text: string): Promise<string[]> => {
   const r = await run(nano, NAMES(text));
   return Array.isArray(r?.names) ? r.names.map(String).filter(Boolean) : [];

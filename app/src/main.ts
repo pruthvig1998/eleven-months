@@ -1,5 +1,5 @@
 import './style.css';
-import { initNano, nanoWarm, nanoJudge, nanoNames, cloudJudge, cloudConfigured } from './ai.ts';
+import { initNano, nanoWarm, nanoJudge, nanoNames, cloudJudge, cloudLabel, cloudConfigured } from './ai.ts';
 import { splitClauses, clauseLabel } from './split.ts';
 import { readLeaseFile } from './pdf.ts';
 import { SAMPLE } from './sample.ts';
@@ -129,7 +129,7 @@ $('analyze').onclick = async () => {
       if (!rulesOnly) try { nano = await nanoJudge(text); } catch (e) { note = `On-device model failed: ${(e as Error).message}`; }
       const d = decide(text, nano, { rent });
       let cloud: Model | null = null, sent = '';
-      if (cloudAll) try { sent = mask(text, []); cloud = await cloudJudge(sent); cloudCalls++; } catch (e) { note ||= `Cloud check failed: ${(e as Error).message}`; sent = ''; }
+      if (cloudAll) try { sent = mask(text, []); cloud = await cloudLabel(sent); cloudCalls++; } catch (e) { note ||= `Cloud check failed: ${(e as Error).message}`; sent = ''; }
       if (d.needsCloud && !rulesOnly) {
         if (!cloudConfigured) note ||= 'Needs a cloud check, but cloud is not configured.';
         else {
