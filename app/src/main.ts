@@ -1,10 +1,11 @@
 import './style.css';
-import { initNano, nanoWarm, nanoJudge, nanoNames, nanoReason, cloudJudge, cloudLabel, cloudConfigured } from './ai.ts';
+import { app, setCloudModel, initNano, nanoWarm, nanoJudge, nanoNames, nanoReason, cloudJudge, cloudLabel, cloudConfigured } from './ai.ts';
+import { loadSettings, DEFAULTS, type Settings } from './config.ts';
 import { splitClauses, clauseLabel } from './split.ts';
 import { readLeaseFile } from './pdf.ts';
 import { SAMPLE } from './sample.ts';
 import { decide, finalize, hasFigures, FIELDS, type Model } from '../../rules/pipeline.ts';
-import { extract } from '../../rules/extract.ts';
+import { extract, LIMITS } from '../../rules/extract.ts';
 import { mask } from './mask.ts';
 import { coverage } from '../../rules/topics.ts';
 import { noteById, searchNotes, BASIS_LABEL, OPEN_QUESTIONS, type Note } from '../../rules/knowledge.ts';
@@ -17,10 +18,20 @@ const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as 
 const esc = (s: unknown) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
 const fmt = (v: number) => v.toLocaleString('en-IN');
 const LABELS: Record<string, string> = { deposit: 'Deposit (Rs.)', lockin_months: 'Lock-in (months)', notice_days: 'Notice (days)', escalation_pct: 'Rent increase (%)' };
+// Labels read the live thresholds, which Remote Config may have changed.
 const FLAGS: Record<string, string> = {
-  deposit_over_3x_rent: 'Deposit over 3x rent', escalation_over_10pct: 'Rent rise over 10%', notice_under_15_days: 'Notice under 15 days',
+  get deposit_over_3x_rent() { return `Deposit over ${LIMITS.depositMonths}x rent`; }, get escalation_over_10pct() { return `Rent rise over ${LIMITS.risePct}%`; },
+  get notice_under_15_days() { return `Notice under ${LIMITS.noticeDays} days`; },
   notice_one_sided: 'One-sided notice', lockin_binds_lessee_only: 'Lock-in binds tenant only',
 };
+// Settings from Firebase Remote Config, loaded once per page and applied before every scan. Defaults if unreachable.
+let settings: Settings = DEFAULTS;
+const applySettings = (s: Settings) => {
+  settings = s; LIMITS.depositMonths = s.depositMonths; LIMITS.risePct = s.risePct; LIMITS.noticeDays = s.noticeDays; setCloudModel(s.cloudModel);
+  const el = document.getElementById('cfgNote');
+  if (el) el.textContent = `Thresholds in use: deposit over ${s.depositMonths} months' rent, rent rise over ${s.risePct}%, notice under ${s.noticeDays} days. Source: ${s.source === 'Remote Config' ? 'Firebase Remote Config' : 'built-in defaults'}.`;
+};
+const settingsReady = cloudConfigured ? loadSettings(app).then(applySettings) : Promise.resolve(applySettings(DEFAULTS));
 const why = (r: string) =>
   r === 'nano_label_unusable' ? 'On-device answer unusable' : r === 'nano_fields_unusable' ? 'On-device numbers unusable'
   : r.startsWith('rules_unsure') ? 'Figures unclear' : r.startsWith('field_disagree:') ? `Rules and model disagree: ${LABELS[r.split(':')[1]] ?? r.split(':')[1]}`
@@ -94,7 +105,8 @@ $('upload').onclick = () => ($('file') as HTMLInputElement).click();
   try {
     const r = await readLeaseFile(f, m => status(m, 'busy'));
     ($('lease') as HTMLTextAreaElement).value = r.text;
-    status(r.ocrUsed ? `Text read from ${f.name} on this device; nothing was uploaded. Reading a photo or scan makes mistakes: compare the text with the paper, fix any errors, then press Scan lease.` : `Loaded ${f.name}. Nothing was uploaded. Press Scan lease.`, 'done');
+    const how = r.reader === 'on-device model' ? `Read by the on-device model; a second reader agreed on ${Math.round((r.agree ?? 0) * 100)}% of the words.` : r.agree !== undefined ? `The on-device model and the text recogniser disagreed (${Math.round(r.agree * 100)}% of words in common), so the recogniser's text is shown.` : 'Read by the text recogniser.';
+    status(r.ocrUsed ? `Text read from ${f.name} on this device; nothing was uploaded. ${how} Reading a photo or scan makes mistakes: compare the text with the paper, fix any errors, then press Scan lease.` : `Loaded ${f.name}. Nothing was uploaded. Press Scan lease.`, 'done');
   }
   catch (err) { status((err as Error).message, 'error'); }
   (e.target as HTMLInputElement).value = '';
@@ -117,6 +129,7 @@ $('analyze').onclick = async () => {
     if (rulesOnly) pill('pillNano', 'error', 'On-device model: not available here');
     // Opt-in for devices with no on-device model: every clause goes to cloud after regex masking (no on-device names check is possible).
     const cloudAll = rulesOnly && cloudConfigured && ($('cloudOk') as HTMLInputElement).checked;
+    await settingsReady;
     const rent = extract(lease).rent ?? undefined;
     let risky = 0, cloudCalls = 0, checks = 0, unmatched = 0;
     const sheetAsks: SheetAsk[] = [];
@@ -127,7 +140,7 @@ $('analyze').onclick = async () => {
       $('out').appendChild(el); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       let nano: Model = { label: null, fields: null }, note = '';
       if (!rulesOnly) try { nano = await nanoJudge(text, hasFigures(text)); } catch (e) { note = `On-device model failed: ${(e as Error).message}`; }
-      const d = decide(text, nano, { rent });
+      const d = decide(text, nano, { rent, mediumToCloud: settings.cloudOnMedium });
       let cloud: Model | null = null, sent = '';
       if (cloudAll) try { sent = mask(text, []); cloud = await cloudLabel(sent); cloudCalls++; } catch (e) { note ||= `Cloud check failed: ${(e as Error).message}`; sent = ''; }
       if (d.needsCloud && !rulesOnly) {

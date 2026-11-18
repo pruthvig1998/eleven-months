@@ -29,7 +29,7 @@ It is a screening aid, not legal advice.
 
 It also:
 
-- reads photos and scanned PDFs on your device, then shows the text so you can correct it before the scan;
+- reads photos and scanned PDFs on your device with the on-device model, checks that reading word by word against a second, plain text recogniser, and shows the text so you can correct it before the scan;
 - checks the whole agreement: are the parties, address, start date, term and rent stated, do any figures contradict each other, and roughly what the stamp duty should be;
 - has step-by-step guides for seven situations (before signing, water or power cut, told to leave, deposit not returned, moving out, rent increase, asked for a bribe);
 - has 25 short notes on rental law, each showing its source, how far it can be trusted, and what could not be verified.
@@ -62,6 +62,8 @@ Every model call goes through the Firebase AI Logic Web SDK (`firebase/ai`). See
 - **Privacy by routing.** In the sample agreement, 2 of 11 clauses go to the cloud. If the on-device names check fails, the clause is not sent at all.
 - **Rules win on numbers.** A model never overrides a figure the rules extracted.
 - **App Check** protects the cloud calls (reCAPTCHA Enterprise in production).
+- **Remote Config** holds the thresholds (deposit months, rent rise, notice days), the cloud model name and the switch for the cloud second opinion, so they can change without a deploy. Every value is range-checked and falls back to a built-in default. See [`app/src/config.ts`](app/src/config.ts).
+- **Photos stay on the device.** A page image is read by the on-device model through Firebase AI Logic and never sent to the cloud, because it cannot be masked before it is read. A model can skip or reword a line without showing it, so its reading is used only when it shares at least 90% of its words with a plain text recogniser's reading of the same page.
 - **No on-device model?** Phones, Safari and Firefox get a rules-only scan. It says so, and it says how many clauses matched no rule. The user can tick a box to also send every clause to the cloud model. In that mode masking is by pattern only (ID numbers, phones, emails, names after a title), because there is no on-device model to find names, and the page says that before the user ticks.
 
 ## Measured, not claimed
@@ -73,9 +75,11 @@ All test data is synthetic and written for this project. Numbers on real agreeme
 | Gemini Nano alone, 40 clauses | 34 labels correct, 15 of 20 risky clauses found |
 | Rules + Nano, cloud on trigger | 40 of 40 labels correct with 13 of 40 clauses sent to cloud |
 | Fixed rules alone on an unseen set of harmful clauses, first run | 12 of 20 (second set), then **4 of 20** (third set, fresh paraphrases); 0 fair clauses wrongly flagged on the third set |
+| Whole pipeline on 96 unseen clauses (70 harmful, 26 fair), desktop Chrome, live site | **67 of 70** harmful caught, 1 of 26 fair wrongly flagged, 45 of 97 clauses sent to cloud |
+| Same clauses with no on-device model (rules + cloud on every clause) | 68 of 70 caught, 0 of 26 wrongly flagged |
 | Nano's per-call limit | fails between about 6,200 and 8,000 words, so long clauses are split |
 
-The third row is the honest limit of this project: the rules are precise and good with numbers, but they do not recognise new wordings of the same problem. That is the model's job, and it is why the rules-only mode is the weakest. Details: [`RISK-KILL-REPORT.md`](RISK-KILL-REPORT.md), [`GAP-REPORT.md`](GAP-REPORT.md), [`SCHEDULE.md`](SCHEDULE.md), [`AUDIT.md`](AUDIT.md).
+The third row is the honest limit of the fixed rules: precise and good with numbers, but they do not recognise new wordings of the same problem. The fourth row shows the model covering that gap. All 96 clauses were written by the project's author in clean English, so real agreements will score lower. Details: [`RISK-KILL-REPORT.md`](RISK-KILL-REPORT.md), [`GAP-REPORT.md`](GAP-REPORT.md), [`SCHEDULE.md`](SCHEDULE.md), [`AUDIT.md`](AUDIT.md).
 
 ## Install and run, from zero
 

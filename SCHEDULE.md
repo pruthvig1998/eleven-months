@@ -128,3 +128,11 @@ Desktop by set after Stage B: 30 of 30, 19 of 20, 18 of 20.
 - The desktop summary showed "29 to check". Most of those are clauses already marked risk where the cloud and the on-device model disagreed, which is noise on a clause the user is already told to look at.
 
 Same limit as before: clauses written by the project's author, in clean English, one run per mode.
+
+## Stage C: built Nov 18, not deployed
+
+- **Wording.** The page no longer says "synthetic text only" or "Demo only". The footer now says what happens to the text and shows the thresholds in use and where they came from.
+- **Remote Config.** Thresholds (deposit months, rent rise %, notice days), the cloud model name and the switch for the cloud second opinion are read from Firebase Remote Config, range-checked, with built-in defaults. Local test: the fetch returned HTTP 200 and, with no parameters set in the console yet, the page showed "Source: built-in defaults". Changing a value in the console and seeing it take effect has not been tried.
+- **Photo reading through Firebase AI Logic.** The on-device model reads the page image (on device only). The plain text recogniser reads it too, and the model's reading is used only when at least 90% of the words match. Local test in desktop Chrome, one clean rendered page: exact text, "a second reader agreed on 100% of the words", 18.6 s (the recogniser alone took 3.5 s). Not tested: a camera photo, a dense page, a multi-page scan.
+- 166 tests pass.
+- Second platform: not started. Web only.

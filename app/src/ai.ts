@@ -6,7 +6,7 @@ import { toLabel, type Model } from '../../rules/pipeline.ts';
 
 const env = import.meta.env;
 export const cloudConfigured = !!env.VITE_FIREBASE_API_KEY;
-const app = initializeApp({
+export const app = initializeApp({
   apiKey: env.VITE_FIREBASE_API_KEY || 'placeholder-on-device-only',
   authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || 'placeholder.firebaseapp.com',
   projectId: env.VITE_FIREBASE_PROJECT_ID || 'placeholder',
@@ -21,11 +21,20 @@ const ai = getAI(app, { backend: new GoogleAIBackend() });
 const nano = getGenerativeModel(ai, { mode: InferenceMode.ONLY_ON_DEVICE });
 // Cloud answers are held to a JSON schema, so a malformed answer cannot turn into an "unknown" label.
 // (A schema did not constrain the on-device model in the risk tests, so Nano's answers are still parsed loosely.)
-const CLOUD_MODEL = 'gemini-3.5-flash-lite'; // the SDK's default cloud model for hybrid mode, named here because a schema needs explicit params
-const json = (responseSchema: Schema) => ({ model: CLOUD_MODEL, generationConfig: { responseMimeType: 'application/json', responseSchema } });
+// The cloud model name comes from Remote Config (default: the SDK's own default for hybrid mode), so the models
+// are built on first use, after the settings have loaded.
+let cloudModel = 'gemini-3.5-flash-lite', built: { cls: typeof nano; fld: typeof nano; name: string } | null = null;
+export const setCloudModel = (name: string) => { cloudModel = name; };
 const num = () => Schema.number({ nullable: true });
-const cloudCls = getGenerativeModel(ai, { mode: InferenceMode.ONLY_IN_CLOUD, inCloudParams: json(Schema.object({ properties: { label: Schema.enumString({ enum: ['ok', 'risky'] }), reason: Schema.string() } })) });
-const cloudFld = getGenerativeModel(ai, { mode: InferenceMode.ONLY_IN_CLOUD, inCloudParams: json(Schema.object({ properties: { deposit: num(), lockin_months: num(), notice_days: num(), escalation_pct: num() } })) });
+function cloudModels() {
+  if (built?.name === cloudModel) return built;
+  const json = (responseSchema: Schema) => ({ model: cloudModel, generationConfig: { responseMimeType: 'application/json', responseSchema } });
+  return (built = {
+    name: cloudModel,
+    cls: getGenerativeModel(ai, { mode: InferenceMode.ONLY_IN_CLOUD, inCloudParams: json(Schema.object({ properties: { label: Schema.enumString({ enum: ['ok', 'risky'] }), reason: Schema.string() } })) }),
+    fld: getGenerativeModel(ai, { mode: InferenceMode.ONLY_IN_CLOUD, inCloudParams: json(Schema.object({ properties: { deposit: num(), lockin_months: num(), notice_days: num(), escalation_pct: num() } })) }),
+  });
+}
 
 // Prompt wording is the tuned "v2" pass from RISK-KILL-REPORT.md.
 const CLS = (t: string) => `You review a tenant's rental agreement in India. Label the clause "risky" if it is unfavourable or one-sided against the tenant: deposit above 3 months' rent or arbitrary forfeiture/deductions, long or one-sided lock-in, notice shorter than 15 days or one-sided, rent increase above 10% a year, eviction without notice or process, tenant paying structural repairs or unbilled charges, or unfair dispute terms. Otherwise label it "ok". Reply with JSON only: {"label":"ok|risky","risk_type":"deposit|lockin|notice|escalation|eviction|maintenance|other|none"}.\n\nClause: ${t}`;
@@ -47,6 +56,18 @@ const run = async (m: typeof nano, prompt: string) => {
 };
 
 export const initNano = (onProgress: (v: number) => void) => nano.initializeDeviceModel(onProgress);
+
+// Photo reading through Firebase AI Logic, on the device only: the page image never goes to the cloud, because it
+// cannot be masked before it is read. Returns null where the on-device model does not take images.
+const nanoVision = getGenerativeModel(ai, { mode: InferenceMode.ONLY_ON_DEVICE, onDeviceParams: { createOptions: { expectedInputs: [{ type: 'image' }, { type: 'text', languages: ['en'] }], expectedOutputs: [{ type: 'text', languages: ['en'] }] } } });
+export async function nanoReadImage(image: Blob): Promise<string | null> {
+  const LM = (self as any).LanguageModel;
+  if (!LM || (await LM.availability({ expectedInputs: [{ type: 'image' }, { type: 'text', languages: ['en'] }] }).catch(() => 'unavailable')) !== 'available') return null;
+  const bytes = new Uint8Array(await image.arrayBuffer()); let bin = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  const r = await nanoVision.generateContent([{ type: 'inlineData', inlineData: { mimeType: image.type || 'image/jpeg', data: btoa(bin) } }, { type: 'text', text: 'Transcribe all the text in this image exactly as written, line by line. Keep clause numbers and blank lines. Output only the text.' }]);
+  return r.response.text().trim() || null;
+}
 // One throwaway prompt loads the model into memory, so the first real clause does not pay the load time (measured: about 19 s).
 export const nanoWarm = () => nano.generateContent('Reply with the word ok.').then(() => undefined);
 
@@ -61,8 +82,8 @@ export async function nanoJudge(text: string, withFields = true): Promise<Model>
 const clean = (r: unknown) => (typeof r === 'string' && r.trim() ? r.trim().slice(0, 240) : undefined);
 // Label (with a reason) only: one request. Used when every clause goes to cloud (no on-device model), where the
 // rules already extract the numbers, so a whole agreement stays inside the free tier's rate limit.
-export const cloudLabel = async (text: string): Promise<Model> => { const c = await run(cloudCls, CLS(text) + WHY); return { label: toLabel(c?.label), fields: null, reason: clean(c?.reason) }; };
-export const cloudJudge = async (text: string): Promise<Model> => { const c = await cloudLabel(text); const f = await run(cloudFld, FLD(text)); return { ...c, fields: f && typeof f === 'object' ? f : null }; };
+export const cloudLabel = async (text: string): Promise<Model> => { const c = await run(cloudModels().cls, CLS(text) + WHY); return { label: toLabel(c?.label), fields: null, reason: clean(c?.reason) }; };
+export const cloudJudge = async (text: string): Promise<Model> => { const c = await cloudLabel(text); const f = await run(cloudModels().fld, FLD(text)); return { ...c, fields: f && typeof f === 'object' ? f : null }; };
 // On-device explanation for a clause the model marked risky when no fixed rule matched and cloud was not used.
 export const nanoReason = async (text: string) => clean((await nano.generateContent(REASON(text))).response.text());
 export const nanoNames = async (text: string): Promise<string[]> => {

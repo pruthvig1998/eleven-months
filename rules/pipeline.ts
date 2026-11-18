@@ -34,7 +34,8 @@ export const toNum = (v: unknown): number | null => {
   return Number.isNaN(n) ? null : n;
 };
 
-export function decide(text: string, nano: Model, ctx: Ctx = {}): Decision {
+// mediumToCloud = false turns off the cloud second opinion on medium findings (fewer clauses leave the device, lower recall).
+export function decide(text: string, nano: Model, ctx: Ctx & { mediumToCloud?: boolean } = {}): Decision {
   const rules = extract(text, ctx);
   const topics = analyzeClause(text, { rent: ctx.rent });
   const highTopics = topics.filter(x => x.severity === 'high');
@@ -49,7 +50,7 @@ export function decide(text: string, nano: Model, ctx: Ctx = {}): Decision {
   // Stage A finding: 10 of the 13 harmful clauses the desktop run missed were ones Nano called ok while a rule had
   // raised a medium finding. A medium finding now asks the cloud for a second opinion.
   const medium = topics.filter(x => x.severity === 'medium');
-  if (nano.label === 'ok' && !rules.flags.length && !highTopics.length && medium.length) reasons.push(`ok_but_medium:${[...new Set(medium.map(x => x.topic))].join(',')}`);
+  if (ctx.mediumToCloud !== false && nano.label === 'ok' && !rules.flags.length && !highTopics.length && medium.length) reasons.push(`ok_but_medium:${[...new Set(medium.map(x => x.topic))].join(',')}`);
   return { rules, topics, needsCloud: reasons.length > 0, reasons };
 }
 

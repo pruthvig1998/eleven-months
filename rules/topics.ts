@@ -2,7 +2,7 @@
 // To add a rule: append to RULES with at least 2 `detected`, 2 `notDetected`, and one severity example; topics.test.ts
 // enforces every example, so a new rule cannot ship untested. Findings link to a reference note (knowledge.ts) via `note`.
 // Severity: high = marks the clause risky; medium = worth a closer look; info = context only.
-import { extract, sentences, type Extraction } from './extract.ts';
+import { extract, sentences, LIMITS, type Extraction } from './extract.ts';
 
 export type Severity = 'high' | 'medium' | 'info';
 export interface Finding { topic: string; severity: Severity; title: string; why: string; note?: string }
@@ -362,7 +362,7 @@ export function analyzeClause(text: string, ctx: { rent?: number | null } = {}):
   const out = topicsFor(text).flatMap(r => r.check?.(text, { rent: ctx.rent, ex }) ?? []);
   const dep = ex.derived.deposit, rent = ex.rent;
   if (dep !== null && rent) {
-    if (dep > 3 * rent) out.push(f('deposit', 'high', `Deposit is ${(dep / rent).toFixed(1).replace(/\.0$/, '')} months' rent`, "Above this tool's 3-month threshold and far above the Model Tenancy Act's 2-month residential benchmark.", 'mta-deposit'));
+    if (dep > LIMITS.depositMonths * rent) out.push(f('deposit', 'high', `Deposit is ${(dep / rent).toFixed(1).replace(/\.0$/, '')} months' rent`, `Above this tool's ${LIMITS.depositMonths}-month threshold and far above the Model Tenancy Act's 2-month residential benchmark.`, 'mta-deposit'));
     else if (dep > 2 * rent) out.push(f('deposit', 'medium', `Deposit is ${(dep / rent).toFixed(1).replace(/\.0$/, '')} months' rent`, "Above the Model Tenancy Act's 2-month residential benchmark (a model law: binding only where a state adopted it).", 'mta-deposit'));
   }
   return out;

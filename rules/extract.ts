@@ -20,6 +20,9 @@ export interface Extraction {
   unsure: string[];
 }
 export interface Ctx { rent?: number }
+// The tool's own thresholds for the numeric flags. The app may replace them from Firebase Remote Config before a scan;
+// the flag names keep their original numbers because they are identifiers, not labels.
+export const LIMITS = { depositMonths: 3, risePct: 10, noticeDays: 15 };
 
 const W = '(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|lakhs?|lacs?|crores?|half)';
 const QW = `\\b${W}(?:[\\s-]+(?:and[\\s-]+a[\\s-]+|and[\\s-]+|a[\\s-]+)?${W})*\\b`;
@@ -228,10 +231,10 @@ export function extract(text: string, ctx: Ctx = {}): Extraction {
   const derivedNotice = notice.lessee ?? notice.either ?? notice.lessor;
   const derived = { deposit: deposit.value, lockin_months: lockin.value, notice_days: derivedNotice, escalation_pct: escalation_pct.value };
   const flags: string[] = [];
-  if (deposit.value !== null && rent !== null && deposit.value > 3 * rent) flags.push('deposit_over_3x_rent');
-  if (escalation_pct.value !== null && escalation_pct.value > 10) flags.push('escalation_over_10pct');
+  if (deposit.value !== null && rent !== null && deposit.value > LIMITS.depositMonths * rent) flags.push('deposit_over_3x_rent');
+  if (escalation_pct.value !== null && escalation_pct.value > LIMITS.risePct) flags.push('escalation_over_10pct');
   const notices = [notice.lessee, notice.lessor, notice.either].filter((x): x is number => x !== null);
-  if (notices.some(n => n < 15)) flags.push('notice_under_15_days');
+  if (notices.some(n => n < LIMITS.noticeDays)) flags.push('notice_under_15_days');
   if ((notice.lessee !== null && notice.lessor !== null && notice.lessee !== notice.lessor) || notice.without_notice) flags.push('notice_one_sided');
   if (lockin.value !== null && lockin.binds === 'lessee') flags.push('lockin_binds_lessee_only');
   const unsure = [deposit.unsure && 'deposit', lockin.unsure && 'lockin_months', escalation_pct.unsure && 'escalation_pct'].filter((x): x is string => !!x);

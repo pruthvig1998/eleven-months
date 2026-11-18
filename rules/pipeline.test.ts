@@ -64,3 +64,8 @@ test('a clause with no figures skips the numbers prompt without triggering cloud
   const d = decide('The Lessee shall keep the premises clean.', { label: 'ok', fields: {} });
   assert.equal(d.needsCloud, false);
 });
+
+test('the cloud second opinion on medium findings can be switched off', () => {
+  const nano: Model = { label: 'ok', fields: {} };
+  assert.equal(decide('Delayed rent shall carry interest at 24% per annum.', nano, { mediumToCloud: false }).needsCloud, false);
+});

@@ -2,7 +2,7 @@
 // never uploaded. shortcut: the recogniser code and English data are fetched from the library's CDN on first
 // use (about 10 MB, then cached); host them with the app if that CDN must not be a dependency.
 // English only. Recognition makes mistakes, so the caller shows the text for the user to correct before scanning.
-type Img = Blob | HTMLCanvasElement;
+type Img = Blob;
 export async function ocr(images: Img[], onProgress: (done: number, total: number, pct: number) => void): Promise<string> {
   const { createWorker } = await import('tesseract.js');
   let page = 0;

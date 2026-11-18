@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { extract } from './extract.ts';
+import { LIMITS } from './extract.ts';
 import { detectAadhaar, detectPan, verhoeff } from './pii.ts';
 
 const d = (t: string, ctx = {}) => extract(t, ctx).derived;
@@ -118,4 +119,11 @@ test('Aadhaar needs a valid Verhoeff checksum; PAN is pattern-based', () => {
   assert.deepEqual(detectAadhaar('Aadhaar 1821 7365 9017.'), ['182173659017']);
   assert.deepEqual(detectAadhaar('Aadhaar 1821 7365 9018.'), []);
   assert.deepEqual(detectPan('PAN ABCPM1234K here'), ['ABCPM1234K']);
+});
+
+test('numeric flags follow LIMITS, so the thresholds can be changed without code', () => {
+  const t = 'The rent shall be increased by 8% every year.';
+  assert.deepEqual(extract(t).flags, []);
+  const old = LIMITS.risePct; LIMITS.risePct = 5;
+  try { assert.deepEqual(extract(t).flags, ['escalation_over_10pct']); } finally { LIMITS.risePct = old; }
 });
