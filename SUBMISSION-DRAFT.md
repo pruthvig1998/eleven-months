@@ -13,7 +13,10 @@ Eleven Months
 Read all eleven months before you sign them.
 
 ## Links
-- Try it: https://eleven-months-nano.web.app (desktop Chrome 139 or newer for the full on-device scan; any browser for the rules and the opt-in cloud check)
+- Platforms: Web app + Chrome extension + Android app (Trusted Web Activity)
+- Try it, web app: https://eleven-months-nano.web.app (desktop Chrome 139 or newer for the full on-device scan; any browser for the rules and the opt-in cloud check)
+- Try it, Chrome extension: https://github.com/pruthvig1998/eleven-months/raw/main/docs/downloads/eleven-months-extension.zip (unzip, then `chrome://extensions`, Developer mode, Load unpacked; steps in `extension/README.md`)
+- Try it, Android app (Trusted Web Activity): the same web app, running in Chrome on Android. APK link: **to add once built** (`sh android/setup.sh`; see `android/README.md`). Chrome on Android has no on-device model yet, so the app runs the fixed rules with the opt-in cloud check.
 - Code: https://github.com/pruthvig1998/eleven-months (Apache-2.0)
 - Video: https://youtu.be/ITnxc7FrfWk (40 s; must be set to **Public** before submitting)
 
@@ -48,11 +51,13 @@ Every model call goes through the Firebase AI Logic Web SDK (`firebase/ai`) at r
 - **Remote Config** holds the thresholds (deposit months, rent rise, notice days), the cloud model name and the switch for the cloud second opinion. Each value is range-checked and falls back to a built-in default.
 - **Firestore is not used for agreements or reports.** No agreement text and no scan result is stored on a server; a saved scan stays in the browser. (Firestore appears only as an optional route for the suggestion box, which is switched off.)
 - **Hosting** on the free Spark plan, with a Content-Security-Policy.
+- **Which surfaces call the cloud: the web app only.** The cloud second opinion needs App Check, and App Check's reCAPTCHA flow runs in a web page, not in an extension page. So the **Chrome extension** runs the rules and Gemini Nano through the same SDK in `ONLY_ON_DEVICE` mode, with a placeholder config and a Content-Security-Policy of `connect-src 'self'` that blocks any network call; a clause that needs a second opinion is handed to the web app ("Full scan"), with the text in the URL fragment, which is never sent to the server. The **Android app** is a Trusted Web Activity: it is the web app itself in Chrome on Android, so its cloud calls are the web app's, under App Check. Chrome on Android has no on-device model yet, so there it runs the rules plus the opt-in cloud check.
+- **Deposit Shield drafts** (the move-out message and notice) use the same masked path: names found by Gemini Nano on the device and masked, then cloud Gemini with a JSON schema; no names check, nothing sent. A draft that cites any law is discarded and a local template is shown instead.
 
 Browsers with no on-device model (phones, Safari, Firefox) get a rules-only scan, and the user can opt in to send every clause to the cloud. The page explains before they tick the box that masking is then by pattern only.
 
 ### The rest of the stack
-Deterministic rules run before any model: they extract the numbers (small models get arithmetic wrong, so a model never overrides a figure the rules extracted) and apply 23 topic rules, each shipped with examples that the tests enforce. Photo reading is checked against a second, plain text recogniser (Tesseract.js): the model's reading is used only if the two share at least 90% of their words, because a model can skip a line silently. TypeScript and Vite, with pdf.js for PDFs. 174 automated tests.
+Deterministic rules run before any model: they extract the numbers (small models get arithmetic wrong, so a model never overrides a figure the rules extracted) and apply 27 topic rules, each shipped with examples that the tests enforce. Photo reading is checked against a second, plain text recogniser (Tesseract.js): the model's reading is used only if the two share at least 90% of their words, because a model can skip a line silently. TypeScript and Vite, with pdf.js for PDFs. 198 automated tests.
 
 ## Challenges we ran into
 - **Gemini Nano alone is not enough.** On 40 clauses it labelled 34 correctly but missed 5 of 20 risky ones, and read "ten months' rent" as one month. So numbers come from the rules, and disagreements go to the cloud.
@@ -88,7 +93,7 @@ Each layer should do what it is good at: rules for numbers, the on-device model 
 - Local law for a second state, with the same source checking as Telangana.
 
 ## Built with
-firebase, firebase-ai-logic, firebase-app-check, firebase-remote-config, cloud-firestore, firebase-hosting, gemini, gemini-nano, typescript, vite, chrome
+firebase, firebase-ai-logic, firebase-app-check, firebase-remote-config, cloud-firestore, firebase-hosting, gemini, gemini-nano, typescript, vite, chrome, chrome-extension, android, trusted-web-activity, bubblewrap
 
 > **Confirm before submitting:** `cloud-firestore` is used only by the optional suggestion-box route, which is switched off on the live site. Delete the tag unless you switch that route on.
 
@@ -142,7 +147,7 @@ Music: "Happy Beats & Business Moves Vol. 11" by Sascha Ende (ende.app), CC BY 4
 
 - [ ] Set the YouTube video to **Public** and paste the description above, with the chapters.
 - [ ] Decide whether the 40 s trailer is enough. The rules ask for a video "showing the project working", and judges want to see both on-device and cloud inference. The trailer shows the scan but not a cloud second opinion, and one of its screens still says "Not yet: scanned photos", which is out of date. A full demo recorded with `DEMO-SCRIPT.md` (under 3 minutes) would cover both.
-- [ ] Fill the Devpost form from this file, select the Web platform, and upload the gallery.
+- [ ] Fill the Devpost form from this file, select the Web and Android platforms (Android only once the APK link above is filled in), and upload the gallery.
 - [ ] Delete the `app-m1` App Check debug token, and the unused Classic reCAPTCHA key under "My First Project".
 - [ ] Keep the site and the Firebase project running, free, until judging ends on 16 Dec.
 - [ ] Do not push to the repository after 30 Nov 2:00 PM Pacific: later commits are not evaluated.

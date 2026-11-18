@@ -15,6 +15,8 @@ Most rental agreements in Hyderabad run for eleven months and are signed in a fe
 
 It is a screening aid, not legal advice.
 
+**Three surfaces:** the [web app](https://eleven-months-nano.web.app), a [Chrome extension](extension/README.md) that checks a clause wherever you select it, and an [Android app (Trusted Web Activity)](android/README.md): the same web app, running in Chrome on Android.
+
 > **For judges**
 > 1. Open **https://eleven-months-nano.web.app** in desktop Chrome 139 or newer. No login.
 > 2. Press **Load sample**, then **Scan lease**. (Press **Prepare model** first if the page asks; the first answer after a Chrome restart takes 13 to 20 s.)
@@ -42,8 +44,10 @@ It also:
 
 - reads photos and scanned PDFs on your device with the on-device model, checks that reading word by word against a second, plain text recogniser, and shows the text so you can correct it before the scan;
 - checks the whole agreement: are the parties, address, start date, term and rent stated, do any figures contradict each other, and roughly what the stamp duty should be;
+- **Deposit Shield**, for moving out: checks each line of the landlord's deduction list against your own agreement ("in your agreement", "ask for the bill", "not in your agreement"), totals it against the deposit, and writes a firm WhatsApp message and a formal notice through the same masked cloud path, plus a move-out checklist and an escalation ladder (Telangana specifics, national routes for other states);
+- **Law, or viral forward?**: eight viral "new rent rules" claims checked for Telangana, Karnataka and Maharashtra, each marked in force, Model Tenancy Act proposal not adopted there, not true, partly true, or could not verify, with sources and a checked date;
 - has step-by-step guides for seven situations (before signing, water or power cut, told to leave, deposit not returned, moving out, rent increase, asked for a bribe);
-- has 25 short notes on rental law, each showing its source, how far it can be trusted, and what could not be verified.
+- has 27 short notes on rental law, each showing its source, how far it can be trusted, and what could not be verified.
 
 ## What it works on, and what it does not
 
@@ -52,7 +56,7 @@ It also:
 | Rental and lease agreements in English, from any Indian state | Agreements in Telugu, Hindi or Urdu, including Hindi written in English letters. These are declined with a message, not scanned badly |
 | Pasted text, text PDFs, photos, scanned PDFs (up to 12 pages) | Handwriting, tables and two-column layouts |
 | Clause checks: deposit size and forfeiture, notice, lock-in, rent increases, entry, water and power cuts, receipts, lock-out, blank cheques, painting and wear deductions, late fees, taxes and society charges | Leave and licence, paying-guest and commercial documents get a warning: some checks will not fit |
-| Local law notes, fees and contacts for **Telangana** | Local law for other states |
+| Local law notes, fees and contacts for **Telangana**; the viral-claims check also covers Karnataka and Maharashtra | Local law notes for other states |
 
 ## How the hybrid inference works
 
@@ -63,7 +67,7 @@ It also:
 Every model call goes through the Firebase AI Logic Web SDK (`firebase/ai`). See [`app/src/ai.ts`](app/src/ai.ts).
 
 ```
- clause ──► 1. Rules          deterministic: amounts, months, days, percentages, 23 topic rules
+ clause ──► 1. Rules          deterministic: amounts, months, days, percentages, 27 topic rules
             │
             ▼
             2. Gemini Nano    on the device, in Chrome: judges the clause and finds names
@@ -79,6 +83,7 @@ Every model call goes through the Firebase AI Logic Web SDK (`firebase/ai`). See
 - **App Check** protects the cloud calls (reCAPTCHA Enterprise in production).
 - **Remote Config** holds the thresholds (deposit months, rent rise, notice days), the cloud model name and the switch for the cloud second opinion, so they can change without a deploy. Every value is range-checked and falls back to a built-in default. See [`app/src/config.ts`](app/src/config.ts).
 - **Photos stay on the device.** A page image is read by the on-device model through Firebase AI Logic and never sent to the cloud, because it cannot be masked before it is read. A model can skip or reword a line without showing it, so its reading is used only when it shares at least 90% of its words with a plain text recogniser's reading of the same page.
+- **Which surfaces call the cloud: the web app only.** The cloud second opinion is protected by App Check, whose reCAPTCHA flow does not run in extension pages. So the Chrome extension runs the rules and Gemini Nano through Firebase AI Logic in `ONLY_ON_DEVICE` mode, its Content-Security-Policy (`connect-src 'self'`) blocks any network call, and "Full scan" hands the text to the web app in the URL fragment (never sent to a server). The Android app is a Trusted Web Activity, so it is the web app itself; Chrome on Android has no on-device model yet, so there it runs the rules plus the opt-in cloud check.
 - **No on-device model?** Phones, Safari and Firefox get a rules-only scan. It says so, and it says how many clauses matched no rule. The user can tick a box to also send every clause to the cloud model. In that mode masking is by pattern only (ID numbers, phones, emails, names after a title), because there is no on-device model to find names, and the page says that before the user ticks.
 
 ## Measured, not claimed
@@ -92,6 +97,8 @@ All test data is synthetic and written for this project. Numbers on real agreeme
 | Fixed rules alone on an unseen set of harmful clauses, first run | 12 of 20 (second set), then **4 of 20** (third set, fresh paraphrases); 0 fair clauses wrongly flagged on the third set |
 | Whole pipeline on 96 unseen clauses (70 harmful, 26 fair), desktop Chrome, live site | **67 of 70** harmful caught, 1 of 26 fair wrongly flagged, 45 of 97 scanned pieces sent to cloud (the 96 clauses plus the test agreement's opening line, which the splitter counts as a clause) |
 | Same clauses with no on-device model (rules + cloud on every clause) | 68 of 70 caught, 0 of 26 wrongly flagged |
+| Lifestyle-clause rules (curfew, visitors, occupants, food), fresh set written after the rules, first run | 7 of 8 harmful flagged, 0 of 4 fair; on the 96 unseen clauses only 2 harmful clauses gained a finding and no fair clause changed ([`rules/results-lifestyle.md`](rules/results-lifestyle.md)) |
+| Deposit Shield auditor, three synthetic deduction lists (fair, inflated, charges absent from the agreement) | 17 of 17 lines labelled as the hand-written gold; same author wrote rules and lists ([`rules/results-deposit.md`](rules/results-deposit.md)) |
 | Nano's per-call limit | fails between about 6,200 and 8,000 words, so long clauses are split |
 
 The third row is the honest limit of the fixed rules: precise and good with numbers, but they do not recognise new wordings of the same problem. The fourth row shows the model covering that gap. All 96 clauses were written by the project's author in clean English, so real agreements will score lower. Details: [`RISK-KILL-REPORT.md`](RISK-KILL-REPORT.md), [`GAP-REPORT.md`](GAP-REPORT.md), [`SCHEDULE.md`](SCHEDULE.md), [`AUDIT.md`](AUDIT.md).
@@ -202,6 +209,8 @@ The app is a static site. To host it on Firebase Hosting in your own project:
 
 - `app/` the web app (Vite, TypeScript): UI, masking, clause splitter, PDF and photo reading.
 - `rules/` extractor, topic rules, whole-agreement checks, document check, reference notes, guides, routing pipeline, scoring tools. See [`rules/README.md`](rules/README.md) and [`rules/EXPANDING.md`](rules/EXPANDING.md).
+- `extension/` the Chrome extension (side panel and context menu, on-device only). See [`extension/README.md`](extension/README.md).
+- `android/` the Trusted Web Activity setup (Bubblewrap). The signing key stays outside the repository. See [`android/README.md`](android/README.md).
 - `harness/` the measurement page and raw results behind the risk report.
 - `docs/` images for this page.
 
@@ -220,6 +229,7 @@ The code was written with an AI coding assistant, which the rules allow. The mea
 - A screening aid, not legal advice. "Nothing found" does not mean "safe to sign".
 - Not tested on a real camera photo, on handwriting, or on a phone.
 - Five legal questions are still unverified and are listed inside the app under "What this tool could not verify", among them the current Telangana stamp duty rate for leases.
+- Chrome on Android has no on-device model yet, so the Android app runs the fixed rules with the opt-in cloud check, not the full hybrid scan.
 - The local law notes cover Telangana only, and the control act there excludes many newer and higher-rent buildings, so the guides tell you to check coverage first.
 
 ## Credits
