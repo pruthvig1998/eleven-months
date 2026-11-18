@@ -16,6 +16,10 @@ Most rental agreements in Hyderabad run for eleven months and are signed in a fe
 It is a screening aid, not legal advice.
 
 <p align="center">
+  <img src="docs/shot-hero.jpg" alt="The Eleven Months home page: Read the fine print before it reads you, with a sample clause marked as risky" width="760">
+</p>
+
+<p align="center">
   <img src="docs/demo.gif" alt="The scan: a verdict in plain words, what to ask for on each risky clause, and the printable sheet" width="760">
 </p>
 
