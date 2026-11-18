@@ -1,0 +1,522 @@
+[
+ {
+  "id": 1,
+  "text": "Rent shall escalate at 20% per annum, compounded, and in addition the Lessee shall pay a further one-time increase of Rs. 2,000 each time the Lessor pays property tax.",
+  "label": "risky",
+  "risk_type": "escalation",
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": 20
+  },
+  "tricky": false
+ },
+ {
+  "id": 2,
+  "text": "The Lessee shall pay a monthly rent of Rs. 20,000 (Rupees Twenty Thousand only) on or before the 5th day of each calendar month through bank transfer to the account of the Lessor.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 3,
+  "text": "This Agreement carries a lock-in period of 10 months for the Lessee. In case of early exit, the Lessee shall forfeit the security deposit and shall also pay three months' additional rent as penalty.",
+  "label": "risky",
+  "risk_type": "lockin",
+  "fields": {
+   "deposit": null,
+   "lockin_months": 10,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 4,
+  "text": "The Lessee shall not vacate the premises during the first eleven months of this Agreement. If the Lessee leaves earlier for any reason, the Lessee shall pay the full rent for the remaining months of the term, while the Lessor may terminate at any time.",
+  "label": "risky",
+  "risk_type": "lockin",
+  "fields": {
+   "deposit": null,
+   "lockin_months": 11,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 5,
+  "text": "There shall be a lock-in period of three months for both parties. After the lock-in period, either party may terminate by giving thirty days' notice in writing.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": 3,
+   "notice_days": 30,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 6,
+  "text": "The lock-in period shall be six months for both parties, after which either party may terminate this tenancy by giving thirty days' written notice.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": 6,
+   "notice_days": 30,
+   "escalation_pct": null
+  },
+  "tricky": true
+ },
+ {
+  "id": 7,
+  "text": "Minor day-to-day repairs such as replacing bulbs, tap washers and fuses shall be done by the Lessee at the Lessee's cost. Major repairs to the structure, roof and wiring, not caused by the Lessee, shall be carried out by the Lessor.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 8,
+  "text": "Any dispute arising out of this Agreement shall first be attempted to be settled amicably between the parties and, failing that, shall be subject to the jurisdiction of the civil courts at Hyderabad.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 9,
+  "text": "The Lessor or his authorised representative may inspect the premises once in a month between 10 a.m. and 6 p.m. after giving the Lessee at least 24 hours' prior intimation.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 10,
+  "text": "The Lessee shall deposit Rs. 2,40,000 as security. Rent is Rs. 20,000 per month. The Lessor may deduct painting, cleaning and any other charges at his sole discretion, and the Lessee waives the right to question the deductions. The Lessee further agrees that the Lessor may use the deposit to meet any liability of the Lessor to any third party, that the deposit shall stand forfeited if the Lessee is arrested or questioned by the police for any reason whatsoever, and that these conditions shall continue to bind the Lessee for three years after termination of the tenancy, notwithstanding anything stated elsewhere in this Agreement.",
+  "label": "risky",
+  "risk_type": "deposit",
+  "fields": {
+   "deposit": 240000,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 11,
+  "text": "The Lessor shall have the right to enter the premises at any time of day or night without notice, and to evict the Lessee immediately, without refund of rent already paid, if the Lessee delays the rent by even one day.",
+  "label": "risky",
+  "risk_type": "eviction",
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 12,
+  "text": "The Lessee agrees that any dispute shall be decided solely by an arbitrator appointed by the Lessor, whose decision shall be final, and that the Lessee shall bear the entire cost of arbitration, even if the Lessee succeeds.",
+  "label": "risky",
+  "risk_type": "other",
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 13,
+  "text": "If the Lessee fails to pay the rent for two consecutive months despite a written reminder with fifteen days to cure, the Lessor may terminate this Agreement by giving notice in writing.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": 15,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 14,
+  "text": "On renewal, the monthly rent shall be enhanced by 10% over the rent payable in the last month of the expiring term.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": 10
+  },
+  "tricky": false
+ },
+ {
+  "id": 15,
+  "text": "On renewal, the rent shall go up by two and a half percent over the last paid rent, and by no other amount.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": 2.5
+  },
+  "tricky": true
+ },
+ {
+  "id": 16,
+  "text": "If the Lessee is found to have any guest staying overnight without the written permission of the Lessor, the Lessor may treat this as a breach, cut off water and electricity and re-enter the premises forthwith.",
+  "label": "risky",
+  "risk_type": "eviction",
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 17,
+  "text": "The Lessee shall give two months' written notice before vacating, whereas the Lessor shall be entitled to ask the Lessee to vacate on three days' notice if the Lessor requires the premises for any purpose.",
+  "label": "risky",
+  "risk_type": "notice",
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": 3,
+   "escalation_pct": null
+  },
+  "tricky": true
+ },
+ {
+  "id": 18,
+  "text": "Security deposit of Rs. 1,50,000 shall be paid by the Lessee. On termination, the Lessor shall refund the deposit only after the Lessor has re-let the premises to a new tenant, and no interest or time limit shall apply to such refund.",
+  "label": "risky",
+  "risk_type": "deposit",
+  "fields": {
+   "deposit": 150000,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 19,
+  "text": "The Lessor hereby lets out and the Lessee hereby takes on lease the residential flat bearing No. 402, Fourth Floor, Sunrise Apartments, Madhapur, Hyderabad, Telangana, for residential purposes only.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 20,
+  "text": "The rent shall be increased by five percent (5%) at the time of renewal of this Agreement, and no other increase shall be made during the term. The parties further agree that the Lessee shall maintain the common areas used by him in a clean manner, shall not store inflammable material, shall not keep pets that cause disturbance to neighbours, shall comply with the rules and bye-laws of the apartment owners' association, shall not carry out any structural alteration, shall not install any hoarding or signboard, shall permit the Lessor to display a 'To Let' board during the last month of the tenancy, shall promptly inform the Lessor in writing of any damage or defect noticed in the premises, shall be responsible for the conduct of his family members and guests, and shall pay any fine imposed by the association upon the Lessee for violation of its rules. The Lessor shall ensure peaceful and quiet enjoyment of the premises by the Lessee during the tenancy without any interruption by the Lessor or any person claiming under him, so long as the Lessee pays the rent and observes the terms of this Agreement.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": 5
+  },
+  "tricky": false
+ },
+ {
+  "id": 21,
+  "text": "The Lessee shall pay an interest-free security deposit of Rs. 60,000. The Lessor shall return the same within thirty days of vacation of the premises, less any documented damage beyond normal wear and tear.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": 60000,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 22,
+  "text": "In the event of sale of the premises, the Lessee shall vacate within 48 hours of being informed, and the Lessee shall have no claim of any kind, including for refund of the security deposit until the sale deed is registered.",
+  "label": "risky",
+  "risk_type": "eviction",
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 23,
+  "text": "The Lessee has paid a security deposit equal to ten months' rent, the monthly rent being Rs. 18,000. The Lessor may forfeit the entire deposit, without assigning any reason, if the Lessee vacates the premises before the Lessor is satisfied with the condition of the flat.",
+  "label": "risky",
+  "risk_type": "deposit",
+  "fields": {
+   "deposit": 180000,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": true
+ },
+ {
+  "id": 24,
+  "text": "The Lessee shall pay the electricity, water and gas charges as per the meter readings directly to the concerned authorities. The Lessor shall pay property tax and the building insurance.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 25,
+  "text": "The Lessee shall pay a fixed maintenance charge of Rs. 8,000 per month to the Lessor, in addition to the amounts demanded by the association, and the Lessor shall not be required to produce any bills or receipts for such charge.",
+  "label": "risky",
+  "risk_type": "maintenance",
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 26,
+  "text": "The Lessor may terminate this Agreement without notice if, in the opinion of the Lessor, the Lessee has caused nuisance. The Lessee shall give 90 days' notice to terminate.",
+  "label": "risky",
+  "risk_type": "notice",
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": 90,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 27,
+  "text": "There shall be a lock-in period of twelve (12) months, binding on the Lessee only. The Lessor retains the right to terminate this tenancy at any time by giving a notice of seven days.",
+  "label": "risky",
+  "risk_type": "lockin",
+  "fields": {
+   "deposit": null,
+   "lockin_months": 12,
+   "notice_days": 7,
+   "escalation_pct": null
+  },
+  "tricky": true
+ },
+ {
+  "id": 28,
+  "text": "The tenancy shall be for a period of eleven (11) months commencing from 1st December 2026 and ending on 31st October 2027, and may be renewed by mutual consent in writing.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 29,
+  "text": "The Lessee shall keep the premises in good and tenantable condition, and shall hand over the premises at the end of the tenancy in the same condition in which they were received, subject to normal wear and tear.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 30,
+  "text": "Although the draft circulated earlier mentioned a security deposit of Rs. 50,000, the parties have now agreed that the deposit actually payable by the Lessee shall be Rs. 40,000, and this clause prevails over the draft.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": 40000,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": true
+ },
+ {
+  "id": 31,
+  "text": "The Lessee shall bear all structural repairs, including leakage of roof, cracks in walls, and replacement of plumbing and electrical wiring, at the Lessee's cost, irrespective of the cause of the damage.",
+  "label": "risky",
+  "risk_type": "maintenance",
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 32,
+  "text": "The Lessee shall use the premises only for residential purposes and shall not sublet, assign or part with possession of the premises or any part thereof without the prior written consent of the Lessor.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 33,
+  "text": "The Lessee has paid to the Lessor a refundable interest-free security deposit of Rs. 40,000, being two months' rent, by cheque. The Lessor shall refund the deposit within 15 days of the Lessee handing over vacant possession, after deducting only proven unpaid dues.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": 40000,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 34,
+  "text": "The monthly rent shall be Rs. 22,000 for the first year. For the renewal period, the Lessor may revise the rent at his discretion by up to fifteen percent, and the Lessee shall pay the revised rent from the first day of the renewed term.",
+  "label": "risky",
+  "risk_type": "escalation",
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": 15
+  },
+  "tricky": true
+ },
+ {
+  "id": 35,
+  "text": "The Lessee shall not be entitled to any receipt for rent paid in cash, and the Lessee acknowledges that the Lessor's own record shall be conclusive evidence of the rent paid or unpaid.",
+  "label": "risky",
+  "risk_type": "other",
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 36,
+  "text": "Either party may terminate this tenancy by giving the other party one month's (30 days) prior written notice. No penalty shall apply on such termination.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": 30,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 37,
+  "text": "Either party may terminate this tenancy by giving notice of 7 days. On expiry of the notice the Lessee shall hand over vacant possession, failing which the Lessor may remove the belongings of the Lessee.",
+  "label": "risky",
+  "risk_type": "notice",
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": 7,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 38,
+  "text": "The rent shall be increased by 25% at the end of every six months of the tenancy, and the Lessee agrees to pay the enhanced rent without demur. The parties further agree that the Lessee shall at all times maintain the common areas used by him in a clean manner, shall not store inflammable material, shall not keep pets that cause disturbance to neighbours, shall comply with the rules and bye-laws of the apartment owners' association, shall not carry out any structural alteration, shall not install any hoarding or signboard, shall permit the Lessor to display a 'To Let' board during the last month of the tenancy, shall promptly inform the Lessor in writing of any damage or defect noticed in the premises, shall be responsible for the conduct of his family members and guests, and shall pay any fine imposed by the association upon the Lessee for violation of its rules. The Lessor shall ensure peaceful and quiet enjoyment of the premises by the Lessee during the tenancy without any interruption by the Lessor or any person claiming under him, so long as the Lessee pays the rent and observes the terms of this Agreement.",
+  "label": "risky",
+  "risk_type": "escalation",
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": 25
+  },
+  "tricky": false
+ },
+ {
+  "id": 39,
+  "text": "Maintenance charges payable to the apartment owners' association, at present Rs. 2,500 per month, shall be paid by the Lessee on production of the association's receipt by the Lessor.",
+  "label": "ok",
+  "risk_type": null,
+  "fields": {
+   "deposit": null,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ },
+ {
+  "id": 40,
+  "text": "The Lessee shall pay to the Lessor an interest-free refundable security deposit of Rs. 3,00,000 (Rupees Three Lakhs only) on or before the date of execution of this Agreement. The monthly rent is Rs. 25,000.",
+  "label": "risky",
+  "risk_type": "deposit",
+  "fields": {
+   "deposit": 300000,
+   "lockin_months": null,
+   "notice_days": null,
+   "escalation_pct": null
+  },
+  "tricky": false
+ }
+]

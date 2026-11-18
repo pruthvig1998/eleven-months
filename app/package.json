@@ -1,0 +1,19 @@
+{
+  "name": "eleven-months-app",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@fontsource/hanken-grotesk": "^5.3.0",
+    "@fontsource/martian-mono": "^5.3.0",
+    "@fontsource/unbounded": "^5.3.0",
+    "firebase": "^13.4.0",
+    "pdfjs-dist": "^6.5.438",
+    "tesseract.js": "^7.0.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  }
+}

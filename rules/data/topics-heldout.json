@@ -1,0 +1,18 @@
+[
+ {"id":"h1","label":"risky","topic":"entry","text":"The Landlord may come into the flat whenever he wishes to check its condition."},
+ {"id":"h2","label":"risky","topic":"selfhelp","text":"If rent is not paid on the due date, the owner may switch off the water supply and the power connection until payment is made."},
+ {"id":"h3","label":"risky","topic":"eviction","text":"The Tenant must leave the premises on the very next day if the Landlord so demands."},
+ {"id":"h4","label":"risky","topic":"forfeiture","text":"The Landlord keeps the whole security deposit if the Tenant leaves before completing the term, whatever the reason."},
+ {"id":"h5","label":"risky","topic":"receipts","text":"No acknowledgement of rent paid will be issued to the Tenant."},
+ {"id":"h6","label":"risky","topic":"dispute","text":"In case of any disagreement, the Landlord's chosen arbitrator will decide, and the Tenant will bear all arbitration fees."},
+ {"id":"h7","label":"risky","topic":"waiver","text":"The Tenant agrees that he cannot raise any objection to deductions made from the deposit."},
+ {"id":"h8","label":"risky","topic":"maintenance","text":"All repairs, including to the roof and electrical wiring, will be paid for by the Tenant."},
+ {"id":"h9","label":"ok","topic":"receipts","text":"The Tenant shall pay rent of Rs. 25,000 in the first week of each month by bank transfer and the Landlord will issue a receipt."},
+ {"id":"h10","label":"ok","topic":"entry","text":"The Landlord may visit the flat for inspection with 48 hours prior written notice."},
+ {"id":"h11","label":"ok","topic":"deposit-refund","text":"The deposit of Rs. 50,000 shall be returned within 30 days after the Tenant vacates, after deducting any proven damage."},
+ {"id":"h12","label":"ok","topic":"eviction","text":"Either party may end the tenancy by giving two months written notice."},
+ {"id":"h13","label":"ok","topic":"guests","text":"The Tenant may keep one pet with the Landlord's written permission."},
+ {"id":"h14","label":"ok","topic":"utilities","text":"Water and electricity are billed to the Tenant according to meter readings."},
+ {"id":"h15","label":"ok","topic":"renewal","text":"This agreement is for 11 months and may be extended by mutual written agreement."},
+ {"id":"h16","label":"ok","topic":"dispute","text":"Disputes shall first be discussed between the parties and, if unresolved, be decided by the civil courts in Hyderabad."}
+]

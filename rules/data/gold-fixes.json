@@ -1,0 +1,14 @@
+{
+ "13": {
+  "field": "notice_days",
+  "old": 15,
+  "new": null,
+  "why": "fifteen days is a cure period, not a notice period; the notice itself has no stated duration."
+ },
+ "17": {
+  "field": "notice_days",
+  "old": 3,
+  "new": 60,
+  "why": "Lessee notice is 2 months (60 days); documented rule derives notice_days from the lessee-side period. Old gold 3 was the lessor side."
+ }
+}

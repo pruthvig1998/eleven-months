@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Check an Indian rental agreement on your own device. Only unclear clauses go to the cloud, with names and ID numbers masked.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2305070c'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23c8ff3d' stroke-width='2.5'/%3E%3Ccircle cx='16' cy='16' r='4' fill='none' stroke='%233df2e0' stroke-width='2'/%3E%3C/svg%3E">
+<title>Eleven Months</title>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="logo" aria-hidden="true"></span>ELEVEN MONTHS</div>
+    <div class="pills">
+      <span class="pill" id="pillNano" data-state="idle"><i></i><span>On-device model: idle</span></span>
+      <span class="pill" id="pillCloud" data-state="idle"><i></i><span>Cloud: off</span></span>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">Rental agreement scanner &middot; Built for Telangana tenants</p>
+      <h1>Read the fine print<br><em>before it reads you.</em></h1>
+      <p class="sub">Paste a lease, or upload a PDF or a photo of it. Rules and an on-device model read every clause. Only the unclear ones go to the cloud, with names and ID numbers masked first.</p>
+    </section>
+
+    <section class="deck">
+      <div class="panel feed">
+        <div class="label"><label for="lease">Document feed</label><span>synthetic text only</span></div>
+        <textarea id="lease" spellcheck="false" placeholder="Paste lease text here, upload a PDF or a photo, or load the sample."></textarea>
+        <div class="actions">
+          <button id="sample" type="button">Load sample</button>
+          <button id="upload" type="button">Upload PDF or photo</button>
+          <input id="file" type="file" accept="application/pdf,.pdf,.txt,text/plain,image/*" hidden>
+          <button id="loadSaved" type="button" hidden>Open saved scan</button>
+          <button id="init" type="button">Prepare model</button>
+          <button id="analyze" type="button" class="primary">Scan lease</button>
+        </div>
+      </div>
+
+      <aside class="panel hud" aria-label="Scan summary">
+        <div class="label"><span>Scan summary</span><span id="hudState">standby</span></div>
+        <div class="gauge">
+          <div class="ring-wrap">
+            <div class="ring" id="ring" role="img" aria-label="Share of clauses marked risky"></div>
+            <div class="ring-num"><b id="riskPct">0</b><small>% risky</small></div>
+          </div>
+          <dl class="stats">
+            <div class="stat"><dt>Clauses</dt><dd id="sTotal">0</dd></div>
+            <div class="stat"><dt>Risky</dt><dd id="sRisky" class="bad">0</dd></div>
+            <div class="stat"><dt>Cloud calls</dt><dd id="sCloud">0</dd></div>
+            <div class="stat"><dt>To check</dt><dd id="sCheck" class="warn">0</dd></div>
+          </dl>
+        </div>
+        <div class="meter"><div class="row"><span>Stayed on device</span><span id="privPct">100%</span></div><div class="bar"><i id="privBar" style="width:100%"></i></div></div>
+        <div class="meter"><div class="row"><span>Scan progress</span><span id="progPct">0%</span></div><div class="bar progress"><i id="progBar"></i></div></div>
+      </aside>
+    </section>
+
+    <p id="status" role="status" aria-live="polite">Ready. Load the sample or paste a lease, then scan.</p>
+    <div id="out" class="timeline" aria-live="polite"></div>
+
+    <section class="panel tools" id="tools" aria-label="Keep and share" hidden>
+      <div class="label"><span>Keep and share</span><span>stays on this device</span></div>
+      <div class="actions">
+        <button id="copyMsg" type="button">Copy message to landlord</button>
+        <button id="saveScan" type="button">Save this scan on this device</button>
+        <button id="clearScan" type="button" hidden>Delete saved scan</button>
+      </div>
+      <p class="nsrc" id="toolsNote">Saving keeps the agreement text in this browser only. Anyone who uses this browser can open it.</p>
+      <details class="openq"><summary>Did the scan miss a clause, or get one wrong?</summary>
+        <p class="nsrc">Write what was missed. The note is kept in this browser only. Nothing is sent anywhere; copy the notes if you want to pass them on.</p>
+        <textarea id="missText" rows="3" placeholder="Example: clause 9 lets the owner raise the rent any time, and it was marked clear."></textarea>
+        <div class="actions"><button id="missSave" type="button">Save note</button><button id="missCopy" type="button">Copy all notes</button><span class="nsrc" id="missCount"></span></div>
+      </details>
+    </section>
+
+    <section class="panel sheet" id="sheet" aria-label="Take this to the signing"></section>
+
+    <section class="panel help" id="help" aria-label="Get help">
+      <div class="label"><span>Get help</span><span>what to do, step by step</span></div>
+      <div class="chips" id="helpChips"></div>
+      <div id="helpOut"><p class="empty">Pick a situation. Each step shows where it comes from: a government source, a court order, commentary, or common practice.</p></div>
+      <details class="openq"><summary>What this tool could not verify</summary><ul id="openQ"></ul></details>
+      <p class="nsrc">General information, not legal advice. For your own case call the free legal aid helpline 15100 (NALSA) or see a lawyer.</p>
+    </section>
+
+    <section class="panel ref" id="ref" aria-label="Reference notes">
+      <div class="label"><label for="refQ">Reference notes</label><span>public law, summarised</span></div>
+      <input id="refQ" type="search" placeholder="Search: notice period, security deposit, landlord entry, registration..." autocomplete="off">
+      <div class="chips" id="refChips">
+        <button type="button" data-q="notice period to vacate">Notice period</button>
+        <button type="button" data-q="security deposit limit">Security deposit</button>
+        <button type="button" data-q="landlord entry inspection">Landlord entry</button>
+        <button type="button" data-q="why 11 months registration">Why 11 months</button>
+        <button type="button" data-q="telangana rent control">Telangana law</button>
+      </div>
+      <div id="refOut"></div>
+      <p class="nsrc">Summaries of public law from secondary commentary, checked 2026-11-17. Not legal advice: verify against the current act and your state's rules.</p>
+    </section>
+  </main>
+
+  <footer>Demo only. Use synthetic text, not a real lease. This tool flags terms to review; it is not legal advice.</footer>
+</div>
+<script type="module" src="/src/main.ts"></script>

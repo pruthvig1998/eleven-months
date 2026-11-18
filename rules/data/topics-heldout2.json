@@ -1,0 +1,14 @@
+[
+ {"id":"b1","label":"risky","topic":"entry","text":"The owner reserves the right to walk in and look around the apartment as and when he feels like it."},
+ {"id":"b2","label":"risky","topic":"selfhelp","text":"Should the tenant delay payment, the supply of electricity to the flat shall be stopped."},
+ {"id":"b3","label":"risky","topic":"eviction","text":"On receiving a verbal request from the landlord, the tenant has to move out by the same evening."},
+ {"id":"b4","label":"risky","topic":"forfeiture","text":"The advance paid by the tenant stands confiscated if he exits early for whatever reason."},
+ {"id":"b5","label":"risky","topic":"receipts","text":"The landlord will not provide any written proof of the rent amounts received."},
+ {"id":"b6","label":"risky","topic":"dispute","text":"Disputes will be resolved by the landlord's nominated arbitrator, with the tenant paying the full cost."},
+ {"id":"b7","label":"risky","topic":"waiver","text":"The tenant gives up every right to challenge any charge raised by the landlord."},
+ {"id":"b8","label":"risky","topic":"maintenance","text":"Fixing damaged wiring or ceiling leaks is the tenant's financial responsibility."},
+ {"id":"b9","label":"ok","topic":"receipts","text":"A receipt will be given each time rent is paid."},
+ {"id":"b10","label":"ok","topic":"entry","text":"The landlord will inform the tenant a day before any visit to the flat."},
+ {"id":"b11","label":"ok","topic":"maintenance","text":"Repairs to the roof and wiring are the landlord's responsibility."},
+ {"id":"b12","label":"ok","topic":"eviction","text":"The tenant may end the tenancy after giving the landlord thirty days notice."}
+]

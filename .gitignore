@@ -1,0 +1,9 @@
+node_modules
+dist
+.env.local
+.env
+.DS_Store
+.playwright-mcp
+.hyperframes
+# Video working files: large renders and bundled music whose licence is not documented.
+brag-output

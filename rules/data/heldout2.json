@@ -1,0 +1,14 @@
+[
+ {"id":201,"text":"The Lessee shall pay Rs. 90,000 towards the refundable security deposit, equivalent to three months' rent of Rs. 30,000.","fields":{"deposit":90000,"lockin_months":null,"notice_days":null,"escalation_pct":null}},
+ {"id":202,"text":"A security deposit of Rupees Forty Thousand only shall be kept by the Lessor until the tenancy ends.","fields":{"deposit":40000,"lockin_months":null,"notice_days":null,"escalation_pct":null}},
+ {"id":203,"text":"The Lessor has received ₹2.5 lakh as advance deposit against the monthly rent of ₹25,000.","fields":{"deposit":250000,"lockin_months":null,"notice_days":null,"escalation_pct":null}},
+ {"id":204,"text":"There is no lock-in period during the first year, and the tenancy may be ended by either party at any time.","fields":{"deposit":null,"lockin_months":null,"notice_days":null,"escalation_pct":null}},
+ {"id":205,"text":"The Lessee shall not leave the premises before completing the first six months of the tenancy.","fields":{"deposit":null,"lockin_months":6,"notice_days":null,"escalation_pct":null}},
+ {"id":206,"text":"A written notice of thirty (30) days shall be given by the Lessee to terminate the tenancy.","fields":{"deposit":null,"lockin_months":null,"notice_days":30,"escalation_pct":null}},
+ {"id":207,"text":"The Lessor may terminate the tenancy by giving the Lessee 3 months' notice.","fields":{"deposit":null,"lockin_months":null,"notice_days":90,"escalation_pct":null}},
+ {"id":208,"text":"The agreed rent will go up by 7.5% every year during the term of this Agreement.","fields":{"deposit":null,"lockin_months":null,"notice_days":null,"escalation_pct":7.5}},
+ {"id":209,"text":"The Lessee shall pay a refundable deposit of Rs. 80,000 and a non-refundable fee of Rs. 5,000 for administrative charges.","fields":{"deposit":80000,"lockin_months":null,"notice_days":null,"escalation_pct":null}},
+ {"id":210,"text":"A rent hike of 10 percent shall apply after the first year of occupation.","fields":{"deposit":null,"lockin_months":null,"notice_days":null,"escalation_pct":10}},
+ {"id":211,"text":"The Lessee shall keep the flat clean, pay the electricity bill of about Rs. 1,200 per month, and hand back the keys on the last day.","fields":{"deposit":null,"lockin_months":null,"notice_days":null,"escalation_pct":null}},
+ {"id":212,"text":"The tenancy may be ended by the Lessee on 15 days' notice after the lock-in of 5 months.","fields":{"deposit":null,"lockin_months":5,"notice_days":15,"escalation_pct":null}}
+]
