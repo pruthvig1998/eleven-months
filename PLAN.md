@@ -41,7 +41,7 @@ Written 18 Nov 2026 after reading every source file (about 3,100 lines: `app/` 7
 10. No automated check on GitHub: tests run only when someone runs them by hand.
 11. No Content-Security-Policy header on the hosted site.
 12. The build ships about 70 font files, including Cyrillic and Vietnamese sets the page never uses.
-13. `rules/pii.ts` is used only by the measurement harness; the app has its own masking. Two places to keep in step.
+13. `rules/pii.ts` (Aadhaar checksum, PAN detection) is used only by a test; the app masks with its own patterns in `app/src/mask.ts`. Two places to keep in step.
 
 **Not yet proven**
 14. A real camera photo, a real phone, several users at once, and the scan time on an idle machine.
@@ -77,7 +77,7 @@ Ordered by what a judge scores: technological implementation (including hybrid i
 - E2. Split the scan function in `main.ts` into a pure "scan one clause" function and a renderer, and test the first. Done: the routing in rules-only, cloud-only and full modes has tests.
 - E3. Content-Security-Policy header in `firebase.json`. Done: the live site still works with the header on, including the photo reader and Firebase.
 - E4. Ship only the Latin font files. Done: font files in the build drop from about 70 to about 14.
-- E5. One masking module shared by the app and the harness.
+- E5. One place for ID detection: have `mask.ts` use `rules/pii.ts`, or delete `pii.ts`.
 
 ### Stage F: submission (Nov 24 to 27)
 - F1. Re-record the video from the final UI, keep it under 3 minutes, show on-device and cloud both working, upload it public to YouTube with the music credit.
