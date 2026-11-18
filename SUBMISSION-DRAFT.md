@@ -1,113 +1,120 @@
-# Eleven Months: Devpost entry and demo script (draft, not submitted)
+# Eleven Months: Devpost entry (draft, not submitted)
 
-For #BuildHybridAI 2026. Submissions close **Nov 30 2026, 2:00 PM PT** (3:30 AM IST Dec 1); personal target Nov 27. Nothing here is published. Every number comes from `RISK-KILL-REPORT.md`, `rules/README.md` or `AUDIT.md`. Items marked **[CHECK]** need you before submitting.
+Hackathon: Firebase hybrid AI hackathon, https://firebasehybridaihackathon.devpost.com/ (rules summarised in `HACKATHON-RULES.md`). Submissions close **30 Nov 2026, 2:00 PM Pacific** (1 Dec, 3:30 AM in India). Personal target: 27 Nov. Every number below is from `SCHEDULE.md`, `RISK-KILL-REPORT.md` or `rules/README.md`, measured on synthetic clauses written by the author.
 
-## Official rules: not verified
+Each heading below is a Devpost form field. Copy the text under it.
 
-I could not find the official Devpost rules page; search returned only a third-party listing. That listing says: run on Devpost; build an AI app using Firebase AI Logic hybrid inference; judged on technical implementation (including how well it uses hybrid inference), design, potential impact and quality of the idea, with no weightings given; the full rules were due on 9 Nov 2026. **Video length, a public-repo requirement and eligibility details are unknown.** **[CHECK]** Open the Devpost page, read the Rules and Submit tabs, and tell me what they say so I can fit this draft to them.
+---
 
-## Title
-
+## Project name
 Eleven Months
 
-## Tagline (under 60 characters)
+## Elevator pitch (under 200 characters)
+Read your rental agreement before you sign it. Eleven Months finds the clauses that can cost an Indian tenant money or their home, says what to ask for instead, and keeps the text on your device.
 
-Read your rental agreement before you sign it.
+## Platform
+Web (Chrome)
 
-## Short description
-
-A rental-agreement checker built for Telangana tenants, starting with Hyderabad-style leases. Rules and Gemini Nano read every clause on your device; only unclear clauses go to cloud Gemini, with names and ID numbers masked first.
+## Links
+- Try it: https://eleven-months-nano.web.app (desktop Chrome 139 or newer for the full on-device scan; any browser for the rules and the opt-in cloud check)
+- Code: https://github.com/pruthvig1998/eleven-months (Apache-2.0)
+- Video: **[add the YouTube link after upload]**
 
 ## Inspiration
-
-Indian residential leases are usually an 11-month agreement in dense legal English. Tenants sign without noticing a ten-month deposit the landlord can forfeit for any reason, a lock-in that binds only the tenant, a right to enter "at any time without notice", or a clause that lets the landlord cut the water. Pasting a lease into a cloud tool means sending names, addresses and ID numbers off the device.
+Most rental agreements in Hyderabad run for eleven months and are signed in a few minutes, often from a photo sent on WhatsApp. They hide clauses like a deposit of ten months' rent that the owner may keep "without assigning any reason", a lock-in that binds only the tenant, entry "at any time without notice", or a right to cut the water. Tenants do not read them, and a lawyer costs more than the deposit. The text is also personal: names, Aadhaar and PAN numbers sit in the first paragraph. That combination, a judgement task on private text, is what hybrid inference is for.
 
 ## What it does
+- Reads a pasted agreement, a text PDF, a photo, or a scanned PDF.
+- Marks every clause clear or risky, with the figures that matter (deposit, lock-in, notice, rent increase) and which layer produced each one.
+- For every risky clause, says what to ask the landlord for instead. When the model flags something no fixed rule covers, it says why in plain words, marked as the model's view.
+- Checks the whole agreement: are the parties, address, start date, term and rent stated; do any figures contradict each other; is the court in a far-away city; roughly what should the stamp duty be.
+- Builds a "Take this to the signing" sheet: the points to raise, what the agreement leaves out, and a checklist for the flat visit. Print it, save it on the device, or copy a message to the landlord.
+- Has step-by-step guides for seven situations (before signing, water cut, told to leave, deposit not returned, moving out, rent increase, asked for a bribe) and 25 short law notes, each showing its source and what could not be verified.
+- Declines documents it cannot judge (Telugu, Hindi, Hindi written in English letters, non-rental documents) instead of scanning them badly, and warns on leave-and-licence, paying-guest and commercial documents.
 
-- Splits a pasted lease into clauses and marks each clear or risky.
-- Reads the numbers that matter (deposit, lock-in, notice, rent increase) and says which layer produced each: rules, Nano or cloud.
-- Applies 16 topic rules and links each finding to a short plain-language note on public rental law, with its status (law, model law, this tool's own threshold, or practical tip), sources and checked date.
-- Shows a lease checklist of what the agreement covers and what it never mentions (for example, no deposit refund deadline).
-- Has a "Get help" panel with step-by-step guides for seven tenant situations, including being asked for a bribe; every step shows its trust level (government source, act text, commentary, reported online, or common practice) and the tool lists what it could not verify.
-- Has a searchable reference panel of 25 notes, offline, no network.
-- Suggests what to ask the landlord for on each risky clause, and builds a printable "Take this to the signing" sheet: the points to raise, what the lease omits, and a flat-visit and handover checklist.
+Built for Telangana tenants: the clause checks work on English agreements from any Indian state; the local law notes, fees and contacts cover Telangana.
 
-## How we built it (hybrid inference)
+## How we built it (how Firebase AI Logic is used)
+Every model call goes through the Firebase AI Logic Web SDK (`firebase/ai`, `app/src/ai.ts`). Inference mode is chosen per task:
 
-All model calls go through the **Firebase AI Logic Web SDK** (`firebase/ai`, 13.4.0).
+| Task | Mode | Why |
+|---|---|---|
+| Judge each clause, find names | `ONLY_ON_DEVICE` (Gemini Nano in Chrome) | The full text never leaves the browser for this step |
+| Read a photo or scanned page | `ONLY_ON_DEVICE`, image input | An image cannot be masked before it is read, so it is never sent. The reading is used only if it shares 90% of its words with a plain text recogniser's reading of the same page, because a model can skip a line silently |
+| Second opinion on a clause | `ONLY_IN_CLOUD` (`gemini-3.5-flash-lite`), with a JSON response schema | Only when Nano's answer is unusable, the rules are unsure, rules and Nano disagree, or Nano says "ok" while a rule raised a concern. Names, Aadhaar, PAN, phones and emails are masked first; if the on-device names check fails, the clause is not sent |
+| Browsers with no on-device model (phones, Safari, Firefox) | `ONLY_IN_CLOUD`, opt-in | The page explains what is and is not masked before the user ticks the box |
 
-1. **Rules first.** Deterministic extraction of amounts, months, days and percentages, plus topic rules. Fast, free, exact on what it covers.
-2. **Gemini Nano on-device** (Chrome's built-in model) judges each clause and finds names. Nothing leaves the browser for this step.
-3. **Cloud Gemini (`gemini-3.5-flash-lite`) only on a trigger:** Nano's answer is unusable, the rules are unsure, rules and Nano disagree, or Nano says ok while the rules flag a risk. Before anything is sent, Aadhaar (any 12-digit run, including wrong checksums), PAN, phone numbers, emails and names are masked. If the on-device names check fails, the clause stays on the device.
-4. **Firebase App Check** with reCAPTCHA Enterprise (Fraud Defense) protects the cloud calls. The Firebase console shows AI Logic enforced and 101 of 101 requests verified.
-5. Hosted on Firebase Hosting (Spark plan, no spend).
+Deterministic rules run before any model: they extract the numbers (small models get arithmetic wrong, so rules always win on figures) and apply 23 topic rules, each shipped with examples that the tests enforce.
 
-## Challenges we ran into (measured, Nov 17 2026, M1 MacBook Pro, Chrome 157)
+Other Firebase products:
+- **App Check** with reCAPTCHA Enterprise protects every cloud call.
+- **Remote Config** holds the thresholds (deposit months, rent rise, notice days), the cloud model name and the switch for the cloud second opinion, range-checked with built-in defaults.
+- **Hosting**, on the free Spark plan, with a Content-Security-Policy.
 
-- Nano alone is not enough. With a tuned prompt it labelled 85% of 40 synthetic clauses correctly but missed 25% of the risky ones, and it got arithmetic wrong ("ten months' rent" read as one month), so numbers come from rules.
-- Structured-output settings did not constrain Nano on-device; the gains came from prompt wording.
-- Speed is fine, startup is not: warm calls take about 1.8 s (p95) for classification and 2.6 s for extraction, but the first answer after restarting Chrome took 13 to 20 s, and the one-time model download is about 4 GB.
-- With the model downloading, `PREFER_ON_DEVICE` falls back to cloud immediately while `ONLY_ON_DEVICE` waits; with the model unavailable, `ONLY_ON_DEVICE` throws at once.
-- Rules written from one author's wording miss paraphrases: on 8 differently worded risky clauses the first topic rules caught **0 of 8**. After widening them with shared word lists, a fresh set written beforehand went from 0 to **7 of 8** with no false alarms on 4 ok clauses.
-- A self-audit found real privacy leaks in our own masking (names failing open, dashed or mistyped Aadhaar, lowercase PAN, phones, emails) and a splitter that dropped short numbered leases; both were fixed with tests that failed first (`AUDIT.md`).
+## Challenges we ran into
+- **Gemini Nano alone is not enough.** On 40 clauses it labelled 34 correctly but missed 5 of 20 risky ones, and read "ten months' rent" as one month. So numbers come from rules, and disagreements go to the cloud.
+- **Fixed rules do not generalise.** On a fresh set of 20 harmful clauses in new wording, the rules alone caught 4. Adding more patterns raised the score on the set in hand and barely on the next. The model has to carry new wording.
+- **Our first routing missed the private path's blind spot.** In the first full measurement, all 13 misses on desktop were clauses Nano called "ok" with nothing sent to cloud, and 10 of them already had a medium rule finding. Sending those to the cloud raised desktop recall from 57 to 67 of 70, at the cost of 12 more clauses leaving the device.
+- **The free cloud tier has a rate limit.** Sending two cloud prompts at once failed 5 of 11 clauses with HTTP 429. One request per clause plus retry fixed it.
+- **Our own privacy claims had holes.** A self-audit found names failing open, dashed or mistyped Aadhaar, lowercase PAN, phones and emails reaching the cloud unmasked. All fixed with tests that failed first (`AUDIT.md`).
+- **Speed.** Each clause makes up to two on-device calls. On a busy laptop the 11-clause sample took 2 to 4 minutes; the first answer after a Chrome restart takes 13 to 20 s while the model loads.
 
-## Results (all on synthetic data written by the author, so optimistic)
+## Accomplishments that we're proud of
+Measured, not claimed. On 96 unseen clauses (70 harmful, 26 fair), run on the live site:
 
-| Measure | Result |
-|---|---|
-| Rules + Nano, cloud only on a trigger (offline replay, 40 clauses) | 13 sent to cloud; all four fields right on 40/40; labels right on 40/40 (the topic rules were written after seeing two of these clauses, so treat the label figure as optimistic) |
-| Live runs on the 9-clause sample | 2 to 5 clauses went to cloud (22 to 55%); the rate varies run to run |
-| Nano vs cloud label agreement | 85%; the disagreement signal caught all 6 Nano label errors with no false alarms |
-| Nano name finding | 16 of 16 names, 1 false name |
-| Topic rules on fresh clauses (first run) | 0 of 8, then 7 of 8 after widening (second set) |
+| Mode | Harmful caught | Fair wrongly flagged | Sent to cloud |
+|---|---|---|---|
+| Fixed rules alone (hardest set) | 4 of 20 | 0 of 10 | 0 |
+| Desktop: rules + Nano + cloud on trigger | **67 of 70** | 1 of 26 | 45 of 97 |
+| No on-device model: rules + cloud on every clause | 68 of 70 | 0 of 26 | 97 of 97 |
 
-## Accomplishments we're proud of
-
-A hybrid pipeline where the on-device model does most of the work and the cloud is a measured fallback, with the privacy behaviour tested rather than promised; a rule set that can grow safely (each rule ships examples that a test enforces, plus a gap-finder tool); and honest numbers, including the ones that went badly.
+Also: 171 automated tests that run on every push; a Lighthouse accessibility score of 100; photo reading that stays on the device and checks itself.
 
 ## What we learned
-
-Hybrid works best when each layer does what it is good at: rules for numbers, Nano for judgement and names, cloud for disagreements. Measure with data written after the rules, because the first version of anything looks better than it is.
+Each layer should do what it is good at: rules for numbers, the on-device model for judgement and names, the cloud for disagreements. Measure on data written after the rules, because the first version of anything looks better than it is. And the privacy trade-off is a number, not a slogan: in this design, catching 10 more harmful clauses cost 12 more clauses leaving the device.
 
 ## What's next
-
-Verify the Telangana-specific law from the act text itself (our tools could not open it); more topics (late-payment interest, move-out charges, lock-in exit fees); a local "report a wrong result" button feeding the rule tests; other states; and, only if wanted, an opt-in store of masked clauses (design in `rules/EXPANDING.md`).
+- Test on real agreements (with consent) and on real phone photos; every number here comes from clean, author-written English.
+- Faster scans: one on-device call per clause where the rules already have the figures.
+- Telugu and Hindi agreements, read on the device and translated before the scan.
+- Local law for a second state, done with the same source checking as Telangana.
 
 ## Built with
+Firebase AI Logic (Web SDK), Gemini Nano (Chrome built-in AI), Gemini 3.5 Flash-Lite, Firebase App Check (reCAPTCHA Enterprise), Firebase Remote Config, Firebase Hosting, TypeScript, Vite, pdf.js, Tesseract.js
 
-Firebase AI Logic (Web SDK), Gemini Nano via Chrome's on-device model, Gemini cloud, Firebase App Check (reCAPTCHA Enterprise), Firebase Hosting, TypeScript, Vite.
+## Testing instructions for judges
+1. Open https://eleven-months-nano.web.app in desktop Chrome 139 or newer. No login.
+2. Press **Prepare model** once. The first time, Chrome downloads its built-in model (about 4 GB); after a Chrome restart the first answer takes 13 to 20 s.
+3. Press **Load sample**, then **Scan lease**. Expected: "6 of 11 clauses need attention." Open "Sent to cloud (names and IDs masked)" on any clause that has it to see exactly what left the device.
+4. To try a phone or another browser: open the same link, tick the cloud check under the text box, and scan the sample.
+5. To try photo reading: take a photo of any printed page of English text and press **Upload PDF or photo**.
 
-## Try it
+The sample agreement is made up; no real personal data is used anywhere.
 
-https://eleven-months-nano.web.app on desktop Chrome 139+ (about 4 GB download the first time; use the built-in sample lease). Repo: **[CHECK]** a public repo may be required; none exists yet, and nothing is committed.
+## Built during the hackathon, and pre-existing code
+All code was written on 17 and 18 November 2026, inside the submission period. There is no pre-existing code. It was written with an AI coding assistant, which the rules allow. Open-source libraries: Firebase JS SDK, pdf.js, Tesseract.js, Fontsource fonts.
 
-## Honest limits (put these in the entry)
+## Honest limits
+A screening aid, not legal advice; "nothing found" does not mean "safe to sign". All test clauses were written by the author in clean English, so real agreements will score lower. Not tested on real camera photos, handwriting or a real phone. Five legal questions remain unverified and are listed inside the app.
 
-A screening aid, not legal advice. Reference notes come from secondary commentary and tell the user to verify; the Telangana notes are the thinnest because the act text could not be opened. All test data is synthetic and author-written.
+---
 
-## Demo video script (about 2:00; the first scan is slow, so record after a warm-up run and cut the waiting)
+## Video description for YouTube (paste under the video)
 
-Before recording: open Chrome 139+, load the live site, click Scan lease on the sample once so the model is warm, then reload. Use Cmd+Shift+5 to record the screen with the microphone. Open DevTools to the Network tab on a second window or a clean second recording of the network view.
+Eleven Months reads a rental agreement on your device and tells an Indian tenant which clauses can cost them money or their home, and what to ask for instead. Built with Firebase AI Logic: Gemini Nano on the device, cloud Gemini only for a masked second opinion.
 
-1. **0:00 Hook.** On screen: the headline. Say: "Indian rental agreements run 11 months and hide the clauses that matter. Eleven Months reads them on your device."
-2. **0:10 Load the sample and press Scan lease.** The scan summary fills in as each clause turns. Say: "Rules and Gemini Nano on the device read each clause. Nothing is uploaded yet."
-3. **0:25 Deposit clause.** Point at "Deposit is 10 months' rent" and "Deposit can be forfeited at the landlord's discretion". Say: "The deposit is read by rules, not the model, because small models get arithmetic wrong."
-4. **0:40 Entry and water clauses.** Point at "Landlord can enter without notice" and "Water or power can be cut". Open "Why it matters" and show the note with its status and source.
-5. **0:55 Intro clause with names and IDs.** Open "Sent to cloud (names and IDs masked)". Say: "Only unclear clauses go to cloud Gemini through Firebase AI Logic, and names, Aadhaar and PAN are replaced first."
-6. **1:10 The trace and the summary.** Point at the RULES / NANO / CLOUD trace on a card and "Stayed on device" in the summary. Show the Network tab with only the few cloud calls.
-7. **1:25 Lease checklist.** Scroll to it: "No deposit refund deadline, no registration mention."
-8. **1:35 Signing sheet.** Scroll to "Take this to the signing", show the points to raise and the flat checklist, and click Print. Say: "It ends in something you can carry into the room."
-9. **1:45 Reference search.** Type "why 11 months" in the reference panel and show the Registration Act note.
-10. **1:55 Close.** Say the honest line: "Nano alone missed a quarter of the risky clauses in our tests, which is why rules and a cloud fallback exist. This is a screening aid, not legal advice." End on the live URL.
-
-## Before you submit
-
-- [ ] Read the official Devpost rules and tell me anything that changes this draft (video length, repo, eligibility).
-- [ ] Record the demo and upload it.
-- [ ] Decide whether to create a public repo (needs a first commit; I have made none). `.gitignore` and `README.md` are ready.
-- [ ] Delete the `app-m1` App Check debug token and the unused Classic reCAPTCHA key under "My First Project" (its secret key was shown in a screenshot).
-- [ ] If you market it as a Telangana product, use "built for Telangana tenants", not "Telangana law checker", and avoid official-looking branding.
-
-## Credit to include in the YouTube description
+Try it: https://eleven-months-nano.web.app
+Code: https://github.com/pruthvig1998/eleven-months
 
 Music: "Happy Beats & Business Moves Vol. 11" by Sascha Ende (ende.app), CC BY 4.0.
+
+---
+
+## Before you submit (your steps)
+
+- [ ] Record the demo with `DEMO-SCRIPT.md` (I cannot record your screen with the on-device model).
+- [ ] Upload the video to YouTube as **Public** (the rules say publicly visible; unlisted is a risk), with the description above.
+- [ ] Fill the Devpost form from this file, select the Web platform, and add both links and the video link.
+- [ ] Delete the `app-m1` App Check debug token, and the unused Classic reCAPTCHA key under "My First Project" (its secret key was shown in a screenshot).
+- [ ] Keep the site and the Firebase project running, free, until judging ends on 16 Dec.
+- [ ] Do not push to the repository after 30 Nov 2:00 PM Pacific: later commits are not evaluated.
