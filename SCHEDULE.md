@@ -136,3 +136,10 @@ Same limit as before: clauses written by the project's author, in clean English,
 - **Photo reading through Firebase AI Logic.** The on-device model reads the page image (on device only). The plain text recogniser reads it too, and the model's reading is used only when at least 90% of the words match. Local test in desktop Chrome, one clean rendered page: exact text, "a second reader agreed on 100% of the words", 18.6 s (the recogniser alone took 3.5 s). Not tested: a camera photo, a dense page, a multi-page scan.
 - 166 tests pass.
 - Second platform: not started. Web only.
+
+### Stage C deployed (Nov 18), live checks
+
+- Photo (one clean rendered page) on the live site: read by the on-device model, 100% word agreement with the second reader, exact text, 14.1 s.
+- Footer and thresholds note show; source "built-in defaults" (no Remote Config parameters set in the console yet).
+- Sample, desktop Chrome: 6 of 11 risky, 8 points to raise, 1 clause to cloud, 202 s.
+- Sample, phone width with the cloud check: 6 of 11, 11 of 11 cloud checks, no errors, 76 s. Earlier today this took 23 s. Both runs happened at the same time on the same machine and shared the cloud rate limit, so neither time is clean.
