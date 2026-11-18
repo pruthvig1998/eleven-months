@@ -4,7 +4,7 @@ import { loadSettings, DEFAULTS, type Settings } from './config.ts';
 import { splitClauses, clauseLabel } from './split.ts';
 import { readLeaseFile } from './pdf.ts';
 import { SAMPLE } from './sample.ts';
-import { decide, finalize, hasFigures, FIELDS, type Model } from '../../rules/pipeline.ts';
+import { decide, finalize, present, hasFigures, FIELDS, type Model } from '../../rules/pipeline.ts';
 import { extract, LIMITS } from '../../rules/extract.ts';
 import { mask } from './mask.ts';
 import { coverage } from '../../rules/topics.ts';
@@ -153,14 +153,8 @@ $('analyze').onclick = async () => {
           catch (e) { note ||= `Cloud check failed: ${(e as Error).message}`; sent = ''; }
         }
       }
-      const fin0 = finalize(d, nano, cloud);
-      // Rules-only: high findings mark the clause risky, medium ones ask for a look, and a clause no rule matched is counted so the verdict can say so.
-      const flagged = d.rules.flags.length > 0 || d.topics.some(x => x.severity === 'high');
-      const fin = cloud && rulesOnly ? { ...fin0, label: flagged ? ('risky' as const) : fin0.label } : rulesOnly ? { ...fin0, label: d.rules.flags.length || d.topics.some(x => x.severity === 'high') ? ('risky' as const) : null, check: d.topics.some(x => x.severity === 'medium') } : fin0;
-      if (!d.rules.flags.length && !d.topics.some(x => x.severity !== 'info')) unmatched++;
-      const unresolved = !rulesOnly && d.needsCloud && !cloud, label = fin.label ?? 'unknown';
-      // A medium rule finding always asks for a closer look, whatever the models said.
-      const look = fin.check || unresolved || (fin.label !== 'risky' && d.topics.some(x => x.severity === 'medium'));
+      const fin = present(d, finalize(d, nano, cloud), cloud, rulesOnly), { unresolved, look } = fin, label = fin.label ?? 'unknown';
+      if (!fin.matched) unmatched++;
       if (fin.label === 'risky') risky++;
       if (look) checks++;
       const clauseRent = extract(text).rent;

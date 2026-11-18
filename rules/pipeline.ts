@@ -66,7 +66,24 @@ export function finalize(d: Decision, nano: Model, cloud: Model | null): Final {
     fields[f] = r ?? (cloud ? c : n);
     if (cloud && r !== null && c !== null && r !== c) check = true;
   }
-  const label = cloud ? cloud.label ?? nano.label : nano.label === 'ok' && (d.rules.flags.length || maxSeverity(d.topics) === 'high') ? 'risky' : nano.label;
+  // Without cloud, a numeric flag or a high finding marks the clause risky whatever Nano said, including when Nano's
+  // answer was unusable (found Nov 18: a 'No receipt' clause showed 'unknown' when Nano failed and the cloud call failed).
+  const label = cloud ? cloud.label ?? nano.label : d.rules.flags.length || maxSeverity(d.topics) === 'high' ? 'risky' : nano.label;
   if (cloud && nano.label !== null && cloud.label !== nano.label) check = true;
   return { label, fields, source: cloud ? 'rules+cloud' : 'rules+nano', check, reasons: d.reasons };
+}
+
+// What the page shows for a clause, in every mode. Pure, so the three modes can be tested without a browser.
+//  - full (on-device model present): the models' label; "check" when they disagree or a needed cloud check did not happen
+//  - rulesOnly with cloud (no on-device model, user ticked the cloud check): cloud's label, raised to risky by a rule
+//  - rulesOnly without cloud: risky only on a numeric flag or a high finding, otherwise no label
+// In every mode a medium finding on a clause not marked risky asks for a closer look.
+export interface Shown extends Final { unresolved: boolean; look: boolean; matched: boolean }
+export function present(d: Decision, fin: Final, cloud: Model | null, rulesOnly: boolean): Shown {
+  const flagged = d.rules.flags.length > 0 || d.topics.some(x => x.severity === 'high');
+  const medium = d.topics.some(x => x.severity === 'medium');
+  const label: Label | null = !rulesOnly ? fin.label : flagged ? 'risky' : cloud ? fin.label : null;
+  const check = rulesOnly && !cloud ? medium : fin.check;
+  const unresolved = !rulesOnly && d.needsCloud && !cloud;
+  return { ...fin, label, check, unresolved, look: check || unresolved || (label !== 'risky' && medium), matched: flagged || d.topics.some(x => x.severity !== 'info') };
 }

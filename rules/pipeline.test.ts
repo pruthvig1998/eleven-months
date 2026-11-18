@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { decide, finalize, toLabel, hasFigures, type Model } from './pipeline.ts';
+import { decide, finalize, present, toLabel, hasFigures, type Model } from './pipeline.ts';
 
 const NOTICE = "Either party may terminate this tenancy by giving the other party one month's (30 days) prior written notice.";
 const agree: Model = { label: 'ok', fields: { deposit: null, lockin_months: null, notice_days: 30, escalation_pct: null } };
@@ -68,4 +68,33 @@ test('a clause with no figures skips the numbers prompt without triggering cloud
 test('the cloud second opinion on medium findings can be switched off', () => {
   const nano: Model = { label: 'ok', fields: {} };
   assert.equal(decide('Delayed rent shall carry interest at 24% per annum.', nano, { mediumToCloud: false }).needsCloud, false);
+});
+
+const LOCK = 'The Owner may change the locks if rent is unpaid for 7 days.';  // high finding
+const LATE = 'Delayed rent shall carry interest at 24% per annum.';           // medium finding
+const PLAIN = 'The Lessee shall keep the premises clean.';                     // no finding
+const none: Model = { label: null, fields: null };
+const shown = (t: string, nano: Model, cloud: Model | null, rulesOnly: boolean) => { const d = decide(t, nano); return present(d, finalize(d, nano, cloud), cloud, rulesOnly); };
+test('rules-only mode: high finding is risky, medium asks for a look, nothing matched has no label', () => {
+  assert.equal(shown(LOCK, none, null, true).label, 'risky');
+  const late = shown(LATE, none, null, true);
+  assert.equal(late.label, null); assert.equal(late.look, true); assert.equal(late.matched, true);
+  const plain = shown(PLAIN, none, null, true);
+  assert.equal(plain.label, null); assert.equal(plain.look, false); assert.equal(plain.matched, false);
+});
+test('rules-only with cloud: cloud decides, a rule can only raise it to risky', () => {
+  assert.equal(shown(PLAIN, none, { label: 'risky', fields: null }, true).label, 'risky');
+  assert.equal(shown(LOCK, none, { label: 'ok', fields: null }, true).label, 'risky');
+  assert.equal(shown(PLAIN, none, { label: 'ok', fields: null }, true).label, 'ok');
+});
+test('full mode: a needed cloud check that did not happen is unresolved and asks for a look', () => {
+  const s = shown(PLAIN, { label: null, fields: {} }, null, false);
+  assert.equal(s.unresolved, true); assert.equal(s.look, true);
+  assert.equal(shown(PLAIN, { label: 'ok', fields: {} }, null, false).look, false);
+});
+
+test('a high finding stays risky when Nano is unusable and the cloud call failed', () => {
+  const t = "The Lessee shall not be entitled to any receipt for rent paid in cash.";
+  const d = decide(t, { label: null, fields: null });
+  assert.equal(finalize(d, { label: null, fields: null }, null).label, 'risky');
 });

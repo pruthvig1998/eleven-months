@@ -1,4 +1,5 @@
 import { test } from 'node:test';
+import { detectAadhaar, detectPan } from '../../rules/pii.ts';
 import assert from 'node:assert/strict';
 import { mask } from './mask.ts';
 import { SAMPLE } from './sample.ts';
@@ -39,4 +40,12 @@ test('sample lease has no ID number or name left after masking, even with no Nan
 test('masks IDs as a photo reader misreads them (O for 0, l for 1, a stray space)', () => {
   assert.equal(mask('Aadhaar 1821 7365 9O17, PAN ABCPM l234K, Aadhaar l821 7365 9017.', []), 'Aadhaar [AADHAAR], PAN [PAN], Aadhaar [AADHAAR].');
   assert.equal(mask('The hall Illo hall will be painted. Rs. 1,80,000 and 11 months.', []), 'The hall Illo hall will be painted. Rs. 1,80,000 and 11 months.');
+});
+
+test('every ID the precise detector finds is removed by the mask', () => {
+  const text = 'Lessor Aadhaar 1821 7365 9017, PAN ABCPM1234K; Lessee Aadhaar 4891 2371 5904 and PAN QWERT5678Z.';
+  const out = mask(text, []);
+  assert.ok(detectAadhaar(text).length + detectPan(text).length >= 3); // the check is not vacuous
+  for (const id of [...detectAadhaar(text), ...detectPan(text)]) assert.ok(!out.replace(/\s/g, '').includes(id), `${id} survived masking`);
+  assert.equal(detectAadhaar(out).length + detectPan(out).length, 0);
 });

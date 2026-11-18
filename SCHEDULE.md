@@ -164,3 +164,12 @@ After the fixes, same check at 390 px: 0 contrast failures, 0 heading jumps, no 
 Left as is: the reCAPTCHA Enterprise cookie that lowers best practices (App Check needs it in production). Not done: a pass on a real phone, Telugu and Hindi (waits on your decision), and a screen-reader test.
 
 Stage D deployed (Nov 18). Lighthouse (mobile) on the live site after deploy: accessibility **100** (was 98), best practices 77, SEO 100. Rules-only sample scan at 390 px: 6 of 11, no sideways scroll.
+
+## Stage E: built Nov 18, not deployed
+
+- **GitHub check** (`.github/workflows/ci.yml`): on every push and pull request, runs the 171 unit tests, the type-check and the build.
+- **Fonts:** only the Latin subsets ship. Font files in the build: about 70 to 12.
+- **Security headers** (`app/csp.txt`, used by Firebase Hosting and by `vite preview`): Content-Security-Policy, nosniff, a referrer policy, and a permissions policy. Tested locally in desktop Chrome under the policy: photo reading by the on-device model, the text recogniser from its CDN, and a full sample scan, with no violations. The policy had to allow `data:` for connections: the Firebase SDK turns an inline image into a Blob with `fetch('data:...')` before handing it to the on-device model, and the first test failed on that. Cloud calls, App Check and reCAPTCHA under the policy can only be checked on the live site.
+- **ID detection:** `rules/pii.ts` (precise) and `app/src/mask.ts` (broad) stay separate on purpose; a test now checks that every ID the precise detector finds is removed by the mask.
+- **Clause labelling** moved out of the page code into `present()` in `rules/pipeline.ts`, with tests for the three modes.
+- **Bug found and fixed while testing:** with the on-device model's answer unusable and the cloud call failed, a clause with a high rule finding ("No receipt, no proof of rent paid") showed "unknown" instead of "risk". A high finding or numeric flag now marks the clause risky whatever the models returned. Offline replay unchanged (40 of 40).

@@ -1,9 +1,10 @@
-@import '@fontsource/unbounded/500.css';
-@import '@fontsource/unbounded/700.css';
-@import '@fontsource/hanken-grotesk/400.css';
-@import '@fontsource/hanken-grotesk/600.css';
-@import '@fontsource/martian-mono/400.css';
-@import '@fontsource/martian-mono/500.css';
+/* Latin subsets only: the page is in English, and the full sets added about 55 unused font files to the build. */
+@import '@fontsource/unbounded/latin-500.css';
+@import '@fontsource/unbounded/latin-700.css';
+@import '@fontsource/hanken-grotesk/latin-400.css';
+@import '@fontsource/hanken-grotesk/latin-600.css';
+@import '@fontsource/martian-mono/latin-400.css';
+@import '@fontsource/martian-mono/latin-500.css';
 
 :root {
   color-scheme: dark;

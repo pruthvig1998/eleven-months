@@ -1,0 +1,28 @@
+name: tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '23.6'
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Unit tests (rules and app)
+        run: node --test --no-warnings rules/*.test.ts app/src/*.test.ts
+      - name: Install app dependencies
+        run: npm ci
+        working-directory: app
+      - name: Type-check
+        working-directory: app
+        run: npx tsc --noEmit --allowImportingTsExtensions --target es2022 --module esnext --moduleResolution bundler --skipLibCheck --types vite/client --lib es2022,dom,dom.iterable src/main.ts
+      - name: Build
+        run: npm run build
+        working-directory: app
