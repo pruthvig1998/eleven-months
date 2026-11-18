@@ -1,0 +1,677 @@
+{
+ "items": [
+  {
+   "n": 1,
+   "set": 1,
+   "kind": "harmful",
+   "key": "painting deduction",
+   "text": "At the time of vacating, one month's rent shall be deducted towards painting and cleaning charges irrespective of the condition of the premises."
+  },
+  {
+   "n": 2,
+   "set": 1,
+   "kind": "harmful",
+   "key": "late fee per day",
+   "text": "Any delay in payment of rent beyond the 5th shall attract a penalty of Rs. 500 per day."
+  },
+  {
+   "n": 3,
+   "set": 1,
+   "kind": "harmful",
+   "key": "interest 24%",
+   "text": "Delayed rent shall carry interest at 24% per annum."
+  },
+  {
+   "n": 4,
+   "set": 1,
+   "kind": "harmful",
+   "key": "pay full remaining term",
+   "text": "If the Tenant vacates before the expiry of the term, the Tenant shall pay rent for the entire remaining period."
+  },
+  {
+   "n": 5,
+   "set": 1,
+   "kind": "harmful",
+   "key": "structural repairs on tenant",
+   "text": "All repairs, including structural repairs and major plumbing and electrical works, shall be borne by the Tenant."
+  },
+  {
+   "n": 6,
+   "set": 1,
+   "kind": "harmful",
+   "key": "sub-meter rate",
+   "text": "Electricity shall be charged at Rs. 12 per unit as per the Owner's sub-meter."
+  },
+  {
+   "n": 7,
+   "set": 1,
+   "kind": "harmful",
+   "key": "guest ban",
+   "text": "The Tenant shall not permit any guests of the opposite gender or overnight visitors without the Owner's written permission."
+  },
+  {
+   "n": 8,
+   "set": 1,
+   "kind": "harmful",
+   "key": "self-help eviction",
+   "text": "On default, the Owner may forcibly evict the Tenant and remove the belongings without any notice or court order."
+  },
+  {
+   "n": 9,
+   "set": 1,
+   "kind": "harmful",
+   "key": "lock change",
+   "text": "The Owner shall be entitled to change the locks and take possession if rent is unpaid for 7 days."
+  },
+  {
+   "n": 10,
+   "set": 1,
+   "kind": "harmful",
+   "key": "rent at discretion",
+   "text": "The Owner may revise the rent at any time at his sole discretion."
+  },
+  {
+   "n": 11,
+   "set": 1,
+   "kind": "harmful",
+   "key": "deposit back in 90 days",
+   "text": "The security deposit shall be refunded without interest within 90 days after vacating."
+  },
+  {
+   "n": 12,
+   "set": 1,
+   "kind": "harmful",
+   "key": "renewal fee",
+   "text": "On each renewal the Tenant shall pay one month's rent as renewal charges to the Owner."
+  },
+  {
+   "n": 13,
+   "set": 1,
+   "kind": "harmful",
+   "key": "unlimited indemnity",
+   "text": "The Tenant shall indemnify the Owner against all losses, claims and damages of whatsoever nature arising from any cause."
+  },
+  {
+   "n": 14,
+   "set": 1,
+   "kind": "harmful",
+   "key": "far jurisdiction",
+   "text": "Courts at New Delhi alone shall have jurisdiction over any dispute."
+  },
+  {
+   "n": 15,
+   "set": 1,
+   "kind": "harmful",
+   "key": "waives rent control",
+   "text": "The Tenant waives all rights under any rent control legislation."
+  },
+  {
+   "n": 16,
+   "set": 1,
+   "kind": "harmful",
+   "key": "normal wear charged",
+   "text": "The Tenant shall pay for all wear and tear including that caused by normal usage."
+  },
+  {
+   "n": 17,
+   "set": 1,
+   "kind": "harmful",
+   "key": "duplicate key",
+   "text": "The Owner shall retain a duplicate key and may enter the premises whenever he wishes."
+  },
+  {
+   "n": 18,
+   "set": 1,
+   "kind": "harmful",
+   "key": "blank cheque",
+   "text": "The Tenant shall hand over eleven post-dated cheques and one undated blank signed cheque as security."
+  },
+  {
+   "n": 19,
+   "set": 1,
+   "kind": "harmful",
+   "key": "open-ended society levies",
+   "text": "The Tenant shall pay all society charges, corpus fund, and any future levies demanded by the association."
+  },
+  {
+   "n": 20,
+   "set": 1,
+   "kind": "harmful",
+   "key": "property tax on tenant",
+   "text": "Property tax and all municipal taxes shall be paid by the Tenant."
+  },
+  {
+   "n": 21,
+   "set": 1,
+   "kind": "harmful",
+   "key": "food restriction",
+   "text": "The Tenant shall not cook or consume non-vegetarian food in the premises."
+  },
+  {
+   "n": 22,
+   "set": 1,
+   "kind": "harmful",
+   "key": "owner ends anytime",
+   "text": "The Owner may terminate this agreement at any time without assigning any reason."
+  },
+  {
+   "n": 23,
+   "set": 1,
+   "kind": "harmful",
+   "key": "deposit forfeited on short notice",
+   "text": "If the tenant fails to give two months notice, the entire deposit shall be forfeited."
+  },
+  {
+   "n": 24,
+   "set": 1,
+   "kind": "harmful",
+   "key": "Hinglish non-refundable",
+   "text": "Kirayedar ko 2 mahine ka advance dena hoga jo wapas nahi hoga."
+  },
+  {
+   "n": 25,
+   "set": 1,
+   "kind": "harmful",
+   "key": "non-refundable advance",
+   "text": "An advance amount of Rs.3,00,000/- (non-refundable) has been paid by the Tenant. The monthly rent is Rs.25,000/-."
+  },
+  {
+   "n": 26,
+   "set": 1,
+   "kind": "harmful",
+   "key": "15% every 11 months",
+   "text": "The rent shall be enhanced by 15% every eleven months."
+  },
+  {
+   "n": 27,
+   "set": 1,
+   "kind": "harmful",
+   "key": "triple rent holdover",
+   "text": "If the Tenant fails to vacate, he shall pay damages at three times the monthly rent for each day of overstay."
+  },
+  {
+   "n": 28,
+   "set": 1,
+   "kind": "harmful",
+   "key": "no sublet/any family",
+   "text": "The Tenant shall not allow any person other than himself to reside in the premises, including family members."
+  },
+  {
+   "n": 29,
+   "set": 1,
+   "kind": "harmful",
+   "key": "amount in words",
+   "text": "The Tenant has paid a refundable deposit of Rupees Two Lakhs Fifty Thousand only. The monthly rent is Rupees Twenty Five Thousand only."
+  },
+  {
+   "n": 30,
+   "set": 1,
+   "kind": "harmful",
+   "key": "notice in words",
+   "text": "Either party may terminate by giving one week notice in writing."
+  },
+  {
+   "n": 31,
+   "set": 1,
+   "kind": "fair",
+   "key": "ok rent",
+   "text": "The monthly rent is Rs. 20,000, payable by the 7th of each month by bank transfer."
+  },
+  {
+   "n": 32,
+   "set": 1,
+   "kind": "fair",
+   "key": "ok deposit",
+   "text": "The Tenant has paid a refundable deposit of Rs. 40,000, returnable within 15 days of vacating after deducting unpaid rent and proven damage."
+  },
+  {
+   "n": 33,
+   "set": 1,
+   "kind": "fair",
+   "key": "ok notice",
+   "text": "Either party may terminate this agreement by giving 30 days written notice."
+  },
+  {
+   "n": 34,
+   "set": 1,
+   "kind": "fair",
+   "key": "ok entry",
+   "text": "The Owner may inspect the premises with 24 hours prior written notice at a reasonable time."
+  },
+  {
+   "n": 35,
+   "set": 1,
+   "kind": "fair",
+   "key": "ok repairs",
+   "text": "Minor repairs up to Rs. 1,000 are borne by the Tenant; structural repairs are borne by the Owner."
+  },
+  {
+   "n": 36,
+   "set": 1,
+   "kind": "fair",
+   "key": "ok use",
+   "text": "The premises shall be used for residential purposes only."
+  },
+  {
+   "n": 37,
+   "set": 2,
+   "kind": "harmful",
+   "key": "repaint fee",
+   "text": "When the licensee moves out, a sum of Rs. 15,000 will be kept back for repainting, no matter how the walls look."
+  },
+  {
+   "n": 38,
+   "set": 2,
+   "kind": "harmful",
+   "key": "deep clean",
+   "text": "A deep-cleaning fee equal to half a month rent is compulsorily adjusted from the advance."
+  },
+  {
+   "n": 39,
+   "set": 2,
+   "kind": "harmful",
+   "key": "late interest monthly",
+   "text": "Rent not received by the due date shall bear interest of 3% per month until paid."
+  },
+  {
+   "n": 40,
+   "set": 2,
+   "kind": "harmful",
+   "key": "daily fine",
+   "text": "A fine of INR 300 for every day of delay will be levied on belated rent."
+  },
+  {
+   "n": 41,
+   "set": 2,
+   "kind": "harmful",
+   "key": "balance months",
+   "text": "Should the occupant leave during the lock-in, the rent for the balance months becomes payable at once."
+  },
+  {
+   "n": 42,
+   "set": 2,
+   "kind": "harmful",
+   "key": "locks",
+   "text": "In case of arrears the landlord is free to replace the locks of the flat."
+  },
+  {
+   "n": 43,
+   "set": 2,
+   "kind": "harmful",
+   "key": "belongings",
+   "text": "Upon default the owner can remove the goods of the tenant and keep them until dues are cleared."
+  },
+  {
+   "n": 44,
+   "set": 2,
+   "kind": "harmful",
+   "key": "at will",
+   "text": "The landlord has the right to cancel this arrangement whenever he wants, for whatever reason."
+  },
+  {
+   "n": 45,
+   "set": 2,
+   "kind": "harmful",
+   "key": "no visitors",
+   "text": "Friends of the opposite sex are strictly not permitted inside the house."
+  },
+  {
+   "n": 46,
+   "set": 2,
+   "kind": "harmful",
+   "key": "veg only",
+   "text": "Only vegetarian food may be prepared; meat and eggs are prohibited."
+  },
+  {
+   "n": 47,
+   "set": 2,
+   "kind": "harmful",
+   "key": "no parents",
+   "text": "Parents or relatives of the tenant cannot stay in the flat for more than two days."
+  },
+  {
+   "n": 48,
+   "set": 2,
+   "kind": "harmful",
+   "key": "house tax",
+   "text": "House tax for the tenancy period will be borne by the tenant."
+  },
+  {
+   "n": 49,
+   "set": 2,
+   "kind": "harmful",
+   "key": "sinking fund",
+   "text": "The tenant will contribute to the sinking fund and any other charges the society may raise."
+  },
+  {
+   "n": 50,
+   "set": 2,
+   "kind": "harmful",
+   "key": "renewal charge",
+   "text": "A renewal fee of Rs. 10,000 is payable to the owner each time the agreement is extended."
+  },
+  {
+   "n": 51,
+   "set": 2,
+   "kind": "harmful",
+   "key": "slow refund",
+   "text": "The advance will be returned within 120 days from the date of vacating."
+  },
+  {
+   "n": 52,
+   "set": 2,
+   "kind": "harmful",
+   "key": "unit rate",
+   "text": "Power will be billed at Rs 14 per unit by the owner."
+  },
+  {
+   "n": 53,
+   "set": 2,
+   "kind": "harmful",
+   "key": "security cheque",
+   "text": "An un-dated cheque signed by the tenant shall be held by the owner as security."
+  },
+  {
+   "n": 54,
+   "set": 2,
+   "kind": "harmful",
+   "key": "usage wear",
+   "text": "The tenant is liable for wear and tear arising from ordinary use."
+  },
+  {
+   "n": 55,
+   "set": 2,
+   "kind": "harmful",
+   "key": "deposit eaten",
+   "text": "If two months notice is not served, the advance stands forfeited in full."
+  },
+  {
+   "n": 56,
+   "set": 2,
+   "kind": "harmful",
+   "key": "enter freely",
+   "text": "The owner can walk in whenever he likes to check the house."
+  },
+  {
+   "n": 57,
+   "set": 2,
+   "kind": "fair",
+   "key": "ok wear",
+   "text": "The tenant shall return the flat in the same condition, fair wear and tear excepted."
+  },
+  {
+   "n": 58,
+   "set": 2,
+   "kind": "fair",
+   "key": "ok paint",
+   "text": "If the walls are damaged beyond normal use, repainting cost at actuals with a bill may be deducted."
+  },
+  {
+   "n": 59,
+   "set": 2,
+   "kind": "fair",
+   "key": "ok interest",
+   "text": "Rent delayed beyond seven days carries interest at 9% per annum."
+  },
+  {
+   "n": 60,
+   "set": 2,
+   "kind": "fair",
+   "key": "ok family",
+   "text": "The premises are let for the residence of the tenant and his family members."
+  },
+  {
+   "n": 61,
+   "set": 2,
+   "kind": "fair",
+   "key": "ok tax",
+   "text": "Property tax and society corpus contributions are the responsibility of the owner."
+  },
+  {
+   "n": 62,
+   "set": 2,
+   "kind": "fair",
+   "key": "ok refund",
+   "text": "The deposit will be returned within 7 days of handing over the keys."
+  },
+  {
+   "n": 63,
+   "set": 2,
+   "kind": "fair",
+   "key": "ok meter",
+   "text": "Electricity is payable by the tenant as per the electricity company meter."
+  },
+  {
+   "n": 64,
+   "set": 2,
+   "kind": "fair",
+   "key": "ok cheque",
+   "text": "Rent may be paid by cheque or bank transfer on or before the 5th."
+  },
+  {
+   "n": 65,
+   "set": 2,
+   "kind": "fair",
+   "key": "ok possession",
+   "text": "On expiry, the tenant shall hand over possession and the owner shall take possession after a joint inspection."
+  },
+  {
+   "n": 66,
+   "set": 2,
+   "kind": "fair",
+   "key": "ok renew",
+   "text": "The agreement may be renewed for a further 11 months by mutual consent with a 5% increase."
+  },
+  {
+   "n": 67,
+   "set": 3,
+   "kind": "harmful",
+   "key": "whitewash fixed",
+   "text": "A flat sum of Rs. 12,000 towards whitewashing will be recovered from the deposit at the end of the tenancy in all cases."
+  },
+  {
+   "n": 68,
+   "set": 3,
+   "kind": "harmful",
+   "key": "interest daily pct",
+   "text": "Unpaid rent will attract interest of 0.1% per day."
+  },
+  {
+   "n": 69,
+   "set": 3,
+   "kind": "harmful",
+   "key": "late lump",
+   "text": "If rent is late by more than three days, the tenant must pay an extra Rs. 2,000."
+  },
+  {
+   "n": 70,
+   "set": 3,
+   "kind": "harmful",
+   "key": "whole tenure",
+   "text": "On premature vacation, the licensee remains liable to pay the licence fee for the unexpired tenure."
+  },
+  {
+   "n": 71,
+   "set": 3,
+   "kind": "harmful",
+   "key": "padlock",
+   "text": "The owner may put his own padlock on the door if two months of rent are outstanding."
+  },
+  {
+   "n": 72,
+   "set": 3,
+   "kind": "harmful",
+   "key": "throw out goods",
+   "text": "The landlord reserves the right to throw out the tenant's luggage if the flat is not vacated on the due date."
+  },
+  {
+   "n": 73,
+   "set": 3,
+   "kind": "harmful",
+   "key": "end at pleasure",
+   "text": "This tenancy can be ended by the owner at his pleasure."
+  },
+  {
+   "n": 74,
+   "set": 3,
+   "kind": "harmful",
+   "key": "no boys",
+   "text": "Male visitors are not allowed after 8 pm."
+  },
+  {
+   "n": 75,
+   "set": 3,
+   "kind": "harmful",
+   "key": "no beef",
+   "text": "Cooking of beef or pork in the kitchen is forbidden."
+  },
+  {
+   "n": 76,
+   "set": 3,
+   "kind": "harmful",
+   "key": "spouse only",
+   "text": "Nobody other than the tenant and his spouse may live here, and relatives staying over is not allowed."
+  },
+  {
+   "n": 77,
+   "set": 3,
+   "kind": "harmful",
+   "key": "municipal",
+   "text": "All municipal taxes and cesses shall be borne by the lessee."
+  },
+  {
+   "n": 78,
+   "set": 3,
+   "kind": "harmful",
+   "key": "any demand",
+   "text": "The tenant agrees to pay whatever amount the apartment association demands from time to time."
+  },
+  {
+   "n": 79,
+   "set": 3,
+   "kind": "harmful",
+   "key": "extension charge",
+   "text": "For every extension of this agreement the tenant will pay Rs. 5,000 as documentation charges to the landlord."
+  },
+  {
+   "n": 80,
+   "set": 3,
+   "kind": "harmful",
+   "key": "refund 6 months",
+   "text": "The deposit will be repaid six months after the keys are returned."
+  },
+  {
+   "n": 81,
+   "set": 3,
+   "kind": "harmful",
+   "key": "inflated power",
+   "text": "Electricity is charged at a flat Rs. 3,000 a month regardless of usage."
+  },
+  {
+   "n": 82,
+   "set": 3,
+   "kind": "harmful",
+   "key": "signed cheques",
+   "text": "The tenant shall deposit two signed cheque leaves without date with the landlord."
+  },
+  {
+   "n": 83,
+   "set": 3,
+   "kind": "harmful",
+   "key": "fair wear",
+   "text": "Any deterioration of fittings from regular use will be charged to the tenant."
+  },
+  {
+   "n": 84,
+   "set": 3,
+   "kind": "harmful",
+   "key": "deposit kept",
+   "text": "The owner may keep the full advance if he is not happy with the state of the flat."
+  },
+  {
+   "n": 85,
+   "set": 3,
+   "kind": "harmful",
+   "key": "key entry",
+   "text": "The landlord keeps a spare key and can come in without telling the tenant."
+  },
+  {
+   "n": 86,
+   "set": 3,
+   "kind": "harmful",
+   "key": "rent hike",
+   "text": "The owner can increase the rent whenever he feels the market has gone up."
+  },
+  {
+   "n": 87,
+   "set": 3,
+   "kind": "fair",
+   "key": "ok late",
+   "text": "A grace period of five days applies, after which interest at 12% per annum is payable on overdue rent."
+  },
+  {
+   "n": 88,
+   "set": 3,
+   "kind": "fair",
+   "key": "ok exit",
+   "text": "Either side may end the tenancy during the lock-in by paying one month of rent."
+  },
+  {
+   "n": 89,
+   "set": 3,
+   "kind": "fair",
+   "key": "ok guests",
+   "text": "Guests are welcome; anyone staying longer than two weeks should be mentioned to the owner."
+  },
+  {
+   "n": 90,
+   "set": 3,
+   "kind": "fair",
+   "key": "ok food",
+   "text": "The tenant may cook any food and shall keep the kitchen chimney clean."
+  },
+  {
+   "n": 91,
+   "set": 3,
+   "kind": "fair",
+   "key": "ok tax",
+   "text": "The owner shall pay the property tax; the tenant pays the monthly maintenance of Rs. 2,500 to the association."
+  },
+  {
+   "n": 92,
+   "set": 3,
+   "kind": "fair",
+   "key": "ok refund",
+   "text": "The owner shall return the deposit on the day the keys are handed over, less any unpaid rent."
+  },
+  {
+   "n": 93,
+   "set": 3,
+   "kind": "fair",
+   "key": "ok power",
+   "text": "The tenant pays electricity directly to the electricity company as per the bill."
+  },
+  {
+   "n": 94,
+   "set": 3,
+   "kind": "fair",
+   "key": "ok locks",
+   "text": "The tenant may change the main door lock at his own cost and shall hand over all keys on vacating."
+  },
+  {
+   "n": 95,
+   "set": 3,
+   "kind": "fair",
+   "key": "ok renew",
+   "text": "Renewal is by mutual agreement in writing, with the rent to rise by 5% a year."
+  },
+  {
+   "n": 96,
+   "set": 3,
+   "kind": "fair",
+   "key": "ok entry",
+   "text": "The owner may visit for repairs after agreeing a time with the tenant at least a day before."
+  }
+ ],
+ "lease": "RENTAL AGREEMENT\n\nThis agreement is between the Lessor and the Lessee. The monthly rent is Rs. 25,000.\n\n1. At the time of vacating, one month's rent shall be deducted towards painting and cleaning charges irrespective of the condition of the premises.\n\n2. Any delay in payment of rent beyond the 5th shall attract a penalty of Rs. 500 per day.\n\n3. Delayed rent shall carry interest at 24% per annum.\n\n4. If the Tenant vacates before the expiry of the term, the Tenant shall pay rent for the entire remaining period.\n\n5. All repairs, including structural repairs and major plumbing and electrical works, shall be borne by the Tenant.\n\n6. Electricity shall be charged at Rs. 12 per unit as per the Owner's sub-meter.\n\n7. The Tenant shall not permit any guests of the opposite gender or overnight visitors without the Owner's written permission.\n\n8. On default, the Owner may forcibly evict the Tenant and remove the belongings without any notice or court order.\n\n9. The Owner shall be entitled to change the locks and take possession if rent is unpaid for 7 days.\n\n10. The Owner may revise the rent at any time at his sole discretion.\n\n11. The security deposit shall be refunded without interest within 90 days after vacating.\n\n12. On each renewal the Tenant shall pay one month's rent as renewal charges to the Owner.\n\n13. The Tenant shall indemnify the Owner against all losses, claims and damages of whatsoever nature arising from any cause.\n\n14. Courts at New Delhi alone shall have jurisdiction over any dispute.\n\n15. The Tenant waives all rights under any rent control legislation.\n\n16. The Tenant shall pay for all wear and tear including that caused by normal usage.\n\n17. The Owner shall retain a duplicate key and may enter the premises whenever he wishes.\n\n18. The Tenant shall hand over eleven post-dated cheques and one undated blank signed cheque as security.\n\n19. The Tenant shall pay all society charges, corpus fund, and any future levies demanded by the association.\n\n20. Property tax and all municipal taxes shall be paid by the Tenant.\n\n21. The Tenant shall not cook or consume non-vegetarian food in the premises.\n\n22. The Owner may terminate this agreement at any time without assigning any reason.\n\n23. If the tenant fails to give two months notice, the entire deposit shall be forfeited.\n\n24. Kirayedar ko 2 mahine ka advance dena hoga jo wapas nahi hoga.\n\n25. An advance amount of Rs.3,00,000/- (non-refundable) has been paid by the Tenant. The monthly rent is Rs.25,000/-.\n\n26. The rent shall be enhanced by 15% every eleven months.\n\n27. If the Tenant fails to vacate, he shall pay damages at three times the monthly rent for each day of overstay.\n\n28. The Tenant shall not allow any person other than himself to reside in the premises, including family members.\n\n29. The Tenant has paid a refundable deposit of Rupees Two Lakhs Fifty Thousand only. The monthly rent is Rupees Twenty Five Thousand only.\n\n30. Either party may terminate by giving one week notice in writing.\n\n31. The monthly rent is Rs. 20,000, payable by the 7th of each month by bank transfer.\n\n32. The Tenant has paid a refundable deposit of Rs. 40,000, returnable within 15 days of vacating after deducting unpaid rent and proven damage.\n\n33. Either party may terminate this agreement by giving 30 days written notice.\n\n34. The Owner may inspect the premises with 24 hours prior written notice at a reasonable time.\n\n35. Minor repairs up to Rs. 1,000 are borne by the Tenant; structural repairs are borne by the Owner.\n\n36. The premises shall be used for residential purposes only.\n\n37. When the licensee moves out, a sum of Rs. 15,000 will be kept back for repainting, no matter how the walls look.\n\n38. A deep-cleaning fee equal to half a month rent is compulsorily adjusted from the advance.\n\n39. Rent not received by the due date shall bear interest of 3% per month until paid.\n\n40. A fine of INR 300 for every day of delay will be levied on belated rent.\n\n41. Should the occupant leave during the lock-in, the rent for the balance months becomes payable at once.\n\n42. In case of arrears the landlord is free to replace the locks of the flat.\n\n43. Upon default the owner can remove the goods of the tenant and keep them until dues are cleared.\n\n44. The landlord has the right to cancel this arrangement whenever he wants, for whatever reason.\n\n45. Friends of the opposite sex are strictly not permitted inside the house.\n\n46. Only vegetarian food may be prepared; meat and eggs are prohibited.\n\n47. Parents or relatives of the tenant cannot stay in the flat for more than two days.\n\n48. House tax for the tenancy period will be borne by the tenant.\n\n49. The tenant will contribute to the sinking fund and any other charges the society may raise.\n\n50. A renewal fee of Rs. 10,000 is payable to the owner each time the agreement is extended.\n\n51. The advance will be returned within 120 days from the date of vacating.\n\n52. Power will be billed at Rs 14 per unit by the owner.\n\n53. An un-dated cheque signed by the tenant shall be held by the owner as security.\n\n54. The tenant is liable for wear and tear arising from ordinary use.\n\n55. If two months notice is not served, the advance stands forfeited in full.\n\n56. The owner can walk in whenever he likes to check the house.\n\n57. The tenant shall return the flat in the same condition, fair wear and tear excepted.\n\n58. If the walls are damaged beyond normal use, repainting cost at actuals with a bill may be deducted.\n\n59. Rent delayed beyond seven days carries interest at 9% per annum.\n\n60. The premises are let for the residence of the tenant and his family members.\n\n61. Property tax and society corpus contributions are the responsibility of the owner.\n\n62. The deposit will be returned within 7 days of handing over the keys.\n\n63. Electricity is payable by the tenant as per the electricity company meter.\n\n64. Rent may be paid by cheque or bank transfer on or before the 5th.\n\n65. On expiry, the tenant shall hand over possession and the owner shall take possession after a joint inspection.\n\n66. The agreement may be renewed for a further 11 months by mutual consent with a 5% increase.\n\n67. A flat sum of Rs. 12,000 towards whitewashing will be recovered from the deposit at the end of the tenancy in all cases.\n\n68. Unpaid rent will attract interest of 0.1% per day.\n\n69. If rent is late by more than three days, the tenant must pay an extra Rs. 2,000.\n\n70. On premature vacation, the licensee remains liable to pay the licence fee for the unexpired tenure.\n\n71. The owner may put his own padlock on the door if two months of rent are outstanding.\n\n72. The landlord reserves the right to throw out the tenant's luggage if the flat is not vacated on the due date.\n\n73. This tenancy can be ended by the owner at his pleasure.\n\n74. Male visitors are not allowed after 8 pm.\n\n75. Cooking of beef or pork in the kitchen is forbidden.\n\n76. Nobody other than the tenant and his spouse may live here, and relatives staying over is not allowed.\n\n77. All municipal taxes and cesses shall be borne by the lessee.\n\n78. The tenant agrees to pay whatever amount the apartment association demands from time to time.\n\n79. For every extension of this agreement the tenant will pay Rs. 5,000 as documentation charges to the landlord.\n\n80. The deposit will be repaid six months after the keys are returned.\n\n81. Electricity is charged at a flat Rs. 3,000 a month regardless of usage.\n\n82. The tenant shall deposit two signed cheque leaves without date with the landlord.\n\n83. Any deterioration of fittings from regular use will be charged to the tenant.\n\n84. The owner may keep the full advance if he is not happy with the state of the flat.\n\n85. The landlord keeps a spare key and can come in without telling the tenant.\n\n86. The owner can increase the rent whenever he feels the market has gone up.\n\n87. A grace period of five days applies, after which interest at 12% per annum is payable on overdue rent.\n\n88. Either side may end the tenancy during the lock-in by paying one month of rent.\n\n89. Guests are welcome; anyone staying longer than two weeks should be mentioned to the owner.\n\n90. The tenant may cook any food and shall keep the kitchen chimney clean.\n\n91. The owner shall pay the property tax; the tenant pays the monthly maintenance of Rs. 2,500 to the association.\n\n92. The owner shall return the deposit on the day the keys are handed over, less any unpaid rent.\n\n93. The tenant pays electricity directly to the electricity company as per the bill.\n\n94. The tenant may change the main door lock at his own cost and shall hand over all keys on vacating.\n\n95. Renewal is by mutual agreement in writing, with the rent to rise by 5% a year.\n\n96. The owner may visit for repairs after agreeing a time with the tenant at least a day before."
+}
