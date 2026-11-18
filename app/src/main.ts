@@ -236,6 +236,8 @@ const refSearch = (q: string) => {
 };
 refQ.addEventListener('input', () => refSearch(refQ.value));
 document.querySelectorAll<HTMLButtonElement>('#refChips button').forEach(b => b.addEventListener('click', () => { refQ.value = b.dataset.q!; refSearch(b.dataset.q!); }));
+// The hero's "Why the name?" link opens the note on 11-month leases; motion.ts scrolls to it.
+document.querySelector('.why-link')?.addEventListener('click', () => { const n = noteById('reg-17'); if (n) { refQ.value = n.title; $('refOut').innerHTML = noteHtml(n); } });
 $('out').addEventListener('click', e => { const a = (e.target as HTMLElement).closest('a[data-q]') as HTMLElement | null; if (a) { const n = noteById(a.dataset.q!); if (n) { refQ.value = n.title; $('refOut').innerHTML = noteHtml(n); } } });
 
 // Get help: situation guides. Each step shows how we know it; linked steps open the reference note.

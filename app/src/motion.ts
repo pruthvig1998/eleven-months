@@ -38,7 +38,7 @@ if (!reduced) {
       const split = SplitText.create(h1, { type: 'words', mask: 'words' });
       gsap.from(split.words, { yPercent: 110, duration: 1.1, ease: EASE, stagger: 0.06 });
     }
-    gsap.from('.hero .sub, .hero .cta-row', { opacity: 0, y: 16, duration: 0.9, ease: EASE, delay: 0.35, stagger: 0.08 });
+    gsap.from('.hero .sub, .hero .cta-row, .hero .why-name', { opacity: 0, y: 16, duration: 0.9, ease: EASE, delay: 0.35, stagger: 0.08 });
     gsap.from('.demo', { opacity: 0, y: 28, rotate: 1.5, duration: 1.1, ease: EASE, delay: 0.2 });
   });
 
