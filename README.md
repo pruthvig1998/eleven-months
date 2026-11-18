@@ -151,7 +151,7 @@ cd ..
 node --test --no-warnings rules/*.test.ts app/src/*.test.ts
 ```
 
-You should see `pass 154` and `fail 0`. To measure the fixed rules on the unseen clause sets:
+You should see `fail 0`. To measure the fixed rules on the unseen clause sets:
 
 ```bash
 node --no-warnings rules/probe-realworld3.ts
