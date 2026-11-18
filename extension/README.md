@@ -1,6 +1,8 @@
 # Eleven Months for Chrome (extension)
 
-A Manifest V3 extension that checks a rental-agreement clause where you find it: on a listing page, in a document, or in a PDF open in Chrome.
+A Manifest V3 extension that checks a rental-agreement clause where you find it: on a listing page or in a document. (Selecting text in Chrome's own PDF viewer has not been tested yet; if the menu item does not appear there, copy the text into the side panel.)
+
+Status: the side panel logic and the hand-off were tested as a page in a browser with no on-device model. The packaged extension has not yet been loaded in Chrome by a person, so the context menu and Gemini Nano inside the panel are not yet verified.
 
 - **Side panel**: click the toolbar icon, paste a clause or a whole agreement, press **Check on this device**.
 - **Context menu**: select text on any page, right-click, choose **Check this clause with Eleven Months**. The side panel opens and checks the selection.
