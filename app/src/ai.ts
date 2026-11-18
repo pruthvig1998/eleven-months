@@ -3,6 +3,7 @@ import { initializeApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import { getAI, getGenerativeModel, GoogleAIBackend, InferenceMode, Schema } from 'firebase/ai';
 import { toLabel, type Model } from '../../rules/pipeline.ts';
+import { CLS, FLD, parse } from './prompts.ts';
 
 const env = import.meta.env;
 export const cloudConfigured = !!env.VITE_FIREBASE_API_KEY;
@@ -36,16 +37,11 @@ function cloudModels() {
   });
 }
 
-// Prompt wording is the tuned "v2" pass from RISK-KILL-REPORT.md.
-const CLS = (t: string) => `You review a tenant's rental agreement in India. Label the clause "risky" if it is unfavourable or one-sided against the tenant: deposit above 3 months' rent or arbitrary forfeiture/deductions, long or one-sided lock-in, notice shorter than 15 days or one-sided, rent increase above 10% a year, eviction without notice or process, tenant paying structural repairs or unbilled charges, or unfair dispute terms. Otherwise label it "ok". Reply with JSON only: {"label":"ok|risky","risk_type":"deposit|lockin|notice|escalation|eviction|maintenance|other|none"}.\n\nClause: ${t}`;
-const FLD = (t: string) => `Extract numbers from this lease clause. deposit = security deposit in rupees (a plain number; convert words and "N months' rent" using the stated rent; if two figures conflict use the final operative one). lockin_months = lock-in months. notice_days = notice period in days (1 month = 30). escalation_pct = percent rent increase. Use null for anything not stated. JSON only: {"deposit":..,"lockin_months":..,"notice_days":..,"escalation_pct":..}.\n\nClause: ${t}`;
 // Cloud is also asked why, in one sentence, so a clause no fixed rule matched still comes with an explanation.
 const WHY = ' Also give "reason": one short plain sentence for the tenant saying why you chose that label.';
 const REASON = (t: string) => `In one short plain sentence, tell a tenant in India why this rental agreement clause could be unfavourable to them. Reply with the sentence only.\n\nClause: ${t}`;
 const NAMES = (t: string) => `List every person's name in this text, exactly as written. Do not include places, companies or titles. If none, return an empty list. JSON only: {"names":[...]}.\n\nText: ${t}`;
 
-// Nano wraps JSON in code fences; empty or template echoes become null and trigger cloud.
-const parse = (t: string): any => { try { return JSON.parse(t); } catch { const m = t.match(/\{[\s\S]*\}/); try { return m ? JSON.parse(m[0]) : null; } catch { return null; } } };
 // The free cloud tier has a rate limit (HTTP 429 was seen with 22 requests in under a minute; 11 in 23 s passed; the exact
 // limit is not known), so a 429 waits and retries.
 const run = async (m: typeof nano, prompt: string) => {

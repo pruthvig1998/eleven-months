@@ -1,0 +1,25 @@
+:root { --bg: #f5f3ee; --surface: #fff; --line: #e4dfd4; --ink: #12201b; --mute: #4d5a54; --brand: #0b6b4e; --risk: #b5361f; --risk-tint: #fbe9e5; --ok-tint: #e8f2ec; --warn: #8a5a00; --warn-tint: #fbf1dc; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 14px/1.5 system-ui, sans-serif; }
+header { display: flex; gap: .6rem; align-items: center; padding: .8rem 1rem; border-bottom: 1px solid var(--line); }
+header div { display: grid; }
+.logo { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 9px; background: var(--brand); color: var(--bg); font: 400 1.1rem/1 Georgia, serif; }
+.pill { font-size: .78rem; color: var(--mute); } .pill[data-ok='true'] { color: var(--brand); }
+main { padding: 1rem; }
+.lab { font-weight: 600; }
+textarea { width: 100%; margin-top: .4rem; padding: .7rem; border: 1px solid var(--line); border-radius: 9px; font: inherit; background: var(--surface); resize: vertical; }
+.row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .6rem; }
+button { min-height: 2.5rem; padding: .5rem .9rem; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); font: 500 .9rem/1 system-ui, sans-serif; color: var(--ink); cursor: pointer; }
+button.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+button:focus-visible, textarea:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+button:disabled { opacity: .55; cursor: default; }
+#status { color: var(--mute); }
+.card { margin-top: .7rem; padding: .8rem; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--line); border-radius: 9px; }
+.card.risky { border-left-color: var(--risk); } .card.ok { border-left-color: var(--brand); }
+.head { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+.chip { padding: .15rem .5rem; border-radius: 99px; font-size: .75rem; font-weight: 600; background: var(--ok-tint); color: var(--brand); }
+.risky .chip:first-of-type { background: var(--risk-tint); color: var(--risk); } .chip.warn { background: var(--warn-tint); color: var(--warn); }
+.text { margin: .4rem 0; color: var(--mute); }
+.tags { display: flex; flex-wrap: wrap; gap: .3rem; margin: .3rem 0; } .tags span { padding: .15rem .45rem; border-radius: 6px; background: var(--risk-tint); color: var(--risk); font-size: .75rem; }
+.asks { padding: .5rem .7rem; border-radius: 7px; background: var(--ok-tint); } .asks ul { margin: .3rem 0 0; padding-left: 1.1rem; }
+.small { font-size: .8rem; color: var(--mute); }
