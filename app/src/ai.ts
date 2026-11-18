@@ -84,6 +84,21 @@ const clean = (r: unknown) => (typeof r === 'string' && r.trim() ? r.trim().slic
 // rules already extract the numbers, so a whole agreement stays inside the free tier's rate limit.
 export const cloudLabel = async (text: string): Promise<Model> => { const c = await run(cloudModels().cls, CLS(text) + WHY); return { label: toLabel(c?.label), fields: null, reason: clean(c?.reason) }; };
 export const cloudJudge = async (text: string): Promise<Model> => { const c = await cloudLabel(text); const f = await run(cloudModels().fld, FLD(text)); return { ...c, fields: f && typeof f === 'object' ? f : null }; };
+// Deposit Shield drafts: the caller masks the facts first (same fail-closed names check as the scan). The prompt
+// forbids citing law; deposit.ts citesLaw() rejects a draft that does anyway, and the page falls back to a template.
+const DRAFTS = (facts: string) => `You help a tenant in India get a security deposit back after moving out. Using ONLY the facts below, write two drafts in plain, firm, polite English:
+1. "whatsapp": a short WhatsApp message (under 120 words) asking for an itemised list of deductions with bills and a refund date.
+2. "notice": a formal written notice (under 300 words) that quotes the agreement's own deposit clause, lists the disputed items, asks for the refund within 15 days, and says further steps may follow.
+Rules: do not cite any law, act, section or court case; do not invent amounts, dates or facts; keep placeholders like [NAME], [DATE], [PHONE] exactly as written. Reply with JSON only: {"whatsapp":"...","notice":"..."}.
+
+Facts:
+${facts}`;
+let draftModel: ReturnType<typeof getGenerativeModel> | null = null, draftName = '';
+export async function cloudDrafts(maskedFacts: string): Promise<{ whatsapp: string; notice: string } | null> {
+  if (!draftModel || draftName !== cloudModel) { draftName = cloudModel; draftModel = getGenerativeModel(ai, { mode: InferenceMode.ONLY_IN_CLOUD, inCloudParams: { model: cloudModel, generationConfig: { responseMimeType: 'application/json', responseSchema: Schema.object({ properties: { whatsapp: Schema.string(), notice: Schema.string() } }) } } }); }
+  const r = await run(draftModel, DRAFTS(maskedFacts));
+  return typeof r?.whatsapp === 'string' && typeof r?.notice === 'string' && r.whatsapp.trim() && r.notice.trim() ? { whatsapp: r.whatsapp.trim(), notice: r.notice.trim() } : null;
+}
 // On-device explanation for a clause the model marked risky when no fixed rule matched and cloud was not used.
 export const nanoReason = async (text: string) => clean((await nano.generateContent(REASON(text))).response.text());
 export const nanoNames = async (text: string): Promise<string[]> => {

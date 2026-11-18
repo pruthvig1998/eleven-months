@@ -1,7 +1,7 @@
 import './style.css';
 import { scrollToEl } from './motion.ts';
 import './hero.tsx';
-import { app, setCloudModel, initNano, nanoWarm, nanoJudge, nanoNames, nanoReason, cloudJudge, cloudLabel, cloudConfigured } from './ai.ts';
+import { app, setCloudModel, initNano, nanoWarm, nanoJudge, nanoNames, nanoReason, cloudJudge, cloudLabel, cloudConfigured, cloudDrafts } from './ai.ts';
 import { loadSettings, DEFAULTS, type Settings } from './config.ts';
 import { splitClauses, clauseLabel } from './split.ts';
 import { readLeaseFile } from './pdf.ts';
@@ -16,6 +16,7 @@ import { GUIDES, guideById, stepBasis } from '../../rules/guides.ts';
 import { askForFinding, askForFlag, askForGap, VISIT } from '../../rules/asks.ts';
 import { docCheck } from '../../rules/doccheck.ts';
 import { leaseReport } from '../../rules/lease.ts';
+import { audit, parseDeductions, EXAMPLE_DEDUCTIONS, MOVE_OUT, DLABEL_TEXT, ladder, templateDrafts, factsText, refundClauseOf, citesLaw, type Audit, type Audited } from '../../rules/deposit.ts';
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const esc = (s: unknown) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
@@ -326,3 +327,77 @@ savedUi(); missUi();
   document.addEventListener('click', e => { if ((e.target as HTMLElement).closest('a[href="#suggest"]')) { e.preventDefault(); open(); } });
   if (location.hash === '#suggest') open();
 }
+
+// Deposit Shield: deductions checked against the agreement in the box above, on this device.
+{
+  let last: { audit: Audit; clauses: string[] } | null = null;
+  const dstat = (t: string, kind = '') => { $('dedStatus').textContent = t; $('dedStatus').dataset.kind = kind; };
+  const money = (n: number | null) => (n === null ? '-' : `Rs. ${fmt(n)}`);
+  $('moveList').innerHTML = MOVE_OUT.map((g, gi) => `<h3>${esc(g.title)}</h3><ul class="tick-list">${g.items.map((it, ii) => `<li><label><input type="checkbox" id="mo${gi}_${ii}"> <span>${esc(it)}</span></label></li>`).join('')}</ul>`).join('') + '<p class="nsrc">Practical tips, not law. <a href="#ref" data-q="tip-handover">See the note on handover</a>.</p>';
+  $('dedExample').onclick = () => {
+    ($('dedText') as HTMLTextAreaElement).value = EXAMPLE_DEDUCTIONS;
+    if (!($('lease') as HTMLTextAreaElement).value.trim()) ($('lease') as HTMLTextAreaElement).value = SAMPLE;
+    dstat('Made-up example loaded, with the sample agreement above. Press Check deductions.');
+  };
+  $('dedUpload').onclick = () => ($('dedFile') as HTMLInputElement).click();
+  ($('dedFile') as HTMLInputElement).onchange = async e => {
+    const f = (e.target as HTMLInputElement).files?.[0]; if (!f) return;
+    dstat(`Reading ${f.name} on this device...`, 'busy');
+    try { const r = await readLeaseFile(f, m => dstat(m, 'busy')); ($('dedText') as HTMLTextAreaElement).value = r.text; dstat(`Text read from ${f.name} on this device; nothing was uploaded. Check the amounts against the paper, then press Check deductions.`, 'done'); }
+    catch (err) { dstat((err as Error).message, 'error'); }
+    (e.target as HTMLInputElement).value = '';
+  };
+  $('dedRun').onclick = () => {
+    const lease = ($('lease') as HTMLTextAreaElement).value.trim(), list = parseDeductions(($('dedText') as HTMLTextAreaElement).value);
+    if (!lease) { dstat('Paste your agreement in the box above, or load the sample, so each deduction can be checked against it.', 'error'); $('lease').focus(); return; }
+    if (!list.length) { dstat('No deductions found. Put one item per line with its amount, for example "Painting - Rs. 20,000".', 'error'); $('dedText').focus(); return; }
+    const clauses = splitClauses(lease), typed = Number(($('dedDeposit') as HTMLInputElement).value.replace(/[^\d]/g, '')) || null;
+    const a = audit(list, clauses, { deposit: typed });
+    last = { audit: a, clauses };
+    if (!typed && a.deposit !== null) ($('dedDeposit') as HTMLInputElement).value = String(a.deposit);
+    $('dDep').textContent = money(a.deposit); $('dClaim').textContent = money(a.claimed); $('dIn').textContent = money(a.totals.in);
+    $('dBill').textContent = money(a.totals.bill); $('dOut').textContent = money(a.totals.out); $('dMin').textContent = money(a.minRefund); $('dedState').textContent = 'checked';
+    const row = (l: Audited) => { const n = l.note ? noteById(l.note) : undefined; return `<tr><td><b>${esc(l.item)}</b><p>${esc(l.why)}${n ? ` <a href="#ref" data-q="${esc(n.id)}">Source</a>` : ''}</p></td><td class="amt">${esc(money(l.amount))}</td><td><span class="dl ${l.label}">${esc(DLABEL_TEXT[l.label])}</span></td></tr>`; };
+    $('dedOut').innerHTML = `<div class="table-wrap"><table class="ded-table"><thead><tr><th scope="col">Deduction, and why</th><th scope="col">Amount</th><th scope="col">Label</th></tr></thead><tbody>${a.lines.map(row).join('')}</tbody></table></div>`
+      + (a.blanket ? `<p class="note">The agreement also lets the landlord keep the deposit without giving a reason (${esc(clauseLabel(a.blanket, 0))}). That clause is one-sided, and it is not a bill: it does not show what any item cost. <a href="#ref" data-q="mta-deposit">See the deposit note</a>.</p>` : '')
+      + `<p class="nsrc">Labels compare each line with your agreement's words and two notes; they are not a ruling. ${a.deposit === null ? 'No deposit figure was found: type it in to see what is due back.' : ''}</p>`;
+    ($('draftRun') as HTMLButtonElement).disabled = false;
+    dstat(`${a.lines.length} deductions checked: ${money(a.totals.out)} not in your agreement, ${money(a.totals.bill)} to ask bills for.`, 'done');
+  };
+  const draftHtml = (d: { whatsapp: string; notice: string }, how: string, sent = '') => `<p class="nsrc">${esc(how)}</p>
+    <div class="draft"><label class="field" for="dWa"><b>Firm message (WhatsApp)</b></label><textarea id="dWa">${esc(d.whatsapp)}</textarea><div class="actions"><button type="button" data-copy="dWa">Copy message</button></div></div>
+    <div class="draft"><label class="field" for="dNo"><b>Formal notice</b></label><textarea id="dNo">${esc(d.notice)}</textarea><div class="actions"><button type="button" data-copy="dNo">Copy notice</button></div></div>
+    ${sent ? `<details><summary>Sent to cloud (names and IDs masked)</summary><p>${esc(sent)}</p></details>` : ''}
+    <p class="nsrc">Fill in every gap in square brackets yourself, and read the draft before you send it. Not legal advice.</p>`;
+  $('drafts').addEventListener('click', e => { const b = (e.target as HTMLElement).closest('button[data-copy]') as HTMLElement | null; if (b) copy(($(b.dataset.copy!) as HTMLTextAreaElement).value, 'Copied. Fill in the gaps before sending.'); });
+  $('draftRun').onclick = async () => {
+    if (!last) return;
+    const btn = $('draftRun') as HTMLButtonElement; btn.disabled = true;
+    const f = { audit: last.audit, handover: ($('dedHandover') as HTMLInputElement).value ? new Date(($('dedHandover') as HTMLInputElement).value).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : undefined, refundClause: refundClauseOf(last.clauses) };
+    const tpl = templateDrafts(f);
+    try {
+      const nanoOk = 'LanguageModel' in self && (await (self as any).LanguageModel.availability().catch(() => 'unavailable')) === 'available';
+      if (!cloudConfigured) { $('drafts').innerHTML = draftHtml(tpl, 'Cloud is off on this site, so these are plain templates written on this device.'); return; }
+      if (!nanoOk || !(await ensureNano(true))) { $('drafts').innerHTML = draftHtml(tpl, 'Names cannot be checked on this device (no on-device model), so nothing was sent. These are plain templates written on this device.'); return; }
+      dstat('Checking names on this device, then asking cloud Gemini for the drafts...', 'busy');
+      const facts = factsText(f);
+      let names: string[] | null = null;
+      try { names = await nanoNames(facts); } catch { /* fail closed below */ }
+      if (!names) { $('drafts').innerHTML = draftHtml(tpl, 'The names check failed on this device, so nothing was sent. These are plain templates written on this device.'); return; }
+      const sent = mask(facts, names);
+      const d = await cloudDrafts(sent).catch(() => null);
+      if (!d) { $('drafts').innerHTML = draftHtml(tpl, 'The cloud draft failed, so these are plain templates written on this device.', sent); return; }
+      if (citesLaw(d.whatsapp) || citesLaw(d.notice)) { $('drafts').innerHTML = draftHtml(tpl, 'The cloud draft cited a law, which this page does not allow without a checked source, so it was discarded. These are plain templates written on this device.', sent); return; }
+      $('drafts').innerHTML = draftHtml(d, 'Written by cloud Gemini from the masked facts shown below. It was told to use only your agreement and these facts, and to cite no law.', sent);
+    } finally { btn.disabled = false; dstat('Drafts ready below.', 'done'); }
+  };
+  const showLadder = (s: 'telangana' | 'other') => {
+    document.querySelectorAll<HTMLButtonElement>('#ladderChips button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.s === s)));
+    $('ladderOut').innerHTML = (s === 'other' ? '<p class="note">National routes only. This tool has sourced notes for Telangana; for your state, check whether it has a Rent Authority or its own rent act.</p>' : '')
+      + ladder(s).map(r => { const n = r.note ? noteById(r.note) : undefined; return `<div class="rung"><b>${esc(r.title)}</b><p>${esc(r.text)}</p>${n ? `<p class="trust"><span class="basis ${n.basis}">${esc(BASIS_LABEL[n.basis])}</span><a href="#ref" data-q="${esc(n.id)}">See the note and its source</a></p>` : '<p class="trust"><span class="basis practice">Common practice</span></p>'}</div>`; }).join('');
+  };
+  $('ladderChips').addEventListener('click', e => { const b = (e.target as HTMLElement).closest('button[data-s]') as HTMLElement | null; if (b) showLadder(b.dataset.s as 'telangana' | 'other'); });
+  showLadder('telangana');
+  $('deposit').addEventListener('click', e => { const a = (e.target as HTMLElement).closest('a[data-q]') as HTMLElement | null; if (a) { const n = noteById(a.dataset.q!); if (n) { refQ.value = n.title; $('refOut').innerHTML = noteHtml(n); } } });
+}
+

@@ -12,6 +12,7 @@
   <nav class="links" aria-label="Sections">
     <a href="#how">How it works</a>
     <a href="#check">Check a lease</a>
+    <a href="#deposit">Deposit Shield</a>
     <a href="#help">Get help</a>
     <a href="#suggest">Suggest a change</a>
   </nav>
@@ -118,6 +119,59 @@
       <section class="panel sheet" id="sheet" aria-label="Take this to the signing"></section>
     </div>
   </section>
+
+  <section class="shield" id="deposit">
+    <div class="check-in">
+      <h2 class="section-h">Deposit Shield</h2>
+      <p class="lead">Moving out? Check each deduction against your own agreement, then send a firm message and a formal notice.</p>
+      <div class="deck">
+        <div class="panel">
+          <div class="label"><label for="dedText">The landlord's deductions</label><span>read on this device</span></div>
+          <p class="howto" id="dedHow">One item per line, with its amount. Paste the list or upload a photo of it. Each line is checked against the agreement in the box above, so paste yours there or load the sample.</p>
+          <textarea id="dedText" rows="8" aria-describedby="dedHow" spellcheck="false" placeholder="AC servicing - Rs. 32,000&#10;Painting of full flat - Rs. 45,000"></textarea>
+          <div class="fields">
+            <label>Deposit paid (Rs.) <input id="dedDeposit" inputmode="numeric" autocomplete="off" placeholder="read from the agreement"></label>
+            <label>Keys handed over on <input id="dedHandover" type="date"></label>
+          </div>
+          <div class="actions">
+            <button id="dedExample" type="button">Load made-up example</button>
+            <button id="dedUpload" type="button">Upload photo of the list</button>
+            <input id="dedFile" type="file" accept="image/*,application/pdf,.pdf,.txt,text/plain" hidden>
+            <button id="dedRun" type="button" class="primary">Check deductions</button>
+          </div>
+        </div>
+        <aside class="panel hud" aria-label="Deposit summary">
+          <div class="label"><span>Against your deposit</span><span id="dedState">waiting</span></div>
+          <dl class="stats ded-stats">
+            <div class="stat"><dt>Deposit</dt><dd id="dDep">-</dd></div>
+            <div class="stat"><dt>Deducted</dt><dd id="dClaim" class="bad">-</dd></div>
+            <div class="stat"><dt>In your agreement</dt><dd id="dIn">-</dd></div>
+            <div class="stat"><dt>Ask for the bill</dt><dd id="dBill" class="warn">-</dd></div>
+            <div class="stat"><dt>Not in your agreement</dt><dd id="dOut" class="bad">-</dd></div>
+            <div class="stat"><dt>Due back, at least</dt><dd id="dMin">-</dd></div>
+          </dl>
+          <p class="nsrc">"Due back, at least" is the deposit minus the lines your agreement backs. A screening aid, not legal advice.</p>
+        </aside>
+      </div>
+      <p id="dedStatus" class="status-line" role="status" aria-live="polite">Load the made-up example, or paste a list, then press Check deductions.</p>
+      <div id="dedOut"></div>
+      <div class="shield-grid">
+        <section class="panel" aria-label="Move-out pack">
+          <div class="label"><span>Move-out pack</span><span>checklist and two drafts</span></div>
+          <div id="moveList"></div>
+          <div class="actions"><button id="draftRun" type="button" class="primary" disabled>Write the two drafts</button></div>
+          <p class="nsrc" id="draftNote">Check the deductions first. Drafts are written by cloud Gemini from masked facts: names, phone numbers and ID numbers are replaced on this device before anything is sent, so the drafts come back with [NAME] and similar gaps for you to fill. If names cannot be checked on this device, nothing is sent and a plain template is used instead.</p>
+          <div id="drafts"></div>
+        </section>
+        <section class="panel" aria-label="If it is not refunded">
+          <div class="label"><span>If it is not refunded</span><span>step by step</span></div>
+          <div class="chips" id="ladderChips"><button type="button" data-s="telangana" aria-pressed="true">Telangana</button><button type="button" data-s="other" aria-pressed="false">Another state</button></div>
+          <div id="ladderOut"></div>
+        </section>
+      </div>
+    </div>
+  </section>
+
 
   <section class="more">
     <div class="more-in">

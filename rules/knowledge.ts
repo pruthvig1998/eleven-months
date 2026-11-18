@@ -244,6 +244,14 @@ export const NOTES: Note[] = [
     ],
   },
   {
+    id: 'consumer-ejagriti', basis: 'commentary', scope: 'india', status: 'tip', checked: '2026-11-19',
+    unverified: "Whether a consumer commission will hear a deposit claim against a private landlord. This tool found no commission order on that point, so ask the legal aid helpline before you file. The fees and the steps on the portal were not read.",
+    title: 'Consumer commissions and the e-Jagriti portal',
+    summary: "Consumer complaints in India are filed with the district, state or national consumer commission. Since 1 January 2025 the government's e-Jagriti portal (e-jagriti.gov.in) lets you register with an OTP, file a complaint online, pay the fee and follow the case; news reports citing the Consumer Affairs ministry say about 1.3 lakh complaints were filed on it by November 2025. Whether a deposit dispute with a private landlord counts as a consumer dispute is not settled here, so treat this route as one to ask about, not a sure one.",
+    tags: ['consumer', 'consumer court', 'commission', 'e-jagriti', 'ejagriti', 'complaint', 'deposit', 'refund', 'not returned', 'file online'],
+    sources: [{ label: 'e-Jagriti portal (Ministry of Consumer Affairs)', url: 'https://e-jagriti.gov.in/' }, { label: 'Free Press Journal (IANS): e-Jagriti use since its January 2025 launch', url: 'https://www.freepressjournal.in/tech/e-jagriti-empowers-consumers-275-lakh-users-13-lakh-complaints-filed-since-january' }],
+  },
+  {
     id: 'acb', basis: 'official', scope: 'telangana', status: 'tip', checked: '2026-11-18',
     unverified: "The steps on the bureau's complaint page, which I did not read.",
     title: 'Reporting a bribe demand: Telangana Anti-Corruption Bureau, 1064',
