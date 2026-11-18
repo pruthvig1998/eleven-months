@@ -178,5 +178,4 @@ Stage D deployed (Nov 18). Lighthouse (mobile) on the live site after deploy: ac
 
 - Headers confirmed on the live site: Content-Security-Policy, X-Content-Type-Options, Referrer-Policy, Permissions-Policy.
 - Phone width, cloud check ticked, sample: 6 of 11, 11 of 11 cloud calls returned 200, reCAPTCHA (www.google.com, www.gstatic.com) loaded with 200, no Content-Security-Policy violations, 65 s.
-- Desktop Chrome with the on-device model under the policy: tested locally only (sample scan and photo reading, no violations). Not re-run on the live site because the Chrome connection dropped.
-- Remote Config fetch under the policy: not observed in the live run (the settings may have been served from the browser's cache). The policy allows all *.googleapis.com connections, which covers it.
+- Desktop Chrome with the on-device model, live: photo read by the on-device model (100% word agreement, exact text); sample 6 of 11, 8 points to raise, 4 clauses to cloud, all succeeded; Remote Config fetched; no Content-Security-Policy violations. The scan took 218 s on this machine.
