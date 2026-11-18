@@ -22,7 +22,7 @@ document.addEventListener('click', e => {
   const a = (e.target as HTMLElement).closest('a[href^="#"]') as HTMLAnchorElement | null;
   const id = a?.getAttribute('href')?.slice(1);
   const target = id ? document.getElementById(id) : null;
-  if (!target || a!.dataset.q) return;
+  if (!target || a!.dataset.q || target.closest('dialog')) return; // dialog targets are opened by main.ts
   e.preventDefault();
   if (lenis) lenis.scrollTo(target, { offset: -16 }); else target.scrollIntoView();
   (target.querySelector('textarea, input, button') as HTMLElement | null)?.focus({ preventScroll: true });

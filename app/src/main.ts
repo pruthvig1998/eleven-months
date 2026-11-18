@@ -314,3 +314,15 @@ savedUi(); missUi();
     finally { btn.disabled = false; }
   };
 }
+
+// The suggestion box lives in a dialog, opened by the floating button, the nav link or a #suggest link.
+{
+  const dlg = $('sgDialog') as HTMLDialogElement;
+  const open = () => { if (!dlg.open) dlg.showModal(); ($('sgText') as HTMLTextAreaElement).focus(); };
+  $('sgFab').onclick = open;
+  $('sgClose').onclick = () => dlg.close();
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); }); // click on the backdrop
+  dlg.addEventListener('close', () => { if (location.hash === '#suggest') history.replaceState(null, '', location.pathname + location.search); $('sgFab').focus(); });
+  document.addEventListener('click', e => { if ((e.target as HTMLElement).closest('a[href="#suggest"]')) { e.preventDefault(); open(); } });
+  if (location.hash === '#suggest') open();
+}
