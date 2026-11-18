@@ -49,6 +49,10 @@ It also:
 
 ## How the hybrid inference works
 
+<p align="center">
+  <img src="docs/architecture.png" alt="Architecture: in the browser, fixed rules and Gemini Nano read every clause. Only clauses that meet a trigger are masked and sent to cloud Gemini through Firebase AI Logic, protected by App Check, with thresholds from Remote Config." width="100%">
+</p>
+
 Every model call goes through the Firebase AI Logic Web SDK (`firebase/ai`). See [`app/src/ai.ts`](app/src/ai.ts).
 
 ```

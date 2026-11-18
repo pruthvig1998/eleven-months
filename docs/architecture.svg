@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1000" width="1800" height="1000" role="img" aria-label="Eleven Months architecture: in the browser, fixed rules and Gemini Nano read every clause; only clauses that meet a trigger are masked and sent to cloud Gemini through Firebase AI Logic, protected by App Check, with thresholds from Remote Config.">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#12201b"/></marker>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#b5361f"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b6b4e"/></marker>
+    <marker id="am" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#5d6862"/></marker>
+  </defs>
+  <style>
+    text { font-family: Geist, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif; fill: #12201b; }
+    .serif { font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif; }
+    .h { font-size: 27px; font-weight: 600; }
+    .b { font-size: 19px; fill: #4d5a54; }
+    .k { font-size: 15px; font-weight: 600; letter-spacing: 2px; fill: #5d6862; }
+    .lane { font-size: 17px; font-weight: 600; letter-spacing: 3px; }
+    .note { font-size: 17px; font-weight: 600; }
+    .box { fill: #ffffff; stroke: #cfc8ba; stroke-width: 1.5; }
+    .ln { stroke: #12201b; stroke-width: 2.5; fill: none; }
+  </style>
+
+  <rect width="1800" height="1000" fill="#f5f3ee"/>
+
+  <text x="60" y="72" class="serif" font-size="46">How Eleven Months reads an agreement</text>
+  <text x="60" y="106" class="b">Every model call goes through the Firebase AI Logic Web SDK (firebase/ai). Most clauses never leave the browser.</text>
+
+  <!-- lane: on the device -->
+  <rect x="40" y="136" width="1720" height="500" rx="20" fill="#e8f2ec" stroke="#0b6b4e" stroke-opacity=".35" stroke-width="1.5"/>
+  <text x="70" y="172" class="lane" fill="#0b6b4e">IN YOUR BROWSER, ON THE DEVICE</text>
+
+  <!-- 1 input -->
+  <rect x="70" y="200" width="250" height="230" rx="14" class="box"/>
+  <text x="92" y="234" class="k">1 · AGREEMENT</text>
+  <text x="92" y="272" class="h">Paste, PDF</text>
+  <text x="92" y="304" class="h">or photo</text>
+  <text x="92" y="342" class="b">Photos are read by</text>
+  <text x="92" y="366" class="b">Gemini Nano, checked</text>
+  <text x="92" y="390" class="b">by a second reader.</text>
+  <text x="92" y="414" class="b">Images never upload.</text>
+
+  <!-- 2 rules -->
+  <rect x="370" y="200" width="290" height="230" rx="14" class="box"/>
+  <text x="392" y="234" class="k">2 · FIXED RULES</text>
+  <text x="392" y="272" class="h">Deterministic</text>
+  <text x="392" y="310" class="b">Deposit, notice, lock-in and</text>
+  <text x="392" y="334" class="b">rent rise as exact figures,</text>
+  <text x="392" y="358" class="b">plus 23 topic rules.</text>
+  <text x="392" y="404" class="note" fill="#0b6b4e">Rules win on numbers.</text>
+
+  <!-- 3 nano -->
+  <rect x="710" y="200" width="290" height="230" rx="14" class="box" stroke="#0b6b4e" stroke-width="2.5"/>
+  <text x="732" y="234" class="k">3 · GEMINI NANO</text>
+  <text x="732" y="272" class="h">On-device model</text>
+  <text x="732" y="310" class="b">Judges each clause and</text>
+  <text x="732" y="334" class="b">finds the names in it.</text>
+  <text x="732" y="380" class="b" font-size="16" font-family="ui-monospace, Menlo, monospace">ONLY_ON_DEVICE</text>
+  <text x="732" y="404" class="note" fill="#0b6b4e">Full text stays here.</text>
+
+  <!-- 4 trigger -->
+  <rect x="1050" y="200" width="320" height="230" rx="14" class="box" stroke="#8a5a00" stroke-width="2"/>
+  <text x="1072" y="234" class="k">4 · SECOND OPINION?</text>
+  <text x="1072" y="270" class="b">Only if one of these holds:</text>
+  <text x="1072" y="302" class="b">• Nano's answer is unusable</text>
+  <text x="1072" y="328" class="b">• the rules are unsure</text>
+  <text x="1072" y="354" class="b">• rules and Nano disagree</text>
+  <text x="1072" y="380" class="b">• Nano says ok, but a rule</text>
+  <text x="1086" y="404" class="b">raised a risk or a concern</text>
+
+  <!-- 5 mask -->
+  <rect x="1050" y="476" width="320" height="140" rx="14" class="box" stroke="#b5361f" stroke-width="2"/>
+  <text x="1072" y="510" class="k">5 · MASK</text>
+  <text x="1072" y="542" class="b">Names, Aadhaar, PAN,</text>
+  <text x="1072" y="566" class="b">phones and emails.</text>
+  <text x="1072" y="598" class="note" fill="#b5361f">Names check fails: not sent.</text>
+
+  <!-- 7 results -->
+  <rect x="1420" y="200" width="310" height="416" rx="14" class="box" stroke="#12201b" stroke-width="2"/>
+  <text x="1442" y="234" class="k">7 · WHAT YOU GET</text>
+  <text x="1442" y="272" class="h">A decision</text>
+  <text x="1442" y="310" class="b">• clear or risky, per clause</text>
+  <text x="1442" y="338" class="b">• the figures and their source</text>
+  <text x="1442" y="366" class="b">• what to ask for instead</text>
+  <text x="1442" y="394" class="b">• whole-agreement checks:</text>
+  <text x="1458" y="418" class="b">basics, contradictions,</text>
+  <text x="1458" y="442" class="b">court city, stamp duty</text>
+  <text x="1442" y="470" class="b">• sheet for the signing</text>
+  <text x="1442" y="498" class="b">• Telangana law notes</text>
+  <line x1="1442" y1="522" x2="1708" y2="522" stroke="#e4dfd4" stroke-width="1.5"/>
+  <text x="1442" y="552" class="b">Each clause sent to cloud</text>
+  <text x="1442" y="576" class="b">shows the exact masked text</text>
+  <text x="1442" y="600" class="b">that left the device.</text>
+
+  <!-- arrows in the device lane -->
+  <line x1="320" y1="315" x2="366" y2="315" class="ln" marker-end="url(#a)"/>
+  <line x1="660" y1="315" x2="706" y2="315" class="ln" marker-end="url(#a)"/>
+  <line x1="1000" y1="315" x2="1046" y2="315" class="ln" marker-end="url(#a)"/>
+  <path d="M1370 270 H1416" stroke="#0b6b4e" stroke-width="2.5" fill="none" marker-end="url(#ag)"/>
+  <text x="1300" y="188" class="note" fill="#0b6b4e">no trigger: stays on device</text>
+  <path d="M1210 430 V472" stroke="#b5361f" stroke-width="2.5" fill="none" marker-end="url(#ar)"/>
+  <text x="1222" y="458" class="note" fill="#b5361f">trigger</text>
+
+  <!-- lane: cloud -->
+  <rect x="40" y="676" width="1720" height="214" rx="20" fill="#ffffff" stroke="#cfc8ba" stroke-width="1.5" stroke-dasharray="8 6"/>
+  <text x="70" y="712" class="lane" fill="#5d6862">FIREBASE AND THE CLOUD</text>
+
+  <!-- 6 cloud gemini -->
+  <rect x="1050" y="730" width="320" height="140" rx="14" class="box" stroke="#12201b" stroke-width="2"/>
+  <text x="1072" y="764" class="k">6 · CLOUD GEMINI</text>
+  <text x="1072" y="798" class="h" font-size="24">gemini-3.5-flash-lite</text>
+  <text x="1072" y="830" class="b">Label and reason, held</text>
+  <text x="1072" y="854" class="b">to a JSON schema.</text>
+
+  <path d="M1210 616 V726" stroke="#b5361f" stroke-width="2.5" fill="none" marker-end="url(#ar)"/>
+  <text x="1222" y="664" class="note" fill="#b5361f">masked text only</text>
+  <path d="M1370 800 H1575 V620" class="ln" marker-end="url(#a)"/>
+  <text x="1392" y="788" class="note">second opinion</text>
+
+  <!-- side services -->
+  <rect x="710" y="730" width="290" height="140" rx="14" class="box"/>
+  <text x="732" y="764" class="k">APP CHECK</text>
+  <text x="732" y="798" class="h" font-size="24">reCAPTCHA</text>
+  <text x="732" y="830" class="b">Enterprise. Protects every</text>
+  <text x="732" y="854" class="b">cloud call.</text>
+  <line x1="1000" y1="800" x2="1046" y2="800" class="ln" stroke="#5d6862" marker-end="url(#am)"/>
+
+  <rect x="370" y="730" width="290" height="140" rx="14" class="box"/>
+  <text x="392" y="764" class="k">REMOTE CONFIG</text>
+  <text x="392" y="798" class="h" font-size="24">Thresholds</text>
+  <text x="392" y="830" class="b">Deposit months, rent rise,</text>
+  <text x="392" y="854" class="b">notice days, cloud model.</text>
+  <path d="M515 730 V434" stroke="#5d6862" stroke-width="2" stroke-dasharray="6 6" fill="none" marker-end="url(#am)"/>
+
+  <rect x="70" y="730" width="250" height="140" rx="14" class="box"/>
+  <text x="92" y="764" class="k">HOSTING</text>
+  <text x="92" y="798" class="h" font-size="24">Spark plan</text>
+  <text x="92" y="830" class="b">Static site with a</text>
+  <text x="92" y="854" class="b">Content-Security-Policy.</text>
+
+  <text x="60" y="940" class="b">No on-device model (phones, Safari, Firefox): the rules run alone, and the user can opt in to send every clause to cloud, masked by pattern only.</text>
+  <text x="60" y="970" class="b">Photos and scanned pages are never sent to the cloud, because an image cannot be masked before it is read.</text>
+</svg>
