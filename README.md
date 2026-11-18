@@ -74,7 +74,7 @@ Every model call goes through the Firebase AI Logic Web SDK (`firebase/ai`). See
             3. Cloud Gemini   the clause is masked first: names, Aadhaar, PAN, phones, emails
 ```
 
-- **Privacy by routing.** In the sample agreement, 2 of 11 clauses go to the cloud. If the on-device names check fails, the clause is not sent at all.
+- **Privacy by routing.** In the sample agreement, 2 of 11 clauses go to the cloud (3 in one of two re-runs on 19 Nov; Gemini Nano does not answer the same way every time, so the count can vary by run). If the on-device names check fails, the clause is not sent at all.
 - **Rules win on numbers.** A model never overrides a figure the rules extracted.
 - **App Check** protects the cloud calls (reCAPTCHA Enterprise in production).
 - **Remote Config** holds the thresholds (deposit months, rent rise, notice days), the cloud model name and the switch for the cloud second opinion, so they can change without a deploy. Every value is range-checked and falls back to a built-in default. See [`app/src/config.ts`](app/src/config.ts).
