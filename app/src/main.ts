@@ -17,6 +17,7 @@ import { askForFinding, askForFlag, askForGap, VISIT } from '../../rules/asks.ts
 import { docCheck } from '../../rules/doccheck.ts';
 import { leaseReport } from '../../rules/lease.ts';
 import { audit, parseDeductions, EXAMPLE_DEDUCTIONS, MOVE_OUT, DLABEL_TEXT, ladder, templateDrafts, factsText, refundClauseOf, citesLaw, type Audit, type Audited } from '../../rules/deposit.ts';
+import { CLAIMS, STATES, STATUS_LABEL, type State } from '../../rules/claims.ts';
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const esc = (s: unknown) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
@@ -401,3 +402,13 @@ savedUi(); missUi();
   $('deposit').addEventListener('click', e => { const a = (e.target as HTMLElement).closest('a[data-q]') as HTMLElement | null; if (a) { const n = noteById(a.dataset.q!); if (n) { refQ.value = n.title; $('refOut').innerHTML = noteHtml(n); } } });
 }
 
+// Law, or viral forward? Eight viral claims, checked per state.
+{
+  const showState = (s: State) => {
+    document.querySelectorAll<HTMLButtonElement>('#viralChips button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.s === s)));
+    $('viralOut').innerHTML = CLAIMS.map(c => { const v = c.states[s]; return `<article class="vcard"><h3>${esc(c.claim)}</h3><span class="vstat ${v.status}">${esc(STATUS_LABEL[v.status])}</span><p>${esc(v.text)}</p><p class="mta-line"><b>In the Model Tenancy Act:</b> ${esc(c.mta)}</p><p class="trust"><span class="basis ${v.basis}">${esc(BASIS_LABEL[v.basis])}</span></p>${v.unverified ? `<p class="unv"><b>Not verified:</b> ${esc(v.unverified)}</p>` : ''}<p class="nsrc">Source: ${v.sources.map(x => safeUrl(x.url) ? `<a href="${esc(safeUrl(x.url))}" target="_blank" rel="noopener noreferrer">${esc(x.label)}</a>` : esc(x.label)).join(' · ')} &middot; checked ${esc(v.checked)}</p></article>`; }).join('');
+  };
+  $('viralChips').innerHTML = STATES.map((s, i) => `<button type="button" data-s="${s.id}" aria-pressed="${i === 0}">${esc(s.name)}</button>`).join('');
+  $('viralChips').addEventListener('click', e => { const b = (e.target as HTMLElement).closest('button[data-s]') as HTMLElement | null; if (b) showState(b.dataset.s as State); });
+  showState('telangana');
+}
