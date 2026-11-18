@@ -31,6 +31,8 @@ const parse = (t: string): any => { try { return JSON.parse(t); } catch { const 
 const run = async (m: typeof nano, prompt: string) => parse((await m.generateContent(prompt)).response.text());
 
 export const initNano = (onProgress: (v: number) => void) => nano.initializeDeviceModel(onProgress);
+// One throwaway prompt loads the model into memory, so the first real clause does not pay the load time (measured: about 19 s).
+export const nanoWarm = () => nano.generateContent('Reply with the word ok.').then(() => undefined);
 
 async function judge(m: typeof nano, text: string): Promise<Model> {
   const c = await run(m, CLS(text));

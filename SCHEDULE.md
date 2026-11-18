@@ -41,3 +41,26 @@ Not done:
 `rules/probe-realworld3.ts`, first run, rules unchanged: **4 of 20** harmful clauses caught, **0 of 10** fair clauses wrongly flagged.
 
 What this means: the fixed rules recognise the wordings they were written against (sets 1 and 2 now pass) but not fresh paraphrases of the same problems ("put his own padlock on the door", "ended by the owner at his pleasure", "repaid six months after the keys are returned"). Adding more patterns raises the score on the set in hand and not much on the next one. The rules are reliable for numbers (deposit, notice, lock-in, rent rise) and precise when they fire; catching paraphrased clauses is the model's job. So the rules-only mode (phones, Safari, Firefox) will miss most unusual harmful clauses, and its verdict text says so. The rules were not tuned against this set.
+
+## Why the live scan took about 2 minutes (measured Nov 18, live site, desktop Chrome)
+
+Timed with the sample agreement, 11 clauses, 143 s in total:
+
+| Part | Time |
+|---|---|
+| Clause 1 (model loads into memory, no network) | 18.7 s |
+| Clause 2 (three on-device calls, the first names call, two cloud calls) | 50 s |
+| Clauses 3 to 11 | about 4.5 s each once warm, more when a cloud call is needed |
+| Each cloud call | 2.8 to 7.1 s |
+
+Two causes. First, the cold start: the model loads on the first clause. Second, the machine: its load average was 10 to 13 during the test (other programs), and earlier idle measurements were about 2 s per on-device call. Each clause makes two on-device calls, so about 50 s for 11 clauses is the floor on this design.
+
+Change made (not deployed): when the model is already downloaded, the page loads it in the background as soon as it opens, so the first clause does not wait. It never starts a download. Not yet timed on an idle machine.
+
+Not changed: the two on-device calls per clause. Skipping the numbers call for clauses with no figures would save time but changes the routing that the accuracy numbers were measured on.
+
+## Other results from Nov 18 (second pass)
+
+- Photo and scanned-PDF upload on the live site: both read in about 3.5 s and scanned correctly (clean rendered pages, not camera photos).
+- Public repository: https://github.com/pruthvig1998/eleven-months (Apache-2.0).
+- Official hackathon rules read: see `HACKATHON-RULES.md`.

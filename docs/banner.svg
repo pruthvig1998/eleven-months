@@ -32,9 +32,9 @@
 
     <!-- scrolling line of what it checks -->
     <g font-size="13" font-weight="600" fill="#aab4cc" letter-spacing="2">
-      <g><animateTransform attributeName="transform" type="translate" from="0 0" to="-1180 0" dur="26s" repeatCount="indefinite"/>
-        <text x="40" y="346">DEPOSIT SIZE  ·  FORFEITURE  ·  NOTICE PERIOD  ·  LOCK-IN  ·  RENT INCREASES  ·  LANDLORD ENTRY  ·  WATER AND POWER CUTS  ·  RECEIPTS  ·  LOCK-OUT  ·  BLANK CHEQUES  ·</text>
-        <text x="1220" y="346">DEPOSIT SIZE  ·  FORFEITURE  ·  NOTICE PERIOD  ·  LOCK-IN  ·  RENT INCREASES  ·  LANDLORD ENTRY  ·  WATER AND POWER CUTS  ·  RECEIPTS  ·  LOCK-OUT  ·  BLANK CHEQUES  ·</text>
+      <g><animateTransform attributeName="transform" type="translate" from="0 0" to="-1640 0" dur="34s" repeatCount="indefinite"/>
+        <text x="40" y="346" textLength="1600">DEPOSIT SIZE  ·  FORFEITURE  ·  NOTICE PERIOD  ·  LOCK-IN  ·  RENT INCREASES  ·  LANDLORD ENTRY  ·  WATER AND POWER CUTS  ·  RECEIPTS  ·  LOCK-OUT  ·  BLANK CHEQUES  ·</text>
+        <text x="1680" y="346" textLength="1600">DEPOSIT SIZE  ·  FORFEITURE  ·  NOTICE PERIOD  ·  LOCK-IN  ·  RENT INCREASES  ·  LANDLORD ENTRY  ·  WATER AND POWER CUTS  ·  RECEIPTS  ·  LOCK-OUT  ·  BLANK CHEQUES  ·</text>
       </g>
     </g>
     <rect y="322" width="1200" height="40" fill="url(#fade)"/>

@@ -1,5 +1,5 @@
 import './style.css';
-import { initNano, nanoJudge, nanoNames, cloudJudge, cloudConfigured } from './ai.ts';
+import { initNano, nanoWarm, nanoJudge, nanoNames, cloudJudge, cloudConfigured } from './ai.ts';
 import { splitClauses, clauseLabel } from './split.ts';
 import { readLeaseFile } from './pdf.ts';
 import { SAMPLE } from './sample.ts';
@@ -51,7 +51,7 @@ function renderSheet(scan: { asks: SheetAsk[]; gaps: string[]; summary: string }
 renderSheet(null);
 
 let ready = false, running = false;
-async function ensureNano(): Promise<boolean> {
+async function ensureNano(quiet = false): Promise<boolean> {
   if (ready) return true;
   if (!('LanguageModel' in self)) {
     pill('pillNano', 'error', 'On-device model: unsupported');
@@ -59,13 +59,13 @@ async function ensureNano(): Promise<boolean> {
     return false;
   }
   pill('pillNano', 'busy', 'On-device model: preparing');
-  status('Preparing the on-device model. The first time can mean a download of about 4 GB.', 'busy');
+  if (!quiet) status('Preparing the on-device model. The first time can mean a download of about 4 GB.', 'busy');
   try {
-    await initNano(v => { const n = Math.round(v * 100); pill('pillNano', 'busy', `On-device model: ${n}%`); status(`Downloading the on-device model: ${n}%`, 'busy'); });
+    await initNano(v => { const n = Math.round(v * 100); pill('pillNano', 'busy', `On-device model: ${n}%`); if (!quiet) status(`Downloading the on-device model: ${n}%`, 'busy'); });
     ready = true; pill('pillNano', 'ready', 'On-device model: ready'); return true;
   } catch (e) {
     pill('pillNano', 'error', 'On-device model: unavailable');
-    status(`On-device model unavailable: ${(e as Error).message}`, 'error'); return false;
+    if (!quiet) status(`On-device model unavailable: ${(e as Error).message}`, 'error'); return false;
   }
 }
 
@@ -248,3 +248,11 @@ $('loadSaved').onclick = () => { const t = store.get('em_saved'); if (t) { ($('l
 $('missSave').onclick = () => { const t = ($('missText') as HTMLTextAreaElement).value.trim(); if (!t) return; if (store.set('em_missed', JSON.stringify([...missed(), t]))) { ($('missText') as HTMLTextAreaElement).value = ''; missUi(); status('Note saved in this browser.', 'done'); } };
 $('missCopy').onclick = () => { const all = missed(); if (all.length) copy(all.map((t, i) => `${i + 1}. ${t}`).join('\n'), 'Notes copied.'); };
 savedUi(); missUi();
+
+// If the model is already downloaded, load it while the user is still pasting. Never starts a download.
+(async () => {
+  try {
+    if (!('LanguageModel' in self) || (await (self as any).LanguageModel.availability()) !== 'available') return;
+    if (await ensureNano(true)) await nanoWarm();
+  } catch { /* warming is optional; the scan loads the model itself if this fails */ }
+})();
