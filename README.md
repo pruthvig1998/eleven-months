@@ -15,6 +15,14 @@ Most rental agreements in Hyderabad run for eleven months and are signed in a fe
 
 It is a screening aid, not legal advice.
 
+> **For judges**
+> 1. Open **https://eleven-months-nano.web.app** in desktop Chrome 139 or newer. No login.
+> 2. Press **Load sample**, then **Scan lease**. (Press **Prepare model** first if the page asks; the first answer after a Chrome restart takes 13 to 20 s.)
+> 3. To see the on-device path, load the page, then switch the network off (DevTools > Network > Offline, or airplane mode) and scan again. The rules and Gemini Nano run on the device; only the cloud second opinion needs the network.
+> 4. On any clause marked "Sent to cloud (names and IDs masked)", open it to see the exact text that left the device.
+>
+> Measured results: [Measured, not claimed](#measured-not-claimed) below, with the details in [`SCHEDULE.md`](SCHEDULE.md), [`RISK-KILL-REPORT.md`](RISK-KILL-REPORT.md) and [`GAP-REPORT.md`](GAP-REPORT.md).
+
 <p align="center">
   <img src="docs/shot-hero.jpg" alt="The Eleven Months home page: Read the fine print before it reads you, with a sample clause marked as risky" width="760">
 </p>
@@ -83,7 +91,7 @@ All test data is synthetic and written for this project. Numbers on real agreeme
 | Gemini Nano alone, 40 clauses | 34 labels correct, 15 of 20 risky clauses found |
 | Rules + Nano, cloud on trigger | 40 of 40 labels correct with 13 of 40 clauses sent to cloud |
 | Fixed rules alone on an unseen set of harmful clauses, first run | 12 of 20 (second set), then **4 of 20** (third set, fresh paraphrases); 0 fair clauses wrongly flagged on the third set |
-| Whole pipeline on 96 unseen clauses (70 harmful, 26 fair), desktop Chrome, live site | **67 of 70** harmful caught, 1 of 26 fair wrongly flagged, 45 of 97 clauses sent to cloud |
+| Whole pipeline on 96 unseen clauses (70 harmful, 26 fair), desktop Chrome, live site | **67 of 70** harmful caught, 1 of 26 fair wrongly flagged, 45 of 97 scanned pieces sent to cloud (the 96 clauses plus the test agreement's opening line, which the splitter counts as a clause) |
 | Same clauses with no on-device model (rules + cloud on every clause) | 68 of 70 caught, 0 of 26 wrongly flagged |
 | Nano's per-call limit | fails between about 6,200 and 8,000 words, so long clauses are split |
 
