@@ -12,3 +12,10 @@ brag-output
 linkedin
 
 .claude/
+# Android (Trusted Web Activity): generated project and build outputs. The signing key is never in this folder.
+android/*
+!android/twa-manifest.template.json
+!android/setup.sh
+!android/README.md
+*.keystore
+*.jks

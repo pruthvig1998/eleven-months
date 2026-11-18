@@ -1,0 +1,16 @@
+{
+  "name": "Eleven Months: rental agreement checker",
+  "short_name": "Eleven Months",
+  "description": "Check an Indian rental agreement clause by clause. Fixed rules on your device; unclear clauses go to cloud Gemini only with names and ID numbers masked.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f5f3ee",
+  "theme_color": "#0b6b4e",
+  "lang": "en",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
