@@ -42,7 +42,7 @@ export const CLAIMS: Claim[] = [
     mta: "Section 11 of the Model Tenancy Act, 2021: at most two months' rent for a home, refunded when the landlord takes back possession, less the tenant's dues.",
     states: {
       telangana: v('mta', 'commentary', "This is the Model Tenancy Act's figure, and Telangana has not adopted that Act. Where the 1960 control act applies, section 7 allows an advance of only one month's rent, which is stricter; but newer and higher-rent flats are outside that act, so for most leases the deposit is whatever the agreement says.", [MTA, TS_MTA, TS_ACT], TS_ADOPT),
-      karnataka: v('mta', 'act', "The Model Tenancy Act's figure. No cap on a security deposit was found in the Karnataka Rent Act, 1999, and a law firm's note on the 2025 amendment says it did not change deposit limits.", [MTA, KA_RENT, KA_AMD], KA_ADOPT),
+      karnataka: v('mta', 'act', "The Model Tenancy Act's figure. No cap on a security deposit was found in sections 4 to 16 of the Karnataka Rent Act, 1999 (the chapter on regulating rent), and a law firm's note on the 2025 amendment says it did not change deposit limits.", [MTA, KA_RENT, KA_AMD], `${KA_ADOPT} The rest of the Karnataka act was not read.`),
       maharashtra: v('mta', 'commentary', "The Model Tenancy Act's figure. No cap on a refundable security deposit was found in the sections of the Maharashtra Rent Control Act, 1999 read for this check.", [MTA, FACTCHECK], `${MH_ADOPT} The Maharashtra act was not read in full.`),
     },
   },
@@ -106,7 +106,7 @@ export const CLAIMS: Claim[] = [
     states: {
       telangana: v('partly', 'act', "Only with the Rent Controller's permission, and only in buildings the 1960 control act covers. Section 19: if the landlord does not make necessary repairs after notice, the Controller may let the tenant make them and deduct the cost, up to one twelfth of the year's rent. Do not deduct on your own.", [TS_ACT], COVER('Telangana')),
       karnataka: v('partly', 'act', "Only with the Controller's permission. Section 47(2) of the Karnataka Rent Act: if necessary repairs are not made within three months of written notice, the Controller may let the tenant make them and deduct the cost, up to half of that year's rent.", [KA_REPAIR], COVER('Karnataka')),
-      maharashtra: v('partly', 'act', "Yes, within a limit, in premises the act covers. Section 14(2) of the Maharashtra Rent Control Act lets the tenant make repairs the landlord neglects and deduct the cost, up to one quarter of that year's rent.", [MH(14, "landlord's duty to keep premises in repair")], `The notice the tenant must give first: secondary sources disagree (15 days or a month). ${COVER('Maharashtra')}`),
+      maharashtra: v('partly', 'act', "Yes, within a limit, in premises the act covers. Section 14(2) of the Maharashtra Rent Control Act: if the landlord does not make a needed repair within a reasonable time after 15 days' written notice, the tenant may make it and deduct the cost from rent, up to one quarter of that year's rent. Keep the vouchers.", [MH(14, "landlord's duty to keep premises in repair")], COVER('Maharashtra')),
     },
   },
 ];

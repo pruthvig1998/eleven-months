@@ -57,7 +57,7 @@ Every model call goes through the Firebase AI Logic Web SDK (`firebase/ai`) at r
 Browsers with no on-device model (phones, Safari, Firefox) get a rules-only scan, and the user can opt in to send every clause to the cloud. The page explains before they tick the box that masking is then by pattern only.
 
 ### The rest of the stack
-Deterministic rules run before any model: they extract the numbers (small models get arithmetic wrong, so a model never overrides a figure the rules extracted) and apply 27 topic rules, each shipped with examples that the tests enforce. Photo reading is checked against a second, plain text recogniser (Tesseract.js): the model's reading is used only if the two share at least 90% of their words, because a model can skip a line silently. TypeScript and Vite, with pdf.js for PDFs. 198 automated tests.
+Deterministic rules run before any model: they extract the numbers (small models get arithmetic wrong, so a model never overrides a figure the rules extracted) and apply 27 topic rules, each shipped with examples that the tests enforce. Photo reading is checked against a second, plain text recogniser (Tesseract.js): the model's reading is used only if the two share at least 90% of their words, because a model can skip a line silently. TypeScript and Vite, with pdf.js for PDFs. 201 automated tests.
 
 ## Challenges we ran into
 - **Gemini Nano alone is not enough.** On 40 clauses it labelled 34 correctly but missed 5 of 20 risky ones, and read "ten months' rent" as one month. So numbers come from the rules, and disagreements go to the cloud.

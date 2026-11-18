@@ -20,7 +20,6 @@ export interface Audit {
 // Kinds of deduction, first match wins. `allow` finds a clause that makes it the tenant's cost.
 interface Kind { id: string; re: RegExp; allow?: RegExp; landlord?: RegExp }
 const KINDS: Kind[] = [
-  { id: 'rent', re: /\b(?:rent|arrears)\b(?![^,;]*\b(?:agreement|renewal)\b)/i },
   { id: 'notice', re: /notice|lock-?in|early exit|short(?:fall)? of notice/i },
   { id: 'fee', re: /brokerage|broker|commission|agreement|documentation|renewal|admin\w*|processing|legal fee|move-?out fee|\bfee\b|misc\w*|general charges?|other charges?|sundry/i },
   { id: 'servicing', re: /servic\w*|deep[- ]clean\w*\s+(?:of\s+)?(?:ac|sofa|appliances?)|gas refill|chimney|\bro\b|water purifier/i, allow: /servic\w*/i },
@@ -29,6 +28,8 @@ const KINDS: Kind[] = [
   { id: 'structure', re: /seepage|leak\w*|waterproof\w*|roof|plumbing|wiring|structur\w*|crack\w* (?:in )?(?:the )?wall|ceiling/i, allow: /structur\w*|roof|wiring|plumbing|leak\w*/i, landlord: /(?:major|structur\w*)[^.]{0,80}(?:lessor|landlord|owner)|(?:lessor|landlord|owner)[^.]{0,40}(?:major|structur\w*)/i },
   { id: 'minor', re: /\bbulbs?\b|tube ?lights?|tap washers?|\bwashers?\b|switch\w*|fuses?|tap\b/i, allow: /bulbs?|tap washers?|minor repairs?|switch\w*/i },
   { id: 'utility', re: /electric\w*|power bill|water (?:bill|charges?)|\bgas\b|internet|broadband|maintenance|society|association|meter/i },
+  // Rent comes after every named charge, so "Painting - one month's rent" is painting, not rent owed.
+  { id: 'rent', re: /\b(?:rent|arrears)\b(?![^,;]*\b(?:agreement|renewal)\b)/i },
   { id: 'damage', re: /damag\w*|broken|break\w*|replac\w*|missing|lost|stain\w*|scratch\w*|torn|burn\w*|key/i },
 ];
 
@@ -86,7 +87,14 @@ export function audit(list: Deduction[], clauses: string[], opts: { deposit?: nu
     const L = (label: DLabel, why: string, extra: Partial<Audited> = {}): Audited => ({ ...d, kind: k?.id ?? 'other', label, why, ...extra });
     switch (k?.id) {
       case 'rent': return rent ? L('in', `Rent owed is a genuine due: the agreement sets the rent at Rs. ${rent.toLocaleString('en-IN')} a month. Check the dates against your payment records.`) : L('bill', 'Rent owed is a genuine due, but no rent figure was found in the agreement. Check it against your payment records.');
-      case 'notice': return hasNotice ? L('in', `The agreement has a notice or lock-in term (${ref(hasNotice)}). Check that the amount matches the days actually short.`, { clause: hasNotice }) : L('out', 'No notice or lock-in term binding you was found in the agreement.');
+      case 'notice': {
+        // A penalty for leaving early is "in" only if a clause names a charge for it; a lock-in alone fixes no amount.
+        if (/penalt|fine|compensat|charge|damages/i.test(d.item)) {
+          const priced = clauses.find(c => /notice|lock-?in|vacat/i.test(c) && /(?:penalt\w*|compensat\w*|charge)[^.]{0,60}(?:(?:rs\.?|₹|inr)\s*\d|months?'?s?'? rent)|(?:(?:rs\.?|₹|inr)\s*\d|months?'?s?'? rent)[^.]{0,60}(?:penalt\w*|compensat\w*|charge)/i.test(c)); // a blanket forfeiture is not a price
+          return priced ? L('in', `The agreement sets a charge for leaving early (${ref(priced)}). Check that the amount matches it.`, { clause: priced }) : L('bill', `The agreement has a notice or lock-in term${hasNotice ? ` (${ref(hasNotice)})` : ''} but fixes no charge for breaking it. Ask how this amount was worked out.`, { clause: hasNotice });
+        }
+        return hasNotice ? L('in', `The agreement has a notice or lock-in term (${ref(hasNotice)}). Check that the amount matches the days actually short.`, { clause: hasNotice }) : L('out', 'No notice or lock-in term binding you was found in the agreement.');
+      }
       case 'fee': return L('out', 'A fee, brokerage or "miscellaneous" charge is not a cost of the flat, and no clause makes it yours. Ask what it is for.', { note: 'rw-deposit-deductions' });
       case 'utility': return L('bill', 'A bill you have not paid is a genuine due, but only the bill or meter reading shows the amount. Ask for it and compare with your last payment.');
       case 'damage': return L('bill', 'Damage you caused can be charged, but normal wear and tear cannot. Ask for a photo, the bill or two quotes, and compare with your handover photos.', { note: 'rw-deposit-deductions' });
@@ -184,4 +192,4 @@ export function templateDrafts(f: DraftFacts): { whatsapp: string; notice: strin
   };
 }
 // A model can invent law. Drafts that cite an act, section or article are not shown.
-export const citesLaw = (t: string) => /\b(?:section|sec\.|article|clause \d+ of the \w+ act)\s*\d|\bact,?\s*(?:18|19|20)\d\d|\b(?:ipc|bns|crpc|cpc)\b|under the [a-z ]{0,60}\bact\b/i.test(t);
+export const citesLaw = (t: string) => /\b(?:[A-Z][a-z]+ ){1,5}Act\b/.test(t) || /\b(?:section|sec\.|article|clause \d+ of the \w+ act)\s*\d|\bact,?\s*(?:18|19|20)\d\d|\b(?:ipc|bns|crpc|cpc)\b|under the [a-z ]{0,60}\bact\b/i.test(t);

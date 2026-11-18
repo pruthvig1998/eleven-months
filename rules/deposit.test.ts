@@ -18,6 +18,15 @@ Society move-out fee: ₹2,000
 Geyser servicing: ₹1,500
 Notice period shortfall (15 days): ₹9,000
 Lost key and lock replacement: ₹800` },
+  // Written after the first fixes; first run 7 of 8 (the lock-in penalty came out "in"), then fixed. See results-deposit.md.
+  { name: 'fresh, written after the fixes', gold: ['bill', 'out', 'bill', 'out', 'in', 'bill', 'out', 'in'], list: `Bathroom tiles cracked - Rs. 6,500
+Kitchen chimney cleaning - Rs. 3,000
+Pending water bill (Jan-Feb) - Rs. 1,200
+Painting charges as per one month rent - Rs. 18,000
+Rent for February (stayed 5 days extra) - Rs 3,000
+Lock-in penalty - Rs. 36,000
+Sofa dry cleaning - Rs 2,500
+Replaced 2 tube lights - Rs 700` },
 ];
 const clauses = splitClauses(SAMPLE);
 
@@ -57,5 +66,14 @@ test('template drafts cite no law, and the law check catches citations', () => {
   assert.ok(!citesLaw(d.whatsapp) && !citesLaw(d.notice));
   assert.match(d.notice, /clause 2/);
   assert.match(factsText(f), /AC servicing/);
-  assert.ok(citesLaw('as required under Section 11 of the Model Tenancy Act') && citesLaw('Transfer of Property Act, 1882') && !citesLaw('as clause 2 of our agreement says'));
+  assert.ok(citesLaw('as per the Model Tenancy Act') && citesLaw('the Consumer Protection Act gives me') && citesLaw('as required under Section 11 of the Model Tenancy Act') && citesLaw('Transfer of Property Act, 1882') && !citesLaw('as clause 2 of our agreement says'));
+});
+test('a named charge priced in months of rent is that charge, not rent owed', () => {
+  const c = ['1. The monthly rent is Rs. 20,000.'];
+  assert.deepEqual(audit(parseDeductions("Painting - one month's rent - Rs. 18,000\nCleaning equal to half month rent: Rs 9,000"), c).lines.map(l => `${l.kind}:${l.label}`), ['painting:out', 'cleaning:out']);
+});
+test('a lock-in penalty is "in" only when a clause prices it', () => {
+  const priced = ['1. The monthly rent is Rs. 20,000.', "2. If the Tenant vacates during the lock-in, a penalty of one month's rent is payable."];
+  assert.equal(audit([{ item: 'Lock-in penalty', amount: 20000 }], priced).lines[0].label, 'in');
+  assert.equal(audit([{ item: 'Lock-in penalty', amount: 20000 }], ['1. The monthly rent is Rs. 20,000.', '2. The Tenant shall not vacate during the first eleven months.']).lines[0].label, 'bill');
 });
