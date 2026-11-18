@@ -30,6 +30,12 @@ const LEX = {
   structure: '(?:structural|roof|plumbing|wiring|electrical|leak\\w*|ceiling|wall)',
 };
 
+// Lifestyle pack: a clock time, words for coming and going, and the penalties that turn a house rule into a real cost.
+const TIME = '\\b\\d{1,2}(?:[.:]\\d{2})?\\s*(?:pm|p\\.m\\.|am|a\\.m\\.)';
+const MOVE = '(?:return\\w*|(?:be |come |coming |get |getting )?back|com(?:e|ing) (?:home|in)|enter\\w*|entry|leav(?:e|ing)|go(?:ing)? out|be inside|be in)';
+const WHEN = '(?:before|after|by|between|beyond|later than|past)';
+const PEN = /(forfeit\w*|deduct\w*|\bfine\b|penalt\w*|terminat\w*|evict\w*|eviction|vacate|cancel\w*)/i;
+
 export const RULES: Rule[] = [
   {
     id: 'entry', label: 'Entry and inspection', detect: new RegExp(`\\b${LEX.enter}\\b`, 'i'),
@@ -348,6 +354,79 @@ export const RULES: Rule[] = [
       notDetected: ['The rent is Rs. 20,000.', 'No pets are allowed.'],
       medium: ['Property tax and all municipal taxes shall be paid by the Tenant.', 'The Tenant shall pay all society charges, corpus fund, and any future levies demanded by the association.'],
       notHigh: ['Property tax shall be paid by the Owner.'],
+    },
+  },
+  // Lifestyle pack (19 Nov 2026): curfews, visitor bans, who may live in the flat, food. A restriction alone is medium
+  // (a closer look, and a cloud second opinion if the on-device model says ok); a restriction that costs the deposit,
+  // a fine or the flat is high. Each skips what the older guests and restrictions rules already report, so a clause is
+  // not flagged twice for the same thing.
+  {
+    id: 'curfew', label: 'Curfew and coming-home times', detect: new RegExp(`${TIME}|\\bmidnight\\b|\\bcurfew\\b`, 'i'),
+    check: t => {
+      const hit = sentences(t).some(x => !new RegExp(`${LESSOR}[^.]{0,30}(?:may|shall|will|can)[^.]{0,30}(?:enter|visit|inspect)`, 'i').test(x)
+        && (/\bcurfew\b/i.test(x) || new RegExp(`${MOVE}\\b[^.]{0,60}${WHEN}\\s+(?:\\d|midnight)|${WHEN}\\s+(?:${TIME}|midnight)[^.]{0,60}${MOVE}`, 'i').test(x)));
+      if (!hit) return [];
+      return PEN.test(t) ? [f('curfew', 'high', 'Coming home late can cost you the flat or money', 'A fixed time to be home, backed by a fine, a deduction or ending the tenancy, controls your private life and gives the landlord an easy reason to act.', 'tip-lifestyle')]
+        : [f('curfew', 'medium', 'Fixed time to be home', 'A rule on when you may come and go is a limit on your private life. Ask for it to be removed, or for a gate key.', 'tip-lifestyle')];
+    },
+    examples: {
+      detected: ['The Tenant must return before 10 PM.', 'A curfew applies to all occupants.'],
+      notDetected: ['The rent is Rs. 20,000.', 'The Lessee shall keep the flat clean.'],
+      high: ['Coming home after 11 p.m. more than twice a month shall be a breach, and the Owner may terminate this Agreement.'],
+      medium: ['The Tenant must return to the premises before 10 PM every night.', 'The Lessee shall not enter or leave the building between 11 pm and 5 am.'],
+      notHigh: ['The Landlord may enter between 10 am and 6 pm after 24 hours notice.', 'Loud music shall not be played after 10 PM.', 'The main gate is closed at 11 PM; residents have their own key.'],
+    },
+  },
+  {
+    id: 'visitors', label: 'Visitor bans and permission', detect: /\b(?:guests?|visitors?|friends|outsiders)\b/i,
+    check: t => {
+      const ban = /(?:not|no|never)\b[^.]{0,20}\b(?:entertain|invite|receive|host)\w*[^.]{0,20}\b(?:guests?|visitors?|friends|outsiders)\b|(?:\bno\b|\bnot\b)[^.]{0,30}\b(?:guests?|visitors?|friends|outsiders)\b[^.]{0,60}(?:allowed|permitted|entertained|admitted)|\b(?:guests?|visitors?|friends|outsiders)\b[^.]{0,60}(?:prohibited|not (?:be )?(?:allowed|permitted|entertained)|barred|forbidden)/i.test(t);
+      const perm = /\b(?:guests?|visitors?|friends|outsiders)\b[^.]{0,80}(?:only |solely )?(?:with|after|without)[^.]{0,30}(?:written |prior |advance )*(?:permission|approval|consent)/i.test(t);
+      if (!ban && !perm) return [];
+      if (PEN.test(t)) return [f('visitors', 'high', 'A visitor can cost you money or the flat', 'A fine, a deduction or ending the tenancy because someone visited you is a heavy penalty for ordinary life.', 'tip-lifestyle')];
+      if (RULES.find(r => r.id === 'guests')!.check!(t, { ex: undefined as never }).length) return []; // already reported by "guests"
+      return [f('visitors', 'medium', ban ? 'No visitors allowed' : "Visitors only with the landlord's permission", 'Who visits your home is your own affair. A ban, or a permission you must ask for each time, is easy to use as a pretext.', 'tip-lifestyle')];
+    },
+    examples: {
+      detected: ['No guests are allowed in the flat.', 'Visitors shall sign the register at the gate.'],
+      notDetected: ['The rent is Rs. 20,000.', 'The deposit is refundable.'],
+      high: ["If any visitor is found in the flat without the Owner's approval, Rs. 5,000 shall be deducted from the deposit."],
+      medium: ['No guests or visitors are allowed inside the flat.', 'The Tenant shall not entertain any visitors in the flat.', 'Visitors may come only with the prior written permission of the Landlord.'],
+      notHigh: ['Visitors shall sign the register at the gate.', 'Guests staying longer than 15 days should be informed to the Owner.'],
+    },
+  },
+  {
+    id: 'occupants', label: 'Who may live in the flat', detect: /\b(?:unmarried|married couples?|live-?in|partners?|girlfriend|boyfriend|bachelors?|spinsters?|marriage certificate|cohabit\w*)\b/i,
+    check: t => {
+      const limit = /(?:only|solely|exclusively)[^.]{0,30}(?:to )?(?:a )?married|\b(?:unmarried|live-?in|partners?|girlfriend|boyfriend|bachelors?|spinsters?)\b[^.]{0,80}(?:not (?:be )?(?:allowed|permitted)|prohibited|barred|forbidden|found|shall not|cannot|will not)|(?:not|no)\b[^.]{0,40}\b(?:unmarried|live-?in|partners?|girlfriend|boyfriend|bachelors?)\b|marriage certificate|cohabit\w*[^.]{0,60}(?:not|other than)[^.]{0,30}(?:spouse|husband|wife)/i.test(t);
+      if (!limit) return [];
+      return PEN.test(t) ? [f('occupants', 'high', 'Your partner or marital status can cost you the deposit or the flat', 'Losing the deposit or the home because of who you live with, or whether you are married, is a heavy penalty for private life.', 'tip-lifestyle')]
+        : [f('occupants', 'medium', 'Limits on who may live with you', 'A rule that only married couples may stay, or that bars a partner or bachelors, reaches into your private life. Decide before signing whether you can live with it.', 'tip-lifestyle')];
+    },
+    examples: {
+      detected: ['The flat is let only to a married couple.', 'Bachelors are not allowed.'],
+      notDetected: ['The rent is Rs. 20,000.', 'The partnership firm of the Owner shall collect rent.'],
+      high: ['If an unmarried partner is found staying, the entire security deposit shall stand forfeited.', "Should the Lessee be found cohabiting with a person who is not the Lessee's spouse, this lease shall be cancelled and the advance forfeited."],
+      medium: ['Bachelors and live-in couples are not permitted, and the Tenant shall produce a marriage certificate on demand.', 'The Tenant shall not allow a boyfriend, girlfriend or any partner to stay in the flat.'],
+      notHigh: ['The flat is let to the Tenant and his family members.'],
+    },
+  },
+  {
+    id: 'food', label: 'Food rules', detect: /\b(?:eggs?|fish|chicken|mutton|beef|pork|non-?veg\w*|vegetarian\w*|pure[- ]veg|onions?|garlic)\b/i,
+    check: t => {
+      const limit = /(?:not|no|prohibit\w*|forbid\w*|ban\w*)\b[^.]{0,80}\b(?:eggs?|fish|chicken|mutton|beef|pork|onions?|garlic)\b|\b(?:eggs?|fish|chicken|mutton|beef|pork|onions?|garlic)\b[^.]{0,80}(?:not (?:be )?(?:allowed|permitted|cooked)|prohibited|forbidden|banned|shall not)|pure[- ]veg\w*|only vegetarian|vegetarians? only|strictly vegetarian/i.test(t);
+      const older = /(?:not|no|prohibit\w*|forbid\w*|ban\w*)\b[^.]{0,80}(?:non-?veg\w*|\bmeat\b)|(?:non-?veg\w*|\bmeat\b)[^.]{0,60}(?:not (?:allowed|permitted)|prohibited|forbidden|banned)|only vegetarian/i.test(t);
+      const linked = /(?:cook\w*|eat\w*|consum\w*|bring\w*)[^.;]{0,40}\b(?:eggs?|fish|chicken|mutton|beef|pork|non-?veg\w*|meat|onions?|garlic)\b/i.test(t) && PEN.test(t);
+      if (!limit && !older && !linked) return [];
+      if (PEN.test(t)) return [f('food', 'high', 'What you cook can cost you money or the flat', 'A fine, a deduction or eviction over the food you cook at home is a heavy penalty for private life.', 'tip-lifestyle')];
+      return older ? [] : [f('food', 'medium', 'Food restriction', 'A rule about what you may cook or eat at home is a limit on private life. Decide before signing whether you can live with it.', 'tip-lifestyle')]; // the plain non-veg ban is reported by "restrictions"
+    },
+    examples: {
+      detected: ['Cooking fish is not allowed.', 'This is a pure veg building.'],
+      notDetected: ['The rent is Rs. 20,000.', 'The Tenant shall dispose of food waste in the bins.'],
+      high: ['Cooking non-vegetarian food will lead to immediate eviction.', 'Onion and garlic shall not be cooked, failing which a fine of Rs. 2,000 shall be payable.'],
+      medium: ['Cooking eggs, fish or chicken is strictly prohibited in the kitchen.'],
+      notHigh: ['The Tenant shall keep the kitchen clean.', 'Non-vegetarian food is not allowed.'],
     },
   },
 ];

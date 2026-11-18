@@ -111,6 +111,14 @@ export const NOTES: Note[] = [
     sources: [],
   },
   {
+    id: 'tip-lifestyle', basis: 'practice', scope: 'india', status: 'tip', checked: '2026-11-19',
+    unverified: 'Whether a court would enforce any particular house rule of this kind. This tool has not checked that, so it does not say these clauses are unlawful.',
+    title: 'Practical tip: curfews, visitor bans and rules on who lives with you',
+    summary: "Some agreements set a time to be home, ban visitors or require the landlord's permission for them, allow only married couples, or bar certain food. These are house rules about your private life, not about the flat. The risk is practical: a breach can be used as a reason to keep the deposit or end the tenancy. Before signing, ask for the rule to be removed, or at least for the penalty attached to it to go. Get any change in writing. This is a practical tip, not a legal citation.",
+    tags: ['curfew', 'guests', 'visitors', 'friends', 'partner', 'unmarried', 'bachelor', 'married', 'couple', 'food', 'vegetarian', 'non-veg', 'eggs', 'house rules', 'privacy', 'lifestyle'],
+    sources: [],
+  },
+  {
     id: 'tip-handover', basis: 'practice', scope: 'india', status: 'tip', checked: CHECKED,
     title: 'Practical tip: record the flat condition and the refund timeline',
     summary: "Photograph the flat and list fixtures at handover, and get the deposit refund deadline in writing (for example, within a fixed number of days of vacating). A deposit that is refunded only after the landlord finds a new tenant, with no time limit, depends on events you do not control. This is a practical tip, not a legal citation.",

@@ -1,0 +1,14 @@
+[
+ { "id": "M1", "label": "risky", "topic": "curfew", "text": "Occupants returning after 9:30 pm will not be let in by the watchman." },
+ { "id": "M2", "label": "risky", "topic": "curfew", "text": "Late entry after midnight attracts a penalty of Rs. 500 each time." },
+ { "id": "M3", "label": "risky", "topic": "visitors", "text": "The Tenant shall not entertain any visitors in the flat." },
+ { "id": "M4", "label": "risky", "topic": "visitors", "text": "Friends of the Tenant are permitted only on Sundays and only with the Owner's consent." },
+ { "id": "M5", "label": "risky", "topic": "occupants", "text": "Only family tenants will be accepted; the flat shall not be given to bachelors under any circumstances." },
+ { "id": "M6", "label": "risky", "topic": "occupants", "text": "Should the Lessee be found cohabiting with a person who is not the Lessee's spouse, this lease shall be cancelled and the advance forfeited." },
+ { "id": "M7", "label": "risky", "topic": "food", "text": "Meat, fish and eggs shall not be brought into the premises." },
+ { "id": "M8", "label": "risky", "topic": "food", "text": "Any tenant found cooking non-veg shall be asked to vacate within 7 days." },
+ { "id": "G1", "label": "ok", "topic": "visitors", "text": "The Tenant is responsible for the conduct of the Tenant's guests within the society premises." },
+ { "id": "G2", "label": "ok", "topic": "curfew", "text": "The swimming pool is open from 6 am to 9 pm." },
+ { "id": "G3", "label": "ok", "topic": "occupants", "text": "The Tenant may share the flat with a partner or friends at the Tenant's choice." },
+ { "id": "G4", "label": "ok", "topic": "food", "text": "The Owner has fitted the kitchen with a gas stove and a fish-shaped chimney hood." }
+]
