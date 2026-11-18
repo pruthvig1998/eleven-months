@@ -59,7 +59,7 @@ A route appears on the site only after its values are in `app/.env.local` and th
 1. Firebase console > `eleven-months-nano` > Firestore Database > Create database (production mode, a region near India such as `asia-south1`).
 2. Deploy the rules in this repo (visitors can only add a suggestion; nobody can read, change or delete one from the site):
    ```bash
-   cd app && npx firebase deploy --only firestore:rules
+   cd app && npx firebase-tools deploy --only firestore:rules
    ```
 3. Firebase console > App Check > Firestore > Enforce (the site already uses App Check).
 4. Service account for the daily job: Project settings > Service accounts > Generate new private key. Do not save the file in this repo. Open it, copy all of it, then delete the downloaded file.
