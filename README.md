@@ -207,7 +207,8 @@ The code was written with an AI coding assistant, which the rules allow. The mea
 
 - Music in the demo video: "Happy Beats & Business Moves Vol. 11" by Sascha Ende, [ende.app](https://ende.app/en), licensed CC BY 4.0. The video itself is not in this repository.
 - Text recognition: [Tesseract.js](https://github.com/naptha/tesseract.js) (Apache-2.0). PDF reading: [pdf.js](https://github.com/mozilla/pdf.js) (Apache-2.0).
-- Fonts: Unbounded, Hanken Grotesk and Martian Mono (SIL Open Font License), through Fontsource.
+- Fonts: Instrument Serif and Geist (SIL Open Font License), through Fontsource.
+- Motion: [GSAP](https://gsap.com) and [Lenis](https://lenis.dev). The hero background is the "Threads" component from [React Bits](https://reactbits.dev), copied into `app/src/vendor/react-bits/` under its own MIT + Commons Clause licence (not Apache-2.0), used as part of this application only.
 
 ## Licence
 

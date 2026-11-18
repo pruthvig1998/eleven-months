@@ -1,4 +1,6 @@
 import './style.css';
+import { scrollToEl } from './motion.ts';
+import './hero.tsx';
 import { app, setCloudModel, initNano, nanoWarm, nanoJudge, nanoNames, nanoReason, cloudJudge, cloudLabel, cloudConfigured } from './ai.ts';
 import { loadSettings, DEFAULTS, type Settings } from './config.ts';
 import { splitClauses, clauseLabel } from './split.ts';
@@ -120,7 +122,7 @@ $('analyze').onclick = async () => {
   if (!clauses.length) { status('No clauses found. Separate clauses with blank lines or numbers.', 'error'); return; }
   const dc = docCheck(lease);
   if (dc.block) { status(dc.block, 'error'); $('out').innerHTML = `<section class="verdict bad"><h2>Not scanned.</h2><p>${esc(dc.block)}</p></section>`; return; }
-  running = true; (['analyze', 'init', 'sample', 'upload'] as const).forEach(id => ($(id) as HTMLButtonElement).disabled = true);
+  running = true; document.body.dataset.scanning = 'true'; (['analyze', 'init', 'sample', 'upload'] as const).forEach(id => ($(id) as HTMLButtonElement).disabled = true);
   $('out').setAttribute('aria-busy', 'true'); $('out').innerHTML = ''; $('hudState').textContent = 'scanning';
   try {
     // No on-device model (phones, Safari, Firefox): run the fixed rules only, and say so.
@@ -137,7 +139,7 @@ $('analyze').onclick = async () => {
     for (const [i, text] of clauses.entries()) {
       status(cloudAll ? `Rules and cloud scan: ${i + 1} of ${clauses.length}` : rulesOnly ? `Rules-only scan: ${i + 1} of ${clauses.length}` : i === 0 ? 'Scanning clause 1. After a Chrome restart the first answer can take up to 20 s while the model loads.' : `Scanning clause ${i + 1} of ${clauses.length}`, 'busy');
       const el = document.createElement('article'); el.className = 'clause scanning'; el.style.setProperty('--i', String(Math.min(i, 8))); el.innerHTML = scanning(i, text);
-      $('out').appendChild(el); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      $('out').appendChild(el); scrollToEl(el);
       let nano: Model = { label: null, fields: null }, note = '';
       if (!rulesOnly) try { nano = await nanoJudge(text, hasFigures(text)); } catch (e) { note = `On-device model failed: ${(e as Error).message}`; }
       const d = decide(text, nano, { rent, mediumToCloud: settings.cloudOnMedium });
@@ -221,7 +223,7 @@ $('analyze').onclick = async () => {
     $('hudState').textContent = 'complete';
     status(`Done: ${clauses.length} clauses, ${risky} risky, ${cloudCalls} sent to cloud, ${checks} to check.`, 'done');
   } finally {
-    running = false; (['analyze', 'init', 'sample', 'upload'] as const).forEach(id => ($(id) as HTMLButtonElement).disabled = false);
+    running = false; document.body.dataset.scanning = 'false'; (['analyze', 'init', 'sample', 'upload'] as const).forEach(id => ($(id) as HTMLButtonElement).disabled = false);
     $('out').removeAttribute('aria-busy'); if ($('hudState').textContent === 'scanning') $('hudState').textContent = 'standby';
   }
 };

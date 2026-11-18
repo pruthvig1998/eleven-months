@@ -22,7 +22,7 @@ jobs:
         run: node --test --no-warnings rules/*.test.ts app/src/*.test.ts
       - name: Type-check
         working-directory: app
-        run: npx tsc --noEmit --allowImportingTsExtensions --target es2022 --module esnext --moduleResolution bundler --skipLibCheck --types vite/client --lib es2022,dom,dom.iterable src/main.ts
+        run: npx tsc --noEmit --allowImportingTsExtensions --target es2022 --module esnext --moduleResolution bundler --skipLibCheck --jsx react-jsx --types vite/client --lib es2022,dom,dom.iterable src/main.ts
       - name: Build
         run: npm run build
         working-directory: app
