@@ -7,3 +7,5 @@ dist
 .hyperframes
 # Video working files: large renders and bundled music whose licence is not documented.
 brag-output
+
+.firebase/
