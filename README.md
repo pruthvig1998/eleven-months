@@ -18,8 +18,7 @@ It is a screening aid, not legal advice.
 > **For judges**
 > 1. Open **https://eleven-months-nano.web.app** in desktop Chrome 139 or newer. No login.
 > 2. Press **Load sample**, then **Scan lease**. (Press **Prepare model** first if the page asks; the first answer after a Chrome restart takes 13 to 20 s.)
-> 3. To see the on-device path, load the page, then switch the network off (DevTools > Network > Offline, or airplane mode) and scan again. The rules and Gemini Nano run on the device; only the cloud second opinion needs the network.
-> 4. On any clause marked "Sent to cloud (names and IDs masked)", open it to see the exact text that left the device.
+> 3. On any clause marked "Sent to cloud (names and IDs masked)", open it to see the exact text that left the device.
 >
 > Measured results: [Measured, not claimed](#measured-not-claimed) below, with the details in [`SCHEDULE.md`](SCHEDULE.md), [`RISK-KILL-REPORT.md`](RISK-KILL-REPORT.md) and [`GAP-REPORT.md`](GAP-REPORT.md).
 

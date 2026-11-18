@@ -76,7 +76,7 @@ Deterministic rules run before any model: they extract the numbers (small models
 Also: 174 automated tests, a Lighthouse accessibility score of 100, and photo reading that stays on the device and checks itself.
 
 ## Why this is different
-Many privacy tools mask text and then send all of it to a cloud model. Eleven Months protects privacy by routing first: the rules and Gemini Nano judge every clause on the device, and only the clauses that meet a stated trigger go to the cloud, masked, with the exact sent text shown to the user. If the on-device names check fails, the clause is not sent. Deterministic rules win on numbers, so a model never overrides an extracted deposit, notice period or rent rise. And the output is a decision, not a summary: a verdict for each clause, what to ask the landlord for instead, a sheet to take to the signing, and Telangana law notes that show their sources and what could not be verified.
+Eleven Months protects privacy by routing, not only by masking: the rules and Gemini Nano judge every clause on the device, and only the clauses that meet a stated trigger go to the cloud, masked, with the exact sent text shown to the user. If the on-device names check fails, the clause is not sent. Deterministic rules win on numbers, so a model never overrides an extracted deposit, notice period or rent rise. And the output is a decision, not a summary: a verdict for each clause, what to ask the landlord for instead, a sheet to take to the signing, and Telangana law notes that show their sources and what could not be verified.
 
 ## What we learned
 Each layer should do what it is good at: rules for numbers, the on-device model for judgement and names, the cloud for disagreements. Measure on data written after the rules, because the first version of anything looks better than it is. And the privacy trade-off is a number, not a slogan: in this design, catching 10 more harmful clauses cost 12 more clauses leaving the device.
@@ -96,9 +96,8 @@ firebase, firebase-ai-logic, firebase-app-check, firebase-remote-config, cloud-f
 1. Open https://eleven-months-nano.web.app in desktop Chrome 139 or newer. No login.
 2. Press **Load sample**, then **Scan lease**. Press **Prepare model** first if the page asks. The first time, Chrome downloads its built-in model (about 4 GB); after a Chrome restart the first answer takes 13 to 20 s. Expected: "6 of 11 clauses need attention."
 3. On any clause marked "Sent to cloud (names and IDs masked)", open it to see exactly what left the device.
-4. To see the on-device path alone: load the page, switch the network off (DevTools > Network > Offline, or airplane mode) and scan again.
-5. To try a phone or another browser: open the same link, tick the cloud check under the text box, and scan the sample.
-6. To try photo reading: take a photo of any printed page of English text and press **Upload PDF or photo**.
+4. To try a phone or another browser: open the same link, tick the cloud check under the text box, and scan the sample.
+5. To try photo reading: take a photo of any printed page of English text and press **Upload PDF or photo**.
 
 The sample agreement is made up; no real personal data is used anywhere.
 
