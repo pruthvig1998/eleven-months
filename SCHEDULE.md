@@ -162,3 +162,5 @@ Audit of the live site before the changes: Lighthouse (mobile) accessibility 98,
 After the fixes, same check at 390 px: 0 contrast failures, 0 heading jumps, no sideways scroll.
 
 Left as is: the reCAPTCHA Enterprise cookie that lowers best practices (App Check needs it in production). Not done: a pass on a real phone, Telugu and Hindi (waits on your decision), and a screen-reader test.
+
+Stage D deployed (Nov 18). Lighthouse (mobile) on the live site after deploy: accessibility **100** (was 98), best practices 77, SEO 100. Rules-only sample scan at 390 px: 6 of 11, no sideways scroll.
