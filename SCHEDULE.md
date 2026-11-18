@@ -110,3 +110,21 @@ What follows for Stage B: send a clause to cloud when the on-device model says "
 - The on-device numbers prompt is skipped for clauses with no figures (9 of 40 in the first data set).
 - Local test in desktop Chrome, 4 clauses: reasons shown for two model-only clauses, the 24% interest clause asked for cloud and showed "check this clause". Cloud calls are refused on localhost, so the schema, the cloud reason and the cloud second opinion are untested until a deploy.
 - 156 tests pass.
+
+## Stage B results (Nov 18, live site, same 96 unseen clauses)
+
+| Mode | Harmful caught, before | after Stage B | Fair wrongly flagged, before | after | Sent to cloud, before | after | Time, before | after |
+|---|---|---|---|---|---|---|---|---|
+| Desktop Chrome: rules + on-device model + cloud on trigger | 57 of 70 | **67 of 70** | 2 of 26 | 1 of 26 | 33 of 97 | 45 of 97 | 847 s | 1,206 s |
+| No on-device model: rules + cloud on every clause | 69 of 70 | 68 of 70 | 0 of 26 | 0 of 26 | 97 | 97 | 400 s | 341 s |
+
+Desktop by set after Stage B: 30 of 30, 19 of 20, 18 of 20.
+
+- Still missed on desktop: a per-unit electricity rate (the cloud also called it ok; it does show "check this clause"), a flat Rs. 2,000 late charge, and "male visitors are not allowed after 8 pm". The last two were called ok by the on-device model with no rule matching, so nothing went to cloud.
+- The one false flag left is a fair deposit clause the on-device model calls risky; no rule or cloud check contradicts it.
+- 17 clauses showed "Why the model flagged this" in each mode. The cloud response schema produced no failed or unparseable answers in about 150 cloud calls.
+- Cost of the gain: 12 more clauses left the device (33 to 45 of 97), and the desktop run took 6 minutes longer. About 12 s per clause on this machine, which was under load. The extra time is the extra cloud calls plus one more on-device prompt for each model-only finding.
+- The cloud mode lost one clause (the per-unit rate) compared with the earlier run. Its prompt now also asks for a reason; one run each, so this may be chance.
+- The desktop summary showed "29 to check". Most of those are clauses already marked risk where the cloud and the on-device model disagreed, which is noise on a clause the user is already told to look at.
+
+Same limit as before: clauses written by the project's author, in clean English, one run per mode.
