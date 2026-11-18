@@ -143,3 +143,22 @@ Same limit as before: clauses written by the project's author, in clean English,
 - Footer and thresholds note show; source "built-in defaults" (no Remote Config parameters set in the console yet).
 - Sample, desktop Chrome: 6 of 11 risky, 8 points to raise, 1 clause to cloud, 202 s.
 - Sample, phone width with the cloud check: 6 of 11, 11 of 11 cloud checks, no errors, 76 s. Earlier today this took 23 s. Both runs happened at the same time on the same machine and shared the cloud rate limit, so neither time is clean.
+
+## Stage D: built Nov 18, not deployed
+
+Audit of the live site before the changes: Lighthouse (mobile) accessibility 98, best practices 77, SEO 100. A contrast and tap-size check over the whole page after a scan, at 390 px wide, found more than Lighthouse did (Lighthouse audits the page before a scan).
+
+| Found | Fix |
+|---|---|
+| Grey text at 2.9 to 3.2:1 contrast (chips, "RULES / NANO / CLOUD", notes, footer); needs 4.5:1 | `--dim` from #566179 to #7f8ba5: 5.0:1 or better on every background |
+| Heading order skipped a level (the signing sheet's sections were h3 with no h2) | Sheet title is now an h2 |
+| Missed-clause notes box had no label | `aria-label` added |
+| Tap targets under 24 px: checkboxes 13 to 17 px, "Why it matters" 11 px tall | Checkboxes 20 px (24 px on touch screens), and they sit inside full-width labels; summaries padded |
+| Rules-only notice in the verdict was a block of monospace capitals on a phone | Normal body text |
+| Panel labels and the eyebrow line wrapped awkwardly at 390 px | Stack on narrow screens |
+| No focus ring on links, summaries and checkboxes | Focus ring on every control |
+| First-time users had no short instruction | One line above the box: paste or upload, press Scan lease, read the verdict and print the sheet |
+
+After the fixes, same check at 390 px: 0 contrast failures, 0 heading jumps, no sideways scroll.
+
+Left as is: the reCAPTCHA Enterprise cookie that lowers best practices (App Check needs it in production). Not done: a pass on a real phone, Telugu and Hindi (waits on your decision), and a screen-reader test.

@@ -52,7 +52,7 @@ function renderSheet(scan: { asks: SheetAsk[]; gaps: string[]; summary: string }
   const gaps = scan?.gaps.length ? `<h3>Missing from the lease</h3><ul class="gap-list">${scan.gaps.map(g => `<li>${esc(g)}</li>`).join('')}</ul>` : '';
   const visit = VISIT.map((g, gi) => `<h3>${esc(g.title)}</h3><ul class="tick-list">${g.items.map((it, ii) => `<li><label><input type="checkbox" id="v${gi}_${ii}"> <span>${esc(it)}</span></label></li>`).join('')}</ul>`).join('');
   $('sheet').innerHTML = `
-    <div class="label"><span>Take this to the signing</span><button type="button" id="printBtn">Print or save as PDF</button></div>
+    <div class="label"><h2>Take this to the signing</h2><button type="button" id="printBtn">Print or save as PDF</button></div>
     <p class="sheet-sum">${scan ? esc(scan.summary) : 'Scan a lease to add its risky clauses and what to ask for. The flat checklist below works without a scan.'}</p>
     ${scan && !scan.asks.length && !scan.gaps.length ? '<p class="sheet-sum">Nothing to ask for was found in this scan.</p>' : ''}
     ${asks}${gaps}${visit}

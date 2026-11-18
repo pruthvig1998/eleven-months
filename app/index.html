@@ -24,7 +24,8 @@
     <section class="deck">
       <div class="panel feed">
         <div class="label"><label for="lease">Your agreement</label><span>read on this device</span></div>
-        <textarea id="lease" spellcheck="false" placeholder="Paste lease text here, upload a PDF or a photo, or load the sample."></textarea>
+        <p class="howto" id="howto">1. Paste the agreement, or upload a PDF or a photo. 2. Press <b>Scan lease</b>. 3. Read the verdict, then print the sheet for the signing.</p>
+        <textarea id="lease" aria-describedby="howto" spellcheck="false" placeholder="Paste lease text here, upload a PDF or a photo, or load the sample."></textarea>
         <div class="actions">
           <button id="sample" type="button">Load sample</button>
           <button id="upload" type="button">Upload PDF or photo</button>
@@ -68,7 +69,7 @@
       <p class="nsrc" id="toolsNote">Saving keeps the agreement text in this browser only. Anyone who uses this browser can open it.</p>
       <details class="openq"><summary>Did the scan miss a clause, or get one wrong?</summary>
         <p class="nsrc">Write what was missed. The note is kept in this browser only. Nothing is sent anywhere; copy the notes if you want to pass them on.</p>
-        <textarea id="missText" rows="3" placeholder="Example: clause 9 lets the owner raise the rent any time, and it was marked clear."></textarea>
+        <textarea id="missText" rows="3" aria-label="What the scan missed or got wrong" placeholder="Example: clause 9 lets the owner raise the rent any time, and it was marked clear."></textarea>
         <div class="actions"><button id="missSave" type="button">Save note</button><button id="missCopy" type="button">Copy all notes</button><span class="nsrc" id="missCount"></span></div>
       </details>
     </section>
