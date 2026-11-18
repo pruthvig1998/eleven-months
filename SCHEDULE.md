@@ -68,3 +68,13 @@ Not changed: the two on-device calls per clause. Skipping the numbers call for c
 ### After deploying the background model load (Nov 18)
 
 One timed run on the live site: clause 1 took 33 s, clause 2 took 59 s, clause 3 took 36 s. No improvement, and slower than the run before the change. The machine was still under load from other programs, so this run does not show whether the change helps. It does show the cold start is not the whole cause. To settle it: time the scan on an idle machine, and if it is still slow, cut the on-device calls per clause from two to one.
+
+## Cloud check for browsers with no on-device model (Nov 18, live site, phone-width desktop browser)
+
+| Version | Time for the sample (11 clauses) | Cloud checks that succeeded |
+|---|---|---|
+| Two cloud requests per clause, one after the other | 121 s | 11 of 11 |
+| Two per clause, sent together | 55 s | 6 of 11 (HTTP 429 from the free tier's rate limit) |
+| One request per clause (label only), retry on 429 | **23 s** | 11 of 11, no 429 |
+
+The last version is live. The rate limit is shared by everyone using the site, so several people scanning at once can still get 429; the retry waits and tries again up to three times. Not tested on a real phone.

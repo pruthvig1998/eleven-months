@@ -28,7 +28,8 @@ const NAMES = (t: string) => `List every person's name in this text, exactly as 
 
 // Nano wraps JSON in code fences; empty or template echoes become null and trigger cloud.
 const parse = (t: string): any => { try { return JSON.parse(t); } catch { const m = t.match(/\{[\s\S]*\}/); try { return m ? JSON.parse(m[0]) : null; } catch { return null; } } };
-// The free cloud tier allows only about 10 to 15 requests a minute (measured: HTTP 429 above that), so a 429 waits and retries.
+// The free cloud tier has a rate limit (HTTP 429 was seen with 22 requests in under a minute; 11 in 23 s passed; the exact
+// limit is not known), so a 429 waits and retries.
 const run = async (m: typeof nano, prompt: string) => {
   for (let attempt = 0; ; attempt++) {
     try { return parse((await m.generateContent(prompt)).response.text()); }
