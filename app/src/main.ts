@@ -115,18 +115,21 @@ $('analyze').onclick = async () => {
     let rulesOnly = !('LanguageModel' in self) || (await (self as any).LanguageModel.availability().catch(() => 'unavailable')) === 'unavailable';
     if (!rulesOnly) { $('hudState').textContent = 'loading model'; if (!(await ensureNano())) rulesOnly = true; $('hudState').textContent = 'scanning'; }
     if (rulesOnly) pill('pillNano', 'error', 'On-device model: not available here');
+    // Opt-in for devices with no on-device model: every clause goes to cloud after regex masking (no on-device names check is possible).
+    const cloudAll = rulesOnly && cloudConfigured && ($('cloudOk') as HTMLInputElement).checked;
     const rent = extract(lease).rent ?? undefined;
     let risky = 0, cloudCalls = 0, checks = 0, unmatched = 0;
     const sheetAsks: SheetAsk[] = [];
     hud(0, clauses.length, 0, 0, 0);
     for (const [i, text] of clauses.entries()) {
-      status(rulesOnly ? `Rules-only scan: ${i + 1} of ${clauses.length}` : i === 0 ? 'Scanning clause 1. After a Chrome restart the first answer can take up to 20 s while the model loads.' : `Scanning clause ${i + 1} of ${clauses.length}`, 'busy');
+      status(cloudAll ? `Rules and cloud scan: ${i + 1} of ${clauses.length}` : rulesOnly ? `Rules-only scan: ${i + 1} of ${clauses.length}` : i === 0 ? 'Scanning clause 1. After a Chrome restart the first answer can take up to 20 s while the model loads.' : `Scanning clause ${i + 1} of ${clauses.length}`, 'busy');
       const el = document.createElement('article'); el.className = 'clause scanning'; el.style.setProperty('--i', String(Math.min(i, 8))); el.innerHTML = scanning(i, text);
       $('out').appendChild(el); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       let nano: Model = { label: null, fields: null }, note = '';
       if (!rulesOnly) try { nano = await nanoJudge(text); } catch (e) { note = `On-device model failed: ${(e as Error).message}`; }
       const d = decide(text, nano, { rent });
       let cloud: Model | null = null, sent = '';
+      if (cloudAll) try { sent = mask(text, []); cloud = await cloudJudge(sent); cloudCalls++; } catch (e) { note ||= `Cloud check failed: ${(e as Error).message}`; sent = ''; }
       if (d.needsCloud && !rulesOnly) {
         if (!cloudConfigured) note ||= 'Needs a cloud check, but cloud is not configured.';
         else {
@@ -139,7 +142,8 @@ $('analyze').onclick = async () => {
       }
       const fin0 = finalize(d, nano, cloud);
       // Rules-only: high findings mark the clause risky, medium ones ask for a look, and a clause no rule matched is counted so the verdict can say so.
-      const fin = rulesOnly ? { ...fin0, label: d.rules.flags.length || d.topics.some(x => x.severity === 'high') ? ('risky' as const) : null, check: d.topics.some(x => x.severity === 'medium') } : fin0;
+      const flagged = d.rules.flags.length > 0 || d.topics.some(x => x.severity === 'high');
+      const fin = cloud && rulesOnly ? { ...fin0, label: flagged ? ('risky' as const) : fin0.label } : rulesOnly ? { ...fin0, label: d.rules.flags.length || d.topics.some(x => x.severity === 'high') ? ('risky' as const) : null, check: d.topics.some(x => x.severity === 'medium') } : fin0;
       if (!d.rules.flags.length && !d.topics.some(x => x.severity !== 'info')) unmatched++;
       const unresolved = !rulesOnly && d.needsCloud && !cloud, label = fin.label ?? 'unknown';
       if (fin.label === 'risky') risky++;
@@ -195,7 +199,7 @@ $('analyze').onclick = async () => {
     const issues = [...new Set(sheetAsks.map(a => a.title))].slice(0, 3);
     const head = risky ? `${risky} of ${clauses.length} clauses need attention.` : checks ? `${checks} of ${clauses.length} clauses are worth a closer look.` : rulesOnly ? 'No fixed rule was triggered.' : 'No risky clauses found.';
     const detail = (issues.length ? `Biggest issues: ${issues.join('; ')}. ` : '') + `${sheetAsks.length} points to raise with the landlord` + (cov.some(c => !c.present) ? `, and ${cov.filter(c => !c.present).length} things the lease does not mention.` : '.') + (whole.length ? ` ${whole.length} whole-agreement ${whole.length === 1 ? 'problem' : 'problems'} listed at the end.` : '');
-    $('out').insertAdjacentHTML('afterbegin', `<section class="verdict ${risky || checks ? 'bad' : 'good'}"><h2>${esc(head)}</h2><p>${esc(detail)}</p>${dc.warnings.map(w => `<p class="note">${esc(w)}</p>`).join('')}${rulesOnly ? `<p class="note">Rules-only scan: this browser has no on-device model. ${unmatched} of ${clauses.length} clauses matched no rule. That does not mean they are fine: read those yourself, or open this page in desktop Chrome for the full scan.</p>` : ''}<p class="nsrc">A screening aid, not legal advice.</p></section>`);
+    $('out').insertAdjacentHTML('afterbegin', `<section class="verdict ${risky || checks ? 'bad' : 'good'}"><h2>${esc(head)}</h2><p>${esc(detail)}</p>${dc.warnings.map(w => `<p class="note">${esc(w)}</p>`).join('')}${cloudAll ? `<p class="note">This browser has no on-device model. Every clause was checked by the fixed rules and by the cloud model, after masking. ${cloudCalls} of ${clauses.length} cloud checks succeeded.</p>` : rulesOnly ? `<p class="note">Rules-only scan: this browser has no on-device model. ${unmatched} of ${clauses.length} clauses matched no rule. That does not mean they are fine: read those yourself, tick the cloud check under the text box, or open this page in desktop Chrome for the full scan.</p>` : ''}<p class="nsrc">A screening aid, not legal advice.</p></section>`);
     lastScan = { lease, asks: sheetAsks }; $('tools').hidden = false;
     $('hudState').textContent = 'complete';
     status(`Done: ${clauses.length} clauses, ${risky} risky, ${cloudCalls} sent to cloud, ${checks} to check.`, 'done');
@@ -250,9 +254,12 @@ $('missCopy').onclick = () => { const all = missed(); if (all.length) copy(all.m
 savedUi(); missUi();
 
 // If the model is already downloaded, load it while the user is still pasting. Never starts a download.
+// With no on-device model at all (phones, Safari, Firefox), offer the opt-in cloud check instead.
 (async () => {
   try {
-    if (!('LanguageModel' in self) || (await (self as any).LanguageModel.availability()) !== 'available') return;
+    const avail = 'LanguageModel' in self ? await (self as any).LanguageModel.availability() : 'unavailable';
+    if (avail === 'unavailable' && cloudConfigured) $('cloudOpt').hidden = false;
+    if (avail !== 'available') return;
     if (await ensureNano(true)) await nanoWarm();
   } catch { /* warming is optional; the scan loads the model itself if this fails */ }
 })();

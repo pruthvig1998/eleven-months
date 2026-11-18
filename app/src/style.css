@@ -226,3 +226,6 @@ details.why-it-matters summary { color: var(--amber); }
 .tools { margin-top: 1.2rem; }
 .tools textarea { min-height: 5rem; margin: .6rem 0; }
 @media print { .tools { display: none; } }
+.cloud-opt { display: flex; gap: .6rem; align-items: flex-start; margin-top: .9rem; font: 400 .78rem/1.5 var(--body); color: var(--mute); }
+.cloud-opt[hidden] { display: none; }
+.cloud-opt input { margin-top: .2rem; accent-color: var(--lime); flex: none; }

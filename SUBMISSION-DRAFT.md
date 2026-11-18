@@ -107,3 +107,7 @@ Before recording: open Chrome 139+, load the live site, click Scan lease on the 
 - [ ] Decide whether to create a public repo (needs a first commit; I have made none). `.gitignore` and `README.md` are ready.
 - [ ] Delete the `app-m1` App Check debug token and the unused Classic reCAPTCHA key under "My First Project" (its secret key was shown in a screenshot).
 - [ ] If you market it as a Telangana product, use "built for Telangana tenants", not "Telangana law checker", and avoid official-looking branding.
+
+## Credit to include in the YouTube description
+
+Music: "Happy Beats & Business Moves Vol. 11" by Sascha Ende (ende.app), CC BY 4.0.

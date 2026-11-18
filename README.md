@@ -62,7 +62,7 @@ Every model call goes through the Firebase AI Logic Web SDK (`firebase/ai`). See
 - **Privacy by routing.** In the sample agreement, 2 of 11 clauses go to the cloud. If the on-device names check fails, the clause is not sent at all.
 - **Rules win on numbers.** A model never overrides a figure the rules extracted.
 - **App Check** protects the cloud calls (reCAPTCHA Enterprise in production).
-- **No on-device model?** Phones, Safari and Firefox get a rules-only scan. It says so, and it says how many clauses matched no rule.
+- **No on-device model?** Phones, Safari and Firefox get a rules-only scan. It says so, and it says how many clauses matched no rule. The user can tick a box to also send every clause to the cloud model. In that mode masking is by pattern only (ID numbers, phones, emails, names after a title), because there is no on-device model to find names, and the page says that before the user ticks.
 
 ## Measured, not claimed
 
@@ -77,30 +77,107 @@ All test data is synthetic and written for this project. Numbers on real agreeme
 
 The third row is the honest limit of this project: the rules are precise and good with numbers, but they do not recognise new wordings of the same problem. That is the model's job, and it is why the rules-only mode is the weakest. Details: [`RISK-KILL-REPORT.md`](RISK-KILL-REPORT.md), [`GAP-REPORT.md`](GAP-REPORT.md), [`SCHEDULE.md`](SCHEDULE.md), [`AUDIT.md`](AUDIT.md).
 
-## Run it
+## Install and run, from zero
 
-Requirements: Node 23.6 or newer. For the full scan, desktop Chrome with the built-in model (the first use downloads about 4 GB).
+You need three things on your computer:
+
+- **Git**, to copy the code. Check with `git --version`.
+- **Node.js 23.6 or newer** (the tests run TypeScript files directly). Check with `node --version`. Get it from https://nodejs.org.
+- **Google Chrome on a desktop or laptop**, version 139 or newer, for the on-device model. Any other browser still runs the fixed rules.
+
+### 1. Get the code
+
+```bash
+git clone https://github.com/pruthvig1998/eleven-months.git
+cd eleven-months
+```
+
+### 2. Install and start the app
 
 ```bash
 cd app
 npm install
-cp .env.example .env.local   # your Firebase web config; needed only for cloud calls
 npm run dev
 ```
 
-Cloud calls need a Firebase project (the free Spark plan is enough), Firebase AI Logic with the Gemini Developer API, and App Check. In development, register an App Check debug token in the Firebase console. Without a Firebase config, the rules and the on-device model still work.
+The last command prints a local address, normally `http://localhost:5173`. Open it in Chrome. Press **Load sample**, then **Scan lease**.
 
-Tests (no extra dependencies):
+At this point the fixed rules and the on-device model work. Cloud checks are off, and the page says so ("Cloud: off"). That is enough to try the app.
+
+### 3. Turn on the on-device model (once per computer)
+
+Chrome downloads the model, about 4 GB, the first time a page asks for it.
+
+1. In the app, press **Prepare model** and wait for the pill at the top to say "On-device model: ready". The page shows the download progress.
+2. If the pill says "unsupported" or "unavailable", open `chrome://on-device-internals` in Chrome to see the model's status. The model needs a recent desktop Chrome, enough free disk space (Chrome asks for about 22 GB free) and a supported graphics card or enough memory. Chrome's own requirements are listed at https://developer.chrome.com/docs/ai/get-started.
+3. After you restart Chrome, the first answer can take 13 to 20 seconds while the model loads.
+
+### 4. Turn on cloud checks (optional)
+
+Cloud checks need your own Firebase project. The free Spark plan is enough.
+
+1. Go to https://console.firebase.google.com and create a project.
+2. In the project, add a **Web app** (the `</>` icon). Firebase shows a config block with `apiKey`, `authDomain`, `projectId` and `appId`.
+3. In the left menu open **AI Logic**, press **Get started**, and choose the **Gemini Developer API**.
+4. Copy the example settings file and fill it in with the values from step 2:
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   ```
+   VITE_FIREBASE_API_KEY=...
+   VITE_FIREBASE_AUTH_DOMAIN=...
+   VITE_FIREBASE_PROJECT_ID=...
+   VITE_FIREBASE_APP_ID=...
+   VITE_RECAPTCHA_SITE_KEY=
+   ```
+
+   Leave `VITE_RECAPTCHA_SITE_KEY` empty for local work. `.env.local` is ignored by git; never commit it.
+5. Stop the dev server (Ctrl+C) and run `npm run dev` again. Open the page, open Chrome's developer console (View, Developer, JavaScript Console) and copy the **App Check debug token** it prints.
+6. In the Firebase console open **App Check**, then **Apps**, open the menu on your web app, choose **Manage debug tokens**, and add the token. Never commit this token or paste it anywhere public.
+7. Reload the page. The pill now says "Cloud: masked clauses only".
+
+### 5. Run the tests
+
+From the top folder of the repository (not `app/`):
 
 ```bash
+cd ..
 node --test --no-warnings rules/*.test.ts app/src/*.test.ts
 ```
 
-Measure the rules on the unseen clause sets:
+You should see `pass 154` and `fail 0`. To measure the fixed rules on the unseen clause sets:
 
 ```bash
 node --no-warnings rules/probe-realworld3.ts
 ```
+
+### 6. Put it online (optional)
+
+The app is a static site. To host it on Firebase Hosting in your own project:
+
+1. In the Firebase console, open **App Check**, register your web app with **reCAPTCHA Enterprise**, and put the site key in `.env.local` as `VITE_RECAPTCHA_SITE_KEY`. Production does not use the debug token.
+2. Edit `app/.firebaserc` and replace `eleven-months-nano` with your own project ID.
+3. Build and deploy:
+
+   ```bash
+   cd app
+   npm run build
+   npx firebase-tools login
+   npx firebase-tools deploy --only hosting
+   ```
+
+### If something goes wrong
+
+| What you see | What to do |
+|---|---|
+| `node: bad option` or a syntax error when running the tests | Your Node.js is older than 23.6. Update it. |
+| "On-device model: unsupported" | The browser has no built-in model. Use desktop Chrome 139 or newer. The fixed rules still run. |
+| The model download stays at 90% | It is verifying the download. Leave the page open. |
+| "Cloud check failed" on every clause | The App Check debug token is not registered (step 4.6), or AI Logic is not enabled (step 4.3). |
+| "Cloud: off" | `.env.local` is missing or empty. Cloud checks are optional. |
+| The first clause takes a long time | The model is loading into memory. Later clauses are faster. Close other heavy programs. |
 
 ## Layout
 
@@ -121,6 +198,12 @@ The code was written with an AI coding assistant, which the rules allow. The mea
 - Not tested on a real camera photo, on handwriting, or on a phone.
 - Five legal questions are still unverified and are listed inside the app under "What this tool could not verify", among them the current Telangana stamp duty rate for leases.
 - The local law notes cover Telangana only, and the control act there excludes many newer and higher-rent buildings, so the guides tell you to check coverage first.
+
+## Credits
+
+- Music in the demo video: "Happy Beats & Business Moves Vol. 11" by Sascha Ende, [ende.app](https://ende.app/en), licensed CC BY 4.0. The video itself is not in this repository.
+- Text recognition: [Tesseract.js](https://github.com/naptha/tesseract.js) (Apache-2.0). PDF reading: [pdf.js](https://github.com/mozilla/pdf.js) (Apache-2.0).
+- Fonts: Unbounded, Hanken Grotesk and Martian Mono (SIL Open Font License), through Fontsource.
 
 ## Licence
 
