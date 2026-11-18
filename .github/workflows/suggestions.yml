@@ -1,0 +1,24 @@
+name: suggestions
+# Once a day, file new suggestions saved in Firestore as GitHub issues. Does nothing until the FIREBASE_SA secret exists.
+on:
+  schedule:
+    - cron: '30 3 * * *'
+  workflow_dispatch:
+permissions:
+  issues: write
+jobs:
+  file:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '23.6'
+      - name: File new Firestore suggestions as issues
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -z "$FIREBASE_SA" ]; then echo "FIREBASE_SA not set; skipping."; exit 0; fi
+          npm install --no-save firebase-admin@13
+          node suggest-inbox/firestore-to-issues.mjs

@@ -271,3 +271,20 @@ a[data-q] { display: inline-block; padding: .3rem 0; }
   .tick-list input { appearance: none; -webkit-appearance: none; display: grid; place-content: center; width: .95rem; height: .95rem; border: 1.5px solid #000; border-radius: 2px; background: #fff; }
   .tick-list input:checked::after { content: '\2713'; font: 700 .8rem/1 sans-serif; color: #000; }
 }
+
+/* suggest a change */
+.suggest { margin-top: 1.1rem; grid-column: 1 / -1; }
+.suggest fieldset { margin: 1rem 0 0; padding: 0; border: 0; }
+.suggest legend, .suggest .field { display: block; margin: 1rem 0 .5rem; font-weight: 500; color: var(--ink); }
+.suggest .field span { font-weight: 400; color: var(--dim); }
+.buckets, #sgRoutes { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: .6rem; }
+.buckets label, .route-opt { display: grid; grid-template-columns: 1.4rem 1fr; gap: .55rem; align-items: start; padding: .85rem 1rem; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); cursor: pointer; transition: border-color 160ms var(--ease-out), background-color 160ms var(--ease-out); }
+.buckets label:has(input:checked), .route-opt:has(input:checked) { border-color: var(--brand); background: var(--brand-tint); }
+.buckets input, .route-opt input { width: 1.15rem; height: 1.15rem; margin: .15rem 0 0; accent-color: var(--brand); }
+.buckets b, .route-opt b { display: block; font-weight: 600; }
+.buckets small, .route-opt small { display: block; margin-top: .2rem; font-size: .86rem; color: var(--mute); }
+.acct { display: inline-block; margin-top: .35rem; padding: .2rem .55rem; border-radius: 99px; font: 500 .78rem/1.3 var(--sans); font-style: normal; }
+.acct.no { color: var(--ok); background: var(--ok-tint); } .acct.yes { color: var(--warn); background: var(--warn-tint); }
+#sgSource { width: 100%; padding: .8rem 1rem; border: 1px solid transparent; border-radius: var(--r-sm); background: var(--surface-2); font: 400 .95rem/1.4 var(--sans); color: var(--ink); }
+#sgSource:focus-visible { outline: none; border-color: var(--brand); background: var(--surface); box-shadow: 0 0 0 4px rgba(11, 107, 78, .12); }
+#sgCheck:not(:empty) { margin-top: 1rem; }

@@ -9,6 +9,7 @@ import { SAMPLE } from './sample.ts';
 import { decide, finalize, present, hasFigures, FIELDS, type Model } from '../../rules/pipeline.ts';
 import { extract, LIMITS } from '../../rules/extract.ts';
 import { mask } from './mask.ts';
+import { routes, clean, githubUrl, gformUrl, sendWorker, sendFirestore, renderTurnstile, type Bucket } from './suggest.ts';
 import { coverage } from '../../rules/topics.ts';
 import { noteById, searchNotes, BASIS_LABEL, OPEN_QUESTIONS, type Note } from '../../rules/knowledge.ts';
 import { GUIDES, guideById, stepBasis } from '../../rules/guides.ts';
@@ -284,3 +285,32 @@ savedUi(); missUi();
     if (await ensureNano(true)) await nanoWarm();
   } catch { /* warming is optional; the scan loads the model itself if this fails */ }
 })();
+
+// Suggest a change: the visitor picks a bucket and a way to send. Each route says whether an account is needed.
+{
+  const rs = routes(); let token = '';
+  $('sgRoutes').innerHTML = rs.map((r, i) => `<label class="route-opt"><input type="radio" name="sgRoute" value="${r.id}"${i === 0 ? ' checked' : ''}> <span><b>${esc(r.name)}</b><em class="acct ${r.account.startsWith('No') ? 'no' : 'yes'}">${esc(r.account)}</em><small>${esc(r.how)}</small></span></label>`).join('');
+  const picked = () => (document.querySelector('input[name="sgRoute"]:checked') as HTMLInputElement).value;
+  const sync = () => {
+    const id = picked(), r = rs.find(x => x.id === id)!;
+    ($('sgSend') as HTMLButtonElement).textContent = r.opensTab ? `Continue on ${r.name.replace(/ issue$/, '')}` : 'Send suggestion';
+    if (id === 'worker') renderTurnstile($('sgCheck'), t => { token = t; }).catch(e => { $('sgStatus').textContent = (e as Error).message; });
+    else $('sgCheck').innerHTML = '';
+  };
+  $('sgRoutes').addEventListener('change', sync); sync();
+  $('sgSend').onclick = async () => {
+    const text = ($('sgText') as HTMLTextAreaElement).value, st = $('sgStatus');
+    if (text.trim().length < 10) { st.textContent = 'Please write a little more, at least a sentence.'; ($('sgText') as HTMLTextAreaElement).focus(); return; }
+    const s = clean({ bucket: (document.querySelector('input[name="sgBucket"]:checked') as HTMLInputElement).value as Bucket, text, source: ($('sgSource') as HTMLInputElement).value });
+    const masked = s.text !== text.trim() ? ' Personal details we spotted were replaced with [NAME], [AADHAAR] and similar before sending.' : '';
+    const id = picked(), btn = $('sgSend') as HTMLButtonElement;
+    try {
+      if (id === 'github' || id === 'gform') { window.open(id === 'github' ? githubUrl(s) : gformUrl(s), '_blank', 'noopener'); st.textContent = `Opened in a new tab. Press Submit there to finish.${masked}`; return; }
+      btn.disabled = true; st.textContent = 'Sending...';
+      if (id === 'worker') { if (!token) throw new Error('Please complete the quick check above first.'); const url = await sendWorker(s, token); st.innerHTML = `Thank you. Your suggestion is now <a href="${esc(url)}" target="_blank" rel="noopener noreferrer">issue on GitHub</a>.${esc(masked)}`; token = ''; renderTurnstile($('sgCheck'), t => { token = t; }).catch(() => {}); }
+      else { await sendFirestore(s); st.textContent = `Thank you. Saved for review; the team reads new suggestions every day.${masked}`; }
+      ($('sgText') as HTMLTextAreaElement).value = ''; ($('sgSource') as HTMLInputElement).value = '';
+    } catch (e) { st.textContent = `Not sent: ${(e as Error).message} You can still use the GitHub option.`; }
+    finally { btn.disabled = false; }
+  };
+}

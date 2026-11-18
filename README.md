@@ -194,6 +194,10 @@ The app is a static site. To host it on Firebase Hosting in your own project:
 - `harness/` the measurement page and raw results behind the risk report.
 - `docs/` images for this page.
 
+## Suggestions and corrections
+
+The site has a **Suggest a change** panel. Every suggestion becomes a GitHub issue labelled `inbox` and its type, for review. Today it opens a prefilled GitHub issue form (needs a free GitHub account). Three no-account routes (Cloudflare Worker, Google Form, Firestore) are built and switch on once configured: see [SUGGESTIONS.md](SUGGESTIONS.md).
+
 ## Built during the hackathon
 
 Everything in this repository was written between 17 and 18 November 2026, inside the submission period. There is no pre-existing code. Dependencies are the Firebase SDK, pdf.js, Tesseract.js (text recognition, runs in the browser) and three open fonts.

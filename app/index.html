@@ -13,6 +13,7 @@
     <a href="#how">How it works</a>
     <a href="#check">Check a lease</a>
     <a href="#help">Get help</a>
+    <a href="#suggest">Suggest a change</a>
   </nav>
   <div class="pills">
     <span class="pill" id="pillNano" data-state="idle"><i></i><span>On-device model: idle</span></span>
@@ -126,6 +127,24 @@
         <div id="helpOut"><p class="empty">Pick a situation. Each step shows where it comes from: a government source, a court order, commentary, or common practice.</p></div>
         <details class="openq"><summary>What this tool could not verify</summary><ul id="openQ"></ul></details>
         <p class="nsrc">General information, not legal advice. For your own case call the free legal aid helpline 15100 (NALSA) or see a lawyer.</p>
+      </section>
+
+      <section class="panel suggest" id="suggest" aria-label="Suggest a change">
+        <div class="label"><span>Suggest a change</span><span>reviewed by the team</span></div>
+        <p class="howto">Tell us what to add, what is wrong, or what has changed in the law or the market. Please do not include names, ID numbers or a real agreement.</p>
+        <fieldset class="buckets"><legend>What is it about?</legend>
+          <label><input type="radio" name="sgBucket" value="idea" checked> <span><b>Idea or feature</b><small>Something it should do, or do better</small></span></label>
+          <label><input type="radio" name="sgBucket" value="wrong"> <span><b>Something is wrong</b><small>A wrong result, fact or message</small></span></label>
+          <label><input type="radio" name="sgBucket" value="new-info"> <span><b>New law or information</b><small>A rule, fee or practice that changed</small></span></label>
+        </fieldset>
+        <label class="field" for="sgText">Your suggestion</label>
+        <textarea id="sgText" rows="4" maxlength="2000" placeholder="Example: the Telangana stamp duty for 11-month leases changed to 0.5% in December 2026."></textarea>
+        <label class="field" for="sgSource">Source <span>(optional link or name of the law, notice or article)</span></label>
+        <input id="sgSource" type="text" maxlength="300" autocomplete="off">
+        <fieldset class="routes"><legend>How do you want to send it?</legend><div id="sgRoutes"></div></fieldset>
+        <div id="sgCheck"></div>
+        <div class="actions"><button id="sgSend" type="button" class="primary">Send suggestion</button></div>
+        <p class="nsrc" id="sgStatus" role="status" aria-live="polite"></p>
       </section>
 
       <section class="panel ref" id="ref" aria-label="Reference notes">
