@@ -84,7 +84,7 @@ export const cloudJudge = async (text: string): Promise<Model> => { const c = aw
 // forbids citing law; deposit.ts citesLaw() rejects a draft that does anyway, and the page falls back to a template.
 const DRAFTS = (facts: string) => `You help a tenant in India get a security deposit back after moving out. Using ONLY the facts below, write two drafts in plain, firm, polite English:
 1. "whatsapp": a short WhatsApp message (under 120 words) asking for an itemised list of deductions with bills and a refund date.
-2. "notice": a formal written notice (under 300 words) that quotes the agreement's own deposit clause, lists the disputed items, asks for the refund within 15 days, and says further steps may follow.
+2. "notice": a formal written notice (under 300 words) that refers to the agreement's own deposit clause (and, if the facts say the tenant disputes it, says so), lists the disputed items, asks for the refund within 15 days, and says further steps may follow.
 Rules: do not cite any law, act, section or court case; do not invent amounts, dates or facts; keep placeholders like [NAME], [DATE], [PHONE] exactly as written. Reply with JSON only: {"whatsapp":"...","notice":"..."}.
 
 Facts:

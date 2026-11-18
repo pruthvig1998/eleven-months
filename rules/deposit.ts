@@ -179,7 +179,7 @@ export function factsText(f: DraftFacts): string {
     `Deductions claimed by the landlord: ${rs(a.claimed)} in total.`,
     disputed.length ? `Disputed items: ${disputed.map(l => `${l.item} (${rs(l.amount)}, ${DLABEL_TEXT[l.label]})`).join('; ')}.` : 'No disputed items.',
     a.minRefund !== null ? `Amount the tenant says is due now, at least: ${rs(a.minRefund)}.` : '',
-    f.refundClause ? `The agreement's deposit clause: "${f.refundClause}"` : 'The agreement has no deposit refund clause.',
+    f.refundClause ? `The agreement's deposit clause: "${f.refundClause}"${/forfeit|without (?:assigning )?(?:any )?reason/i.test(f.refundClause) ? ' (The tenant disputes this clause: it lets the landlord keep the deposit without a reason, and it is not a bill for any item.)' : ''}` : 'The agreement has no deposit refund clause.',
   ].filter(Boolean).join('\n');
 }
 // Fallback when the cloud is off or the names check fails. Cites only the agreement, never a law.
