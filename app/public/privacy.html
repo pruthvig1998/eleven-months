@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy: Eleven Months</title>
+<meta name="description" content="What Eleven Months reads, what stays on your device, and what is sent to the cloud.">
+<style>
+  :root { --bg: #f5f3ee; --ink: #12201b; --mute: #4d5a54; --brand: #0b6b4e; --line: #e4dfd4; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 1rem/1.65 system-ui, -apple-system, sans-serif; }
+  main { max-width: 44rem; margin: 0 auto; padding: 3rem 1rem 4rem; }
+  h1 { font: 400 2.4rem/1.1 Georgia, serif; margin: 0 0 .5rem; }
+  h2 { font: 600 1.1rem/1.3 system-ui, sans-serif; margin: 2rem 0 .4rem; }
+  p, li { color: var(--ink); } .meta { color: var(--mute); }
+  a { color: #1f5bb3; } ul { padding-left: 1.2rem; }
+  .brand { display: inline-flex; gap: .5rem; align-items: center; text-decoration: none; color: var(--ink); font-weight: 600; margin-bottom: 2rem; }
+  .logo { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 9px; background: var(--brand); color: var(--bg); font: 400 1.1rem/1 Georgia, serif; }
+</style>
+<main>
+  <a class="brand" href="/"><span class="logo" aria-hidden="true">11</span>Eleven Months</a>
+  <h1>Privacy</h1>
+  <p class="meta">Last updated 19 November 2026. This covers the web app at eleven-months-nano.web.app, the Eleven Months Chrome extension, and the Android app, which shows the same web app.</p>
+
+  <h2>In short</h2>
+  <p>Your agreement is read on your own device. Most of it never leaves. When a clause needs a second opinion, names, Aadhaar and PAN numbers, phone numbers and email addresses are replaced on your device before that one clause is sent, and the page shows you exactly what was sent. There are no accounts, no ads and no analytics, and nothing is sold.</p>
+
+  <h2>What stays on your device</h2>
+  <ul>
+    <li>The text you paste, and any PDF or photo you upload. Photos and scanned pages are read on your device and are never sent anywhere.</li>
+    <li>The fixed rules and the on-device model (Gemini Nano, built into Chrome) that check each clause.</li>
+    <li>A scan you choose to save, and notes you write about missed clauses. These are kept in your browser's storage and can be deleted from the page. Anyone who uses the same browser can open them.</li>
+  </ul>
+
+  <h2>What is sent to the cloud, and when</h2>
+  <ul>
+    <li><b>A clause that needs a second opinion</b> (for example when the rules and the on-device model disagree) is sent to Google's Gemini model through Firebase AI Logic, after the masking described above. If the names cannot be checked on your device, the clause is not sent.</li>
+    <li><b>On a device with no on-device model</b> (phones, Safari, Firefox), clauses are sent only if you tick the box that asks for it. Masking is then by pattern only, and the page says so before you tick.</li>
+    <li><b>Deposit Shield drafts</b>, if you ask for them, send a short masked summary (amounts, dates, the disputed items and the deposit clause) to the same model.</li>
+    <li><b>App protection and settings:</b> Firebase App Check with Google reCAPTCHA Enterprise checks that cloud requests come from this site, and Firebase Remote Config loads the screening thresholds. These Google services receive technical data such as your IP address, browser details and a Firebase installation identifier.</li>
+    <li><b>Hosting:</b> the site is served by Firebase Hosting, which keeps standard server logs.</li>
+  </ul>
+  <p>Google processes this data under its own terms: <a href="https://firebase.google.com/support/privacy" rel="noopener noreferrer">Firebase privacy and security</a> and the <a href="https://policies.google.com/privacy" rel="noopener noreferrer">Google Privacy Policy</a>. Eleven Months does not store your agreement, your scans or the cloud's answers on any server of its own.</p>
+
+  <h2>The Chrome extension</h2>
+  <ul>
+    <li>Its own pages make no network requests: the rules and Gemini Nano run on your device.</li>
+    <li>It reads the text of a page only after you click "Scan this page" or a right-click item, and only for that tab. Selected text is passed to its side panel through the browser's session storage and is cleared when the browser closes.</li>
+    <li>Its "Full app" tab shows this website, so everything on this page about the web app applies there.</li>
+  </ul>
+
+  <h2>The suggestion box</h2>
+  <p>"Suggest a change" opens a pre-filled public GitHub issue that you submit yourself on GitHub, so what you write there is public. Please do not include names, ID numbers or a real agreement.</p>
+
+  <h2>Children</h2>
+  <p>Eleven Months is meant for adults reading a rental agreement. It is not directed at children.</p>
+
+  <h2>Changes and contact</h2>
+  <p>If this changes, the date above changes with it. Questions: open an issue at <a href="https://github.com/pruthvig1998/eleven-months/issues" rel="noopener noreferrer">github.com/pruthvig1998/eleven-months</a>.</p>
+  <p class="meta">Eleven Months is a screening aid, not legal advice.</p>
+</main>
