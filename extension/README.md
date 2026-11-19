@@ -23,6 +23,10 @@ How this is enforced, not just promised:
 
 No on-device model (for example Chrome without Gemini Nano)? The panel says "rules only" and runs the fixed rules alone.
 
+## Chrome Web Store
+
+Submitted for review on 19 Nov 2026 (version 1.2.0, item `mhkioblkanhmcjcbhoipmbmfkojidejg`), set to publish automatically once approved. Google says review can take up to several weeks; until it is live, install from the zip below. Once approved it will be at https://chromewebstore.google.com/detail/mhkioblkanhmcjcbhoipmbmfkojidejg.
+
 ## Install (for judges)
 
 1. Download [`docs/downloads/eleven-months-extension.zip`](../docs/downloads/eleven-months-extension.zip) and unzip it.

@@ -15,7 +15,7 @@ Read all eleven months before you sign them.
 ## Links
 - Platforms: Web app + Chrome extension + Android app (Trusted Web Activity)
 - Try it, web app: https://eleven-months-nano.web.app (desktop Chrome 139 or newer for the full on-device scan; any browser for the rules and the opt-in cloud check)
-- Try it, Chrome extension: https://github.com/pruthvig1998/eleven-months/raw/main/docs/downloads/eleven-months-extension.zip (unzip, then `chrome://extensions`, Developer mode, Load unpacked; steps in `extension/README.md`)
+- Try it, Chrome extension: https://github.com/pruthvig1998/eleven-months/raw/main/docs/downloads/eleven-months-extension.zip (unzip, then `chrome://extensions`, Developer mode, Load unpacked; steps in `extension/README.md`). Chrome Web Store: submitted for review on 19 Nov 2026; if it is approved before submitting, replace this with the store link https://chromewebstore.google.com/detail/mhkioblkanhmcjcbhoipmbmfkojidejg
 - Try it, Android app (Trusted Web Activity): the same web app, running in Chrome on Android. APK: https://github.com/pruthvig1998/eleven-months/raw/main/docs/downloads/eleven-months-android.apk (Android 7.0 or newer; allow installs from unknown sources). Chrome on Android has no on-device model yet, so the app runs the fixed rules with the opt-in cloud check.
 - Code: https://github.com/pruthvig1998/eleven-months (Apache-2.0)
 - Video: https://youtu.be/ITnxc7FrfWk (40 s; must be set to **Public** before submitting)
