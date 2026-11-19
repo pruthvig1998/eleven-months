@@ -4,6 +4,7 @@ A Manifest V3 extension that checks a rental-agreement clause where you find it:
 
 Status: the side panel logic and the hand-off were tested as a page in a browser with no on-device model. The packaged extension has not yet been loaded in Chrome by a person, so the context menu and Gemini Nano inside the panel are not yet verified.
 
+- **Scan this page**: open an agreement in a tab (a web page, or a document shown as a page), click the toolbar icon, press **Scan this page**. Or right-click anywhere on the page and choose **Scan this page with Eleven Months**. Up to 60 pieces are checked on the device; Full scan has no cap.
 - **Side panel**: click the toolbar icon, paste a clause or a whole agreement, press **Check on this device**.
 - **Context menu**: select text on any page, right-click, choose **Check this clause with Eleven Months**. The side panel opens and checks the selection.
 - **Full scan in Eleven Months**: opens the web app with the text already in the agreement box.
@@ -15,7 +16,8 @@ The extension runs the same fixed rules (`rules/`) and the same Gemini Nano prom
 How this is enforced, not just promised:
 - The build reads no `.env` file (`envDir` points at an empty folder), so no Firebase project values reach the bundle. It uses a placeholder config, which is enough for on-device inference. A check of the built bundle found no `recaptcha` and no `AIza` API key.
 - The manifest's Content Security Policy sets `connect-src 'self'`, so the browser itself blocks any network request from the side panel.
-- No host permissions. The only permissions are `sidePanel`, `contextMenus` and `storage`. `storage` holds the selected text for the panel in session storage only.
+- No host permissions. The permissions are `sidePanel`, `contextMenus`, `storage` (the selected text, in session storage only), and `activeTab` with `scripting`, which let it read the text of the one tab you clicked on, only after that click. It cannot read other tabs or pages in the background.
+- Pages Chrome does not let extensions read (a PDF in Chrome's own viewer, the Web Store, `chrome://` pages) get a message saying so; select the text and use the right-click item there.
 - The hand-off puts the text in the URL **fragment** (`#lease=...`). Browsers do not send a fragment to the server. The web app moves the text into the agreement box and removes it from the address bar. Nothing is scanned until you press **Scan lease**.
 
 No on-device model (for example Chrome without Gemini Nano)? The panel says "rules only" and runs the fixed rules alone.
