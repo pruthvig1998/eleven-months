@@ -21,7 +21,7 @@ Read all eleven months before you sign them.
 - Video: https://youtu.be/ITnxc7FrfWk (40 s; must be set to **Public** before submitting)
 
 ## Image gallery
-Upload the seven files in `docs/gallery/` in order, with the captions from `docs/gallery/captions.md`. Add `docs/architecture.png` as the eighth image, captioned: "How a clause moves: rules and Gemini Nano on the device; only triggered clauses are masked and sent to cloud Gemini."
+Upload the fifteen files in `docs/gallery/` in order, with the captions from `docs/gallery/captions.md`. Add `docs/architecture.png` as the eighth image, captioned: "How a clause moves: rules and Gemini Nano on the device; only triggered clauses are masked and sent to cloud Gemini."
 
 ---
 

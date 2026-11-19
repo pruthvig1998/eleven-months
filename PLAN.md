@@ -12,7 +12,7 @@ Written 18 Nov 2026 after reading every source file (about 3,100 lines: `app/` 7
 | Numbers | Deposit, lock-in, notice, rent increase, rent, in digits or words, with five risk flags | `rules/extract.ts` | 22 tests; 20 of 20 fields on messy samples |
 | Clause rules | 27 topic rules, each with examples the tests enforce | `rules/topics.ts` | Precise (0 false flags on unseen fair clauses) but weak on new wording: 4 of 20 on the third unseen set |
 | On-device model | Gemini Nano labels each clause and finds names | `app/src/ai.ts` | 34 of 40 labels, 15 of 20 risky clauses, on the first data set only |
-| Routing | Cloud only when Nano fails, rules are unsure, or the two disagree | `rules/pipeline.ts` | 40 of 40 labels with 13 of 40 clauses sent to cloud, on the first data set only |
+| Routing | Cloud only when Nano fails, rules are unsure, or the two disagree | `rules/pipeline.ts` | 40 of 40 labels with 15 of 40 clauses sent to cloud (13 before the medium-finding trigger), on the first data set only |
 | Privacy | Names, Aadhaar, PAN, phones, emails masked before cloud; fails closed if the names check fails | `app/src/mask.ts` | 9 tests, including IDs misread by the photo reader |
 | No on-device model | Rules-only scan, or opt-in cloud check of every clause | `app/src/main.ts` | Live: 23 s, 11 of 11 cloud checks |
 | Whole agreement | Basics present, contradicting figures, distant court, stamp duty estimate | `rules/lease.ts` | 5 tests |

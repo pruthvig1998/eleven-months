@@ -93,7 +93,7 @@ All test data is synthetic and written for this project. Numbers on real agreeme
 | What | Result |
 |---|---|
 | Gemini Nano alone, 40 clauses | 34 labels correct, 15 of 20 risky clauses found |
-| Rules + Nano, cloud on trigger | 40 of 40 labels correct with 13 of 40 clauses sent to cloud |
+| Rules + Nano, cloud on trigger | 40 of 40 labels correct with 15 of 40 clauses sent to cloud (offline replay of saved outputs, `node rules/replay.ts`; it was 13 before medium rule findings also asked for a second opinion) |
 | Fixed rules alone on an unseen set of harmful clauses, first run | 12 of 20 (second set), then **4 of 20** (third set, fresh paraphrases); 0 fair clauses wrongly flagged on the third set |
 | Whole pipeline on 96 unseen clauses (70 harmful, 26 fair), desktop Chrome, live site | **67 of 70** harmful caught, 1 of 26 fair wrongly flagged, 45 of 97 scanned pieces sent to cloud (the 96 clauses plus the test agreement's opening line, which the splitter counts as a clause) |
 | Same clauses with no on-device model (rules + cloud on every clause) | 68 of 70 caught, 0 of 26 wrongly flagged |
