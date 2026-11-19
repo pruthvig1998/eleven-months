@@ -19,7 +19,8 @@ if (cloudConfigured && (env.DEV || siteKey)) {
   initializeAppCheck(app, { provider: new ReCaptchaEnterpriseProvider(siteKey || 'unused-in-debug'), isTokenAutoRefreshEnabled: true });
 }
 const ai = getAI(app, { backend: new GoogleAIBackend() });
-const nano = getGenerativeModel(ai, { mode: InferenceMode.ONLY_ON_DEVICE });
+// English in and out, so Chrome does not warn that no output language was set.
+const nano = getGenerativeModel(ai, { mode: InferenceMode.ONLY_ON_DEVICE, onDeviceParams: { createOptions: { expectedInputs: [{ type: 'text', languages: ['en'] }], expectedOutputs: [{ type: 'text', languages: ['en'] }] } } });
 // Cloud answers are held to a JSON schema, so a malformed answer cannot turn into an "unknown" label.
 // (A schema did not constrain the on-device model in the risk tests, so Nano's answers are still parsed loosely.)
 // The cloud model name comes from Remote Config (default: the SDK's own default for hybrid mode), so the models
