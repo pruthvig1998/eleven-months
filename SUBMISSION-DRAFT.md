@@ -122,7 +122,7 @@ The sample agreement is made up; no real personal data is used anywhere.
 - [ ] I hold the rights to everything in the video, including the music (CC BY 4.0, credited in the description).
 
 ## Honest limits
-A screening aid, not legal advice; "nothing found" does not mean "safe to sign". All test clauses were written by the author in clean English, so real agreements will score lower. Not tested on real camera photos, handwriting or a real phone. Five legal questions remain unverified and are listed inside the app.
+A screening aid, not legal advice; "nothing found" does not mean "safe to sign". All test clauses were written by the author in clean English, so real agreements will score lower. Not tested on real camera photos or handwriting; on a real phone only the Android app's install and full-screen launch were checked. Five legal questions remain unverified and are listed inside the app.
 
 ---
 

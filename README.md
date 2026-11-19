@@ -227,7 +227,7 @@ The code was written with an AI coding assistant, which the rules allow. The mea
 ## Limits you should know
 
 - A screening aid, not legal advice. "Nothing found" does not mean "safe to sign".
-- Not tested on a real camera photo, on handwriting, or on a phone.
+- Not tested on a real camera photo or on handwriting. On a phone, only the install and full-screen launch of the Android app were checked (19 Nov), not a full scan there.
 - Five legal questions are still unverified and are listed inside the app under "What this tool could not verify", among them the current Telangana stamp duty rate for leases.
 - Chrome on Android has no on-device model yet, so the Android app runs the fixed rules with the opt-in cloud check, not the full hybrid scan.
 - The local law notes cover Telangana only, and the control act there excludes many newer and higher-rent buildings, so the guides tell you to check coverage first.
