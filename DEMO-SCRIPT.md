@@ -35,7 +35,7 @@ Times are for the finished video, after I cut the waits.
 | 0:17 | Press **Load sample**, then **Scan lease**. Point at the RULES and NANO tags | "Fixed rules read the numbers. The on-device model judges each clause. Nothing has left the laptop." |
 | 0:32 | Scroll to the verdict: "6 of 11 clauses need attention." | "Six of eleven clauses need attention." |
 | 0:38 | Clause 2: "Deposit is 10 months' rent", "Deposit can be forfeited", and the "Ask for this instead" box | "Ten months' deposit the owner can keep for any reason, and exactly what to ask for instead." |
-| 0:50 | The CLOUD tag on Clause 2 or 3, then the scan summary: "Cloud calls" and "Stayed on device" | "A clause goes to cloud Gemini only when there's a reason, like the rules and the model disagreeing. Everything else stays here." |
+| 0:50 | The chip on a clear clause, "On device … s · nothing sent", then on Clause 2 or 3 the lit CLOUD tag and its chip "On device … s + Cloud … s · masked text sent". Then the scan summary: "Cloud calls" and "Stayed on device" | "Every clause says where it ran. Most stay on this laptop. One goes to cloud Gemini only when there's a reason, like the rules and the model disagreeing, and only after masking." |
 | 1:03 | Select all in the agreement box, paste the test clause, **Scan lease**. Open "Sent to cloud (names and IDs masked)" | "Before anything is sent, names, Aadhaar, PAN, phones and emails are masked on the device. This is exactly what the cloud saw." |
 | 1:20 | "Take this to the signing" sheet | "And a sheet to take to the signing." |
 | 1:26 | **Upload PDF or photo**, pick the phone photo, the text appears | "A photo of the agreement is read on the device too. It never leaves the laptop." |

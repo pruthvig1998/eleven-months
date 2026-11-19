@@ -6,8 +6,8 @@ Fifteen screenshots. Shots 1 to 13 are of the live site (https://eleven-months-n
 |---|---|
 | `01-sample-loaded.jpg` | The sample agreement loaded and ready to scan. Both status chips show where the work happens: on-device model ready, and cloud for masked clauses only. |
 | `02-scan-in-progress.jpg` | Clauses appear one at a time as the rules and Gemini Nano judge them on the device; the chips show which layers ran. |
-| `03-verdict.jpg` | The verdict in plain words: 6 of 11 clauses need attention, with the biggest issues, the points to raise, and each clause marked clear or risky. |
-| `04-ask-for-this-instead.jpg` | A risky clause with the rule findings, the figures, and what to ask the landlord for instead. |
+| `03-verdict.jpg` | The verdict in plain words: 6 of 11 clauses need attention. Each clause card says where it ran and how long it took, for example "On device 5.6 s + Cloud 18.2 s · masked text sent". |
+| `04-ask-for-this-instead.jpg` | A risky clause with the rule findings, the figures and what to ask the landlord for instead, plus where it ran: on the device, then a masked cloud second opinion because the rules and the model disagreed. |
 | `05-masked-before-cloud.jpg` | The exact text sent to cloud Gemini for a second opinion: names, phone, email, Aadhaar and PAN are masked on the device first. |
 | `06-scan-summary.jpg` | The scan summary: 3 cloud calls, 73% of the clauses stayed on the device. |
 | `07-signing-sheet.jpg` | The "Take this to the signing" sheet: each point to raise, the clause it comes from, and what to ask for. Print it or save it as a PDF. |
@@ -24,4 +24,4 @@ Notes:
 - Shots 14 and 15 are framed images of the extension's side panel. The panel's own code ran in a Chrome tab with Gemini Nano on the developer's Mac ("On-device model: ready"); the same build is the extension package.
 - Shot 10's drafts were written by cloud Gemini on 19 Nov; the facts sent contained no names, so nothing needed masking beyond the placeholders.
 - Shot 5 uses a one-clause test agreement: clause 2 of the sample with made-up names, a phone number, an email, an Aadhaar number and a PAN added. The sample's own clauses that go to the cloud contain no personal details, so they would show nothing being masked.
-- Shot 3 is from the first scan (2 clauses sent to cloud). Shot 6 is from a second scan of the same sample (3 sent, 2 marked "to check"). Gemini Nano does not give the same answer every time, so the cloud count can vary between runs.
+- Shots 3 and 4 were retaken on 19 Nov (evening) to show the new where-it-ran chip; that run sent 4 of the 11 clauses to the cloud. Shot 6 is from a second scan of the same sample (3 sent, 2 marked "to check"). Gemini Nano does not give the same answer every time, so the cloud count can vary between runs.

@@ -69,7 +69,7 @@ Deterministic rules run before any model: they extract the numbers (small models
 - **Speed.** Each clause makes up to two on-device calls. On a busy laptop the 11-clause sample took 2 to 4 minutes; the first answer after a Chrome restart takes 13 to 20 s while the model loads.
 
 ## Accomplishments that we're proud of
-**Measured, not claimed.** On 96 unseen clauses (70 harmful, 26 fair) run through the live site in desktop Chrome, the full pipeline caught **67 of 70** harmful clauses and flagged **1 of 26** fair ones by mistake. In the bundled sample agreement, **2 of 11** clauses left the device in the recorded run (3 of 11 in one of two re-runs on 19 Nov; Gemini Nano does not answer the same way every time).
+**Measured, not claimed.** On 96 unseen clauses (70 harmful, 26 fair) run through the live site in desktop Chrome, the full pipeline caught **67 of 70** harmful clauses and flagged **1 of 26** fair ones by mistake. In the bundled sample agreement, **2 of 11** clauses left the device in the recorded run (3 and 4 of 11 in two re-runs on 19 Nov; Gemini Nano does not answer the same way every time).
 
 | Mode | Harmful caught | Fair wrongly flagged | Sent to cloud |
 |---|---|---|---|
