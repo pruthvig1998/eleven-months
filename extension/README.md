@@ -64,4 +64,4 @@ One-time setup, done by the account owner (free):
    - `CWS_PUBLISHER_ID`: the publisher ID shown in the developer dashboard's URL
 6. Actions, Chrome extension, Run workflow, to check it.
 
-Never paste these values into a chat, a file or a commit. A consent screen left in "Testing" mode can expire refresh tokens after 7 days; if the upload later fails with an authorisation error, publish the consent screen (it needs no review for this scope used by its own owner) or create a new refresh token.
+Never paste these values into a chat, a file or a commit. A consent screen left in "Testing" mode can expire refresh tokens after 7 days; if the upload later fails with an authorisation error, set the consent screen to "In production" and create a new refresh token (Google may show an "unverified app" warning when you authorise; for your own account you can continue past it), or simply create a new refresh token each time.
