@@ -36,8 +36,8 @@ It is a screening aid, not legal advice.
 
 | | |
 |---|---|
-| <img src="docs/shot-verdict.jpg" alt="Verdict: 6 of 11 clauses need attention" width="420"> | **A verdict in plain words.** Each clause is marked clear or risky, with the figures that matter (deposit, lock-in, notice, rent increase) and where each figure came from. |
-| <img src="docs/shot-asks.jpg" alt="A risky clause with an Ask for this instead box" width="420"> | **What to ask for instead.** Every risky clause comes with a concrete request, tied to a public benchmark and a note you can open. |
+| <img src="docs/gallery/03-verdict.jpg" alt="Verdict: 6 of 11 clauses need attention, each clause card showing where it ran and how long it took" width="420"> | **A verdict in plain words.** Each clause is marked clear or risky, with the figures that matter (deposit, lock-in, notice, rent increase) and where each figure came from. Each clause also says where it ran and how long it took, for example "On device 5.6 s + Cloud 18.2 s · masked text sent". |
+| <img src="docs/gallery/04-ask-for-this-instead.jpg" alt="A risky clause with an Ask for this instead box and its where-it-ran chip" width="420"> | **What to ask for instead.** Every risky clause comes with a concrete request, tied to a public benchmark and a note you can open. |
 | <img src="docs/shot-sheet.jpg" alt="The Take this to the signing sheet" width="420"> | **A sheet for the signing.** The points to raise, what the agreement leaves out, and a checklist for the flat visit. Print it or save it as a PDF. |
 
 It also:
