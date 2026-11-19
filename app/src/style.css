@@ -349,3 +349,5 @@ body[data-scanning='true'] .sg-fab { opacity: 0; pointer-events: none; }
 /* Framed in the Chrome extension's side panel (?embed=1): the tool sections only, no hero or floating button. */
 body.embed .hero, body.embed .how, body.embed .sg-fab, body.embed .links { display: none !important; }
 body.embed .check-in, body.embed .more-in { padding-top: 1.5rem; }
+.took { margin-left: .4rem; font: 500 .74rem/1 var(--mono); color: var(--dim); white-space: nowrap; }
+@media (max-width: 52rem) { .took { margin-left: 0; width: 100%; } }

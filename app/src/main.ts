@@ -1,7 +1,7 @@
 import './style.css';
 import { scrollToEl } from './motion.ts';
 import './hero.tsx';
-import { app, setCloudModel, initNano, nanoWarm, nanoJudge, nanoNames, nanoReason, cloudJudge, cloudLabel, cloudConfigured, cloudDrafts } from './ai.ts';
+import { app, setCloudModel, initNano, nanoWarm, nanoJudge, nanoNames, nanoReason, cloudJudge, cloudLabel, cloudConfigured, cloudDrafts, takeCalls, type Call } from './ai.ts';
 import { loadSettings, DEFAULTS, type Settings } from './config.ts';
 import { splitClauses, clauseLabel } from './split.ts';
 import { readLeaseFile } from './pdf.ts';
@@ -93,6 +93,13 @@ function hud(done: number, total: number, risky: number, cloud: number, checks: 
   const prog = total ? Math.round((done / total) * 100) : 0; $('progPct').textContent = `${prog}%`; $('progBar').style.width = `${prog}%`;
 }
 
+// Where a clause was judged and how long it took, from the timed calls in ai.ts (source from the SDK's inferenceSource).
+const secs = (ms: number) => `${(ms / 1000).toFixed(1)} s`;
+const tookChip = (cs: Call[], asked: boolean) => {
+  const sum = (w: Call['where']) => cs.filter(c => c.where === w).reduce((a, c) => a + c.ms, 0);
+  const parts = [sum('device') ? `On device ${secs(sum('device'))}` : '', sum('cloud') ? `Cloud ${secs(sum('cloud'))}` : ''].filter(Boolean);
+  return `<span class="took">${esc(parts.join(' + ') || 'Rules only')} · ${!asked ? 'nothing sent' : sum('cloud') ? 'masked text sent' : 'masked text sent, no cloud answer'}</span>`;
+};
 const trace = (nanoOk: boolean, cloud: 'off' | 'on' | 'wait') =>
   `<div class="trace" aria-label="Resolved by"><span class="t on">RULES</span><span class="t ${nanoOk ? 'on' : ''}">NANO</span><span class="t cloud ${cloud === 'off' ? '' : cloud}">CLOUD</span></div>`;
 const scanning = (i: number, text: string) => `
@@ -160,18 +167,22 @@ $('analyze').onclick = async () => {
       status(cloudAll ? `Rules and cloud scan: ${i + 1} of ${clauses.length}` : rulesOnly ? `Rules-only scan: ${i + 1} of ${clauses.length}` : i === 0 ? 'Scanning clause 1. After a Chrome restart the first answer can take up to 20 s while the model loads.' : `Scanning clause ${i + 1} of ${clauses.length}`, 'busy');
       const el = document.createElement('article'); el.className = 'clause scanning'; el.style.setProperty('--i', String(Math.min(i, 8))); el.innerHTML = scanning(i, text);
       $('out').appendChild(el); scrollToEl(el);
-      let nano: Model = { label: null, fields: null }, note = '';
+      let nano: Model = { label: null, fields: null }, note = '', asked = false;
+      // Honest waiting: count the seconds while the on-device model reads, as it can take a while on a busy laptop.
+      takeCalls(); const t0 = performance.now();
+      const tick = rulesOnly ? undefined : setInterval(() => status(`Gemini Nano is reading clause ${i + 1} of ${clauses.length} on this device: ${Math.round((performance.now() - t0) / 1000)} s so far${i === 0 ? '. After a Chrome restart the first answer can take up to 20 s while the model loads.' : ''}`, 'busy'), 1000);
       if (!rulesOnly) try { nano = await nanoJudge(text, hasFigures(text)); } catch (e) { note = `On-device model failed: ${(e as Error).message}`; }
+      clearInterval(tick);
       const d = decide(text, nano, { rent, mediumToCloud: settings.cloudOnMedium });
       let cloud: Model | null = null, sent = '';
-      if (cloudAll) try { sent = mask(text, []); cloud = await cloudLabel(sent); cloudCalls++; } catch (e) { note ||= `Cloud check failed: ${(e as Error).message}`; sent = ''; }
+      if (cloudAll) try { sent = mask(text, []); asked = true; cloud = await cloudLabel(sent); cloudCalls++; } catch (e) { note ||= `Cloud check failed: ${(e as Error).message}`; sent = ''; }
       if (d.needsCloud && !rulesOnly) {
         if (!cloudConfigured) note ||= 'Needs a cloud check, but cloud is not configured.';
         else {
           // Fail closed: if the on-device names check fails, the clause stays on the device instead of going out unchecked.
           let names: string[] | null = null;
           try { names = await nanoNames(text); } catch { note ||= 'Names could not be checked on this device, so the clause was not sent to cloud.'; }
-          if (names) try { sent = mask(text, names); cloud = await cloudJudge(sent); cloudCalls++; }
+          if (names) try { sent = mask(text, names); asked = true; cloud = await cloudJudge(sent); cloudCalls++; }
           catch (e) { note ||= `Cloud check failed: ${(e as Error).message}`; sent = ''; }
         }
       }
@@ -212,7 +223,7 @@ $('analyze').onclick = async () => {
           <div class="head"><span class="no">${esc(clauseLabel(text, i))}</span>
             <span class="chip ${label}">${label === 'risky' ? 'risk' : label === 'ok' ? 'clear' : rulesOnly ? 'no rule hit' : 'unknown'}</span>
             ${look ? '<span class="chip check">check this clause</span>' : ''}
-            ${trace(nano.label !== null, cloud ? 'on' : unresolved ? 'wait' : 'off')}</div>
+            ${trace(nano.label !== null, cloud ? 'on' : unresolved ? 'wait' : 'off')}${tookChip(takeCalls(), asked)}</div>
           <p class="text">${esc(text)}</p>
           ${cells ? `<dl class="data">${cells}</dl>` : '<p class="empty">No numbers to extract in this clause.</p>'}
           ${tags ? `<div class="tags">${tags}</div>` : ''}

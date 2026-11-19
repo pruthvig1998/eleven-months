@@ -4,6 +4,7 @@ import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-ch
 import { getAI, getGenerativeModel, GoogleAIBackend, InferenceMode, Schema } from 'firebase/ai';
 import { toLabel, type Model } from '../../rules/pipeline.ts';
 import { CLS, FLD, parse } from './prompts.ts';
+import { withTimeout } from './timeout.ts';
 
 const env = import.meta.env;
 export const cloudConfigured = !!env.VITE_FIREBASE_API_KEY;
@@ -45,9 +46,22 @@ const NAMES = (t: string) => `List every person's name in this text, exactly as 
 
 // The free cloud tier has a rate limit (HTTP 429 was seen with 22 requests in under a minute; 11 in 23 s passed; the exact
 // limit is not known), so a 429 waits and retries.
-const run = async (m: typeof nano, prompt: string) => {
+// Every call is timed and its source recorded (from the SDK's inferenceSource), so each clause can show where it ran.
+// On-device calls get a time limit: a stall then counts as an unusable answer instead of freezing the scan.
+export const NANO_TIMEOUT_MS = 60_000;
+export interface Call { where: 'device' | 'cloud'; ms: number }
+let calls: Call[] = [];
+export const takeCalls = (): Call[] => { const c = calls; calls = []; return c; };
+const timed = async (m: typeof nano, prompt: string, device: boolean) => {
+  const t0 = performance.now();
+  const r = device ? await withTimeout(signal => m.generateContent(prompt, { signal }), NANO_TIMEOUT_MS, 'The on-device model') : await m.generateContent(prompt);
+  const src = r.response.inferenceSource;
+  calls.push({ where: src ? (src === 'on_device' ? 'device' : 'cloud') : device ? 'device' : 'cloud', ms: performance.now() - t0 });
+  return r.response.text();
+};
+const run = async (m: typeof nano, prompt: string, device = false) => {
   for (let attempt = 0; ; attempt++) {
-    try { return parse((await m.generateContent(prompt)).response.text()); }
+    try { return parse(await timed(m, prompt, device)); }
     catch (e) { if (attempt >= 3 || !/429|RESOURCE_EXHAUSTED|quota/i.test(String((e as Error).message))) throw e; await new Promise(r => setTimeout(r, 8000 * (attempt + 1))); }
   }
 };
@@ -72,8 +86,8 @@ export const nanoWarm = () => nano.generateContent('Reply with the word ok.').th
 // requests-per-minute limit (5 of 11 clauses failed with HTTP 429), so it was reverted.
 // withFields = false skips the numbers prompt: for a clause with no figures it can only invent values.
 export async function nanoJudge(text: string, withFields = true): Promise<Model> {
-  const c = await run(nano, CLS(text));
-  const f = withFields ? await run(nano, FLD(text)) : {};
+  const c = await run(nano, CLS(text), true);
+  const f = withFields ? await run(nano, FLD(text), true) : {};
   return { label: toLabel(c?.label), fields: f && typeof f === 'object' ? f : null };
 }
 const clean = (r: unknown) => (typeof r === 'string' && r.trim() ? r.trim().slice(0, 240) : undefined);
@@ -97,8 +111,8 @@ export async function cloudDrafts(maskedFacts: string): Promise<{ whatsapp: stri
   return typeof r?.whatsapp === 'string' && typeof r?.notice === 'string' && r.whatsapp.trim() && r.notice.trim() ? { whatsapp: r.whatsapp.trim(), notice: r.notice.trim() } : null;
 }
 // On-device explanation for a clause the model marked risky when no fixed rule matched and cloud was not used.
-export const nanoReason = async (text: string) => clean((await nano.generateContent(REASON(text))).response.text());
+export const nanoReason = async (text: string) => clean(await timed(nano, REASON(text), true));
 export const nanoNames = async (text: string): Promise<string[]> => {
-  const r = await run(nano, NAMES(text));
+  const r = await run(nano, NAMES(text), true);
   return Array.isArray(r?.names) ? r.names.map(String).filter(Boolean) : [];
 };

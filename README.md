@@ -79,6 +79,8 @@ Every model call goes through the Firebase AI Logic Web SDK (`firebase/ai`). See
 ```
 
 - **Privacy by routing.** In the sample agreement, 2 of 11 clauses go to the cloud (3 in one of two re-runs on 19 Nov; Gemini Nano does not answer the same way every time, so the count can vary by run). If the on-device names check fails, the clause is not sent at all.
+- **Every clause shows where it ran and how long it took**, for example "On device 3.9 s · nothing sent" or "On device 5.5 s + Cloud 1.8 s · masked text sent". The source comes from the SDK's `inferenceSource`, and while Gemini Nano reads, the status line counts the seconds.
+- **A stalled model cannot freeze the scan.** Each on-device call has a 60-second limit (we once saw Gemini Nano stall for over 30 minutes on one clause). A call that runs out counts as an unusable on-device answer, so the clause gets the masked cloud second opinion like any other.
 - **Rules win on numbers.** A model never overrides a figure the rules extracted.
 - **App Check** protects the cloud calls (reCAPTCHA Enterprise in production).
 - **Remote Config** holds the thresholds (deposit months, rent rise, notice days), the cloud model name and the switch for the cloud second opinion, so they can change without a deploy. Every value is range-checked and falls back to a built-in default. See [`app/src/config.ts`](app/src/config.ts).
