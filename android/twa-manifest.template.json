@@ -27,7 +27,7 @@
   "alphaDependencies": { "enabled": false },
   "enableSiteSettingsShortcut": true,
   "isChildDirected": false,
-  "minSdkVersion": 21,
+  "minSdkVersion": 24,
   "orientation": "default",
   "fingerprints": [],
   "additionalTrustedOrigins": [],
