@@ -29,11 +29,11 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 2
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -53,7 +53,7 @@ jobs:
           if grep -qE 'AIza|recaptcha' extension/dist/assets/*.js; then echo "::error::Extension bundle contains a Firebase key or reCAPTCHA"; exit 1; fi
           (cd extension/dist && zip -qr ../../eleven-months-extension.zip .)
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: eleven-months-extension
           path: eleven-months-extension.zip
