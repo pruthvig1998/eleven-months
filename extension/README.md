@@ -56,7 +56,7 @@ One-time setup, done by the account owner (free):
 
 1. https://console.cloud.google.com: create a project, then enable the **Chrome Web Store API** (APIs & Services, Library).
 2. APIs & Services, **OAuth consent screen**: type External; add your own Google account (the one that owns the store item) as a test user.
-3. APIs & Services, **Credentials**, Create credentials, **OAuth client ID**, type **Desktop app**. Note the client ID and client secret.
+3. APIs & Services, **Credentials**, Create credentials, **OAuth client ID**, type **Web application**, with the authorised redirect URI `https://developers.google.com/oauthplayground` (the Playground in step 4 needs it; a Desktop app client fails there). Note the client ID and client secret. A new client can take about 5 minutes to work.
 4. https://developers.google.com/oauthplayground: open the gear icon, tick "Use your own OAuth credentials", enter the client ID and secret. In "Input your own scopes" enter `https://www.googleapis.com/auth/chromewebstore`, authorise with the store account, then "Exchange authorization code for tokens". Copy the **refresh token**.
 5. GitHub repository, Settings, Secrets and variables, Actions, **New repository secret**, five times:
    - `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET`, `CWS_REFRESH_TOKEN` (steps 3 and 4)
