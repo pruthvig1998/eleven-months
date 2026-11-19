@@ -1,0 +1,29 @@
+{
+  "parameters": {
+    "deposit_months_limit": {
+      "defaultValue": { "value": "3" },
+      "valueType": "NUMBER",
+      "description": "Flag a deposit above this many months' rent (1-12; app/src/config.ts)."
+    },
+    "rent_rise_pct_limit": {
+      "defaultValue": { "value": "10" },
+      "valueType": "NUMBER",
+      "description": "Flag a yearly rent rise above this percentage (1-50)."
+    },
+    "notice_days_min": {
+      "defaultValue": { "value": "15" },
+      "valueType": "NUMBER",
+      "description": "Flag a notice period shorter than this many days (1-90)."
+    },
+    "cloud_on_medium": {
+      "defaultValue": { "value": "true" },
+      "valueType": "BOOLEAN",
+      "description": "Ask cloud Gemini for a second opinion when the on-device model says ok but a rule raised a medium finding."
+    },
+    "cloud_model": {
+      "defaultValue": { "value": "gemini-3.5-flash-lite" },
+      "valueType": "STRING",
+      "description": "Cloud model for the masked second opinion (must start with gemini-)."
+    }
+  }
+}
