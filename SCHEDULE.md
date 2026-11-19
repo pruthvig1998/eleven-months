@@ -179,3 +179,21 @@ Stage D deployed (Nov 18). Lighthouse (mobile) on the live site after deploy: ac
 - Headers confirmed on the live site: Content-Security-Policy, X-Content-Type-Options, Referrer-Policy, Permissions-Policy.
 - Phone width, cloud check ticked, sample: 6 of 11, 11 of 11 cloud calls returned 200, reCAPTCHA (www.google.com, www.gstatic.com) loaded with 200, no Content-Security-Policy violations, 65 s.
 - Desktop Chrome with the on-device model, live: photo read by the on-device model (100% word agreement, exact text); sample 6 of 11, 8 points to raise, 4 clauses to cloud, all succeeded; Remote Config fetched; no Content-Security-Policy violations. The scan took 218 s on this machine.
+
+## Re-run after the lifestyle rules (Nov 19, live site, same 96 unseen clauses): cut short by the cloud quota
+
+Desktop Chrome, rules + on-device model + cloud on trigger, deployed build with the four lifestyle rules. 2,605 s.
+
+**Not comparable with 67 of 70.** The free cloud tier's quota ran out during the run: 26 clauses got HTTP 429 "You exceeded your current quota" even after the retries, so their cloud second opinion never happened. Raw result: 50 of 70 harmful caught, 1 of 26 fair wrongly flagged, 19 clauses sent to cloud successfully.
+
+| Harmful clauses | Caught |
+|---|---|
+| Cloud check not needed or succeeded | **41 of 44** |
+| Cloud check failed with 429 | 9 of 26 |
+
+- 17 of the 20 misses are clauses whose cloud check failed on quota.
+- The 3 other misses: 14 (courts at New Delhi; only the whole-agreement check can judge it, as before), 69 (a flat Rs. 2,000 late charge; missed before too), 76 (only the tenant and spouse may live there; the on-device model called it ok and no rule matched).
+- Clause 74 ("male visitors are not allowed after 8 pm"), missed in the last run, is now caught: the new `visitors` rule raised a medium finding, the cloud was asked, and it said risky. Clause 75 (beef or pork) was also caught.
+- The fair clause flagged is 58 (repainting at actual cost with a bill).
+
+To do: re-run after the daily quota resets, before quoting any new headline number. The README keeps 67 of 70 until then.
