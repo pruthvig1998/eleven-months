@@ -11,6 +11,7 @@ import { extract } from '../../rules/extract.ts';
 import { askForFinding, askForFlag } from '../../rules/asks.ts';
 import { docCheck } from '../../rules/doccheck.ts';
 import { pdfText } from './pdftext.ts';
+import { withTimeout } from '../../app/src/timeout.ts';
 
 const APP_URL = 'https://eleven-months-nano.web.app/';
 const ai = getAI(initializeApp({ apiKey: 'placeholder-on-device-only', projectId: 'placeholder', appId: '1:0:web:0' }), { backend: new GoogleAIBackend() });
@@ -34,7 +35,8 @@ const ensureNano = async (fromClick = true): Promise<boolean> => {
   try { await nano.initializeDeviceModel(v => pill(`On-device model: ${Math.round(v * 100)}%`, false)); pill('On-device model: ready', true); return (nanoOk = true); }
   catch { pill('On-device model: unavailable, rules only', false); return false; }
 };
-const ask = async (p: string) => parse((await nano.generateContent(p)).response.text());
+// 60 s limit per call, as in the web app: a stalled model then counts as no answer and the rules still decide.
+const ask = async (p: string) => parse((await withTimeout(signal => nano.generateContent(p, { signal }), 60_000, 'The on-device model')).response.text());
 
 // One check at a time: a request that arrives during a check (button, PDF, right-click) waits and runs next.
 let busy = false, queued: (() => void) | null = null;
