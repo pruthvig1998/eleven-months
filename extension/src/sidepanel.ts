@@ -95,9 +95,13 @@ const openApp = (text = '') => {
   ($('appNew') as HTMLAnchorElement).href = `${APP_URL}${hash}`;
   showTab(true);
 };
+// Both the Full app tab and "Full scan in the app" carry the text in the box, but only text not already sent, so
+// switching tabs back and forth does not overwrite what the user changed in the app.
+let lastSent = '';
+const sendToApp = () => { const t = ($('text') as HTMLTextAreaElement).value.trim(); openApp(t && t !== lastSent ? t : ''); if (t) lastSent = t; };
 $('tabDev').onclick = () => showTab(false);
-$('tabApp').onclick = () => openApp();
-$('full').onclick = () => openApp(($('text') as HTMLTextAreaElement).value.trim());
+$('tabApp').onclick = sendToApp;
+$('full').onclick = () => { if (!($('text') as HTMLTextAreaElement).value.trim()) { status('Nothing to send yet: check a clause, scan the page or open a PDF first.'); return; } lastSent = ''; sendToApp(); };
 $('check').onclick = () => whenFree(() => check());
 // Open a PDF file: read on this device (pdf.js, bundled). Covers PDFs that Chrome or another extension's viewer blocks.
 $('pdf').onclick = () => ($('pdfFile') as HTMLInputElement).click();
