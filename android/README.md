@@ -6,6 +6,10 @@ A Trusted Web Activity opens the live site (https://eleven-months-nano.web.app) 
 
 Honest limit: **Chrome on Android does not yet support the on-device model** (Chrome's own documentation lists Chrome for Android as not supported by the built-in AI APIs). So on Android the app runs the fixed rules on the phone and offers the opt-in cloud check, where ID numbers, phones, emails and names written after a title are masked by pattern before sending, and the page says so before you tick it. The full hybrid engine (rules, then Gemini Nano, then masked cloud only on a trigger) runs in desktop Chrome and in the Chrome extension (on-device part only).
 
+## Install (for judges)
+
+Download [`docs/downloads/eleven-months-android.apk`](../docs/downloads/eleven-months-android.apk) on an Android phone (Android 7.0 or newer), allow installs from unknown sources when asked, and open **Eleven Months**.
+
 ## Build
 
 ```bash
