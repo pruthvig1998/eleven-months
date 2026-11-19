@@ -10,6 +10,7 @@ import { decide, finalize, present, hasFigures, toLabel, type Model } from '../.
 import { extract } from '../../rules/extract.ts';
 import { askForFinding, askForFlag } from '../../rules/asks.ts';
 import { docCheck } from '../../rules/doccheck.ts';
+import { pdfText } from './pdftext.ts';
 
 const APP_URL = 'https://eleven-months-nano.web.app/';
 const ai = getAI(initializeApp({ apiKey: 'placeholder-on-device-only', projectId: 'placeholder', appId: '1:0:web:0' }), { backend: new GoogleAIBackend() });
@@ -31,7 +32,7 @@ const ensureNano = () => (nanoReady ??= (async () => {
 const ask = async (p: string) => parse((await nano.generateContent(p)).response.text());
 
 const MAX_CLAUSES = 60; // shortcut: a long page is cut at 60 pieces so the on-device scan stays usable; Full scan has no cap
-const BLOCKED = "Chrome does not let extensions read this page (for example a PDF in Chrome's own viewer, the Web Store or a chrome:// page). Select the text and use the right-click item, or paste it here.";
+const BLOCKED = 'Chrome does not let extensions read this page. A PDF shown in a viewer (Chrome\'s own, or another extension\'s such as Adobe Acrobat) is one example. Download the PDF and press "Open a PDF file", or select the text and use the right-click item.';
 
 async function check(fromPage = false) {
   const text = ($('text') as HTMLTextAreaElement).value.trim();
@@ -62,6 +63,18 @@ async function check(fromPage = false) {
 const b64url = (s: string) => { const b = new TextEncoder().encode(s); let bin = ''; for (const x of b) bin += String.fromCharCode(x); return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
 $('full').onclick = () => { const t = ($('text') as HTMLTextAreaElement).value.trim(); chrome.tabs.create({ url: t ? `${APP_URL}#lease=${b64url(t)}` : APP_URL }); };
 $('check').onclick = () => check();
+// Open a PDF file: read on this device (pdf.js, bundled). Covers PDFs that Chrome or another extension's viewer blocks.
+$('pdf').onclick = () => ($('pdfFile') as HTMLInputElement).click();
+($('pdfFile') as HTMLInputElement).onchange = async e => {
+  const f = (e.target as HTMLInputElement).files?.[0]; if (!f) return;
+  status(`Reading ${f.name} on this device...`);
+  try {
+    const t = await pdfText(f);
+    if (t.replace(/\s/g, '').length < 40) { status('This PDF has no text layer (it is a scan). Use Full scan in Eleven Months: the web app reads scanned pages on your device.'); return; }
+    ($('text') as HTMLTextAreaElement).value = t; check(true);
+  } catch (err) { status(`Could not read this PDF: ${(err as Error).message}`); }
+  (e.target as HTMLInputElement).value = '';
+};
 // Scan this page: the click on the panel's button, or the toolbar click that opened the panel, grants activeTab.
 // The page text is read on the device; nothing is sent anywhere.
 $('page').onclick = async () => {

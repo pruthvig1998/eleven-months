@@ -7,7 +7,7 @@
 <main>
   <label for="text" class="lab">Clause or agreement</label>
   <textarea id="text" rows="8" spellcheck="false" placeholder="Press Scan this page to check the agreement open in this tab. Or select a clause, right-click and choose &quot;Check this clause with Eleven Months&quot;, or paste text here."></textarea>
-  <div class="row"><button id="page" class="primary" type="button">Scan this page</button><button id="check" type="button">Check on this device</button><button id="full" type="button">Full scan in Eleven Months</button></div>
+  <div class="row"><button id="page" class="primary" type="button">Scan this page</button><button id="check" type="button">Check on this device</button><button id="pdf" type="button">Open a PDF file</button><input id="pdfFile" type="file" accept="application/pdf,.pdf" hidden><button id="full" type="button">Full scan in Eleven Months</button></div>
   <p id="status" role="status" aria-live="polite"></p>
   <div id="out"></div>
   <p class="small">Runs on this device only: fixed rules and Chrome's built-in Gemini Nano. This extension makes no cloud calls. When a clause needs a second opinion, "Full scan" opens the web app, where it can be masked and checked by cloud Gemini under App Check. The text goes in the address fragment, which the browser does not send to the server. A screening aid, not legal advice.</p>
