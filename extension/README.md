@@ -45,3 +45,23 @@ app/node_modules/.bin/vite build --config extension/vite.config.mjs
 ```
 
 The output is in `extension/dist`.
+
+## Automatic updates to the Chrome Web Store
+
+`.github/workflows/extension.yml` runs on every push to `main` that touches the extension or the code it bundles (`rules/`, `app/src/prompts.ts`, `app/src/split.ts`). It runs the tests, builds and zips the extension, checks the bundle carries no Firebase key or reCAPTCHA, and keeps the zip as a build artifact. If the version in `extension/public/manifest.json` went up, it uploads the zip to the store and submits it for review. If the version did not change, it uploads nothing and says so, because the store rejects a repeated version. Running it by hand (Actions, Chrome extension, Run workflow) uploads the current version.
+
+Users get the new version from Chrome automatically, usually within hours of Google approving it. Every version goes through review again. While one version is pending review, a new upload replaces it.
+
+One-time setup, done by the account owner (free):
+
+1. https://console.cloud.google.com: create a project, then enable the **Chrome Web Store API** (APIs & Services, Library).
+2. APIs & Services, **OAuth consent screen**: type External; add your own Google account (the one that owns the store item) as a test user.
+3. APIs & Services, **Credentials**, Create credentials, **OAuth client ID**, type **Desktop app**. Note the client ID and client secret.
+4. https://developers.google.com/oauthplayground: open the gear icon, tick "Use your own OAuth credentials", enter the client ID and secret. In "Input your own scopes" enter `https://www.googleapis.com/auth/chromewebstore`, authorise with the store account, then "Exchange authorization code for tokens". Copy the **refresh token**.
+5. GitHub repository, Settings, Secrets and variables, Actions, **New repository secret**, five times:
+   - `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET`, `CWS_REFRESH_TOKEN` (steps 3 and 4)
+   - `CWS_EXTENSION_ID`: `mhkioblkanhmcjcbhoipmbmfkojidejg`
+   - `CWS_PUBLISHER_ID`: the publisher ID shown in the developer dashboard's URL
+6. Actions, Chrome extension, Run workflow, to check it.
+
+Never paste these values into a chat, a file or a commit. A consent screen left in "Testing" mode can expire refresh tokens after 7 days; if the upload later fails with an authorisation error, publish the consent screen (it needs no review for this scope used by its own owner) or create a new refresh token.

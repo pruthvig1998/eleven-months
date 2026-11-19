@@ -1,0 +1,81 @@
+# Builds the Chrome extension and, when its manifest version went up, uploads it to the Chrome Web Store and submits
+# it for review. Runs on pushes to main that touch anything the extension bundles.
+# Needs five repository secrets (Settings > Secrets and variables > Actions), added by the owner, never committed:
+#   CWS_CLIENT_ID, CWS_CLIENT_SECRET, CWS_REFRESH_TOKEN  (OAuth client and refresh token for the Chrome Web Store API)
+#   CWS_EXTENSION_ID, CWS_PUBLISHER_ID                   (the store item and the developer account)
+# Without them the job builds and stops before the upload, so it is safe to have before they exist.
+name: Chrome extension
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'extension/**'
+      - 'rules/**'
+      - 'app/src/prompts.ts'
+      - 'app/src/split.ts'
+      - 'app/package-lock.json'
+      - '.github/workflows/extension.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: chrome-extension
+  cancel-in-progress: false
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install the app's packages (the extension builds with them)
+        run: npm ci --prefix app
+
+      - name: Run the tests
+        run: node --test --no-warnings rules/*.test.ts app/src/*.test.ts
+
+      - name: Build and zip the extension
+        run: |
+          ln -sfn ../app/node_modules extension/node_modules
+          app/node_modules/.bin/vite build --config extension/vite.config.mjs
+          # The bundle must carry no Firebase project values and no reCAPTCHA (see extension/README.md).
+          if grep -qE 'AIza|recaptcha' extension/dist/assets/*.js; then echo "::error::Extension bundle contains a Firebase key or reCAPTCHA"; exit 1; fi
+          (cd extension/dist && zip -qr ../../eleven-months-extension.zip .)
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eleven-months-extension
+          path: eleven-months-extension.zip
+
+      - name: Decide whether to publish
+        id: gate
+        env:
+          HAS_SECRETS: ${{ secrets.CWS_REFRESH_TOKEN != '' }}
+        run: |
+          now=$(node -p "require('./extension/public/manifest.json').version")
+          before=$(git show HEAD~1:extension/public/manifest.json 2>/dev/null | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{console.log(JSON.parse(s).version)}catch{console.log('')}})")
+          echo "Manifest version: $now (previous commit: ${before:-none})"
+          if [ "$HAS_SECRETS" != "true" ]; then echo "::notice::Chrome Web Store secrets are not set, so nothing was uploaded."; echo "go=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          if [ "${{ github.event_name }}" != "workflow_dispatch" ] && [ "$now" = "$before" ]; then echo "::warning::The extension changed but manifest version is still $now, so nothing was uploaded. Raise the version in extension/public/manifest.json to publish."; echo "go=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          echo "go=true" >> "$GITHUB_OUTPUT"
+
+      - name: Upload to the Chrome Web Store and submit for review
+        if: steps.gate.outputs.go == 'true'
+        env:
+          EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+          PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
+          CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+        run: npx --yes chrome-webstore-upload-cli@4.0.2 --source eleven-months-extension.zip
