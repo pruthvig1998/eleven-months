@@ -14,7 +14,8 @@ import { pdfText } from './pdftext.ts';
 
 const APP_URL = 'https://eleven-months-nano.web.app/';
 const ai = getAI(initializeApp({ apiKey: 'placeholder-on-device-only', projectId: 'placeholder', appId: '1:0:web:0' }), { backend: new GoogleAIBackend() });
-const nano = getGenerativeModel(ai, { mode: InferenceMode.ONLY_ON_DEVICE });
+// English in and out, so Chrome does not warn that no output language was set.
+const nano = getGenerativeModel(ai, { mode: InferenceMode.ONLY_ON_DEVICE, onDeviceParams: { createOptions: { expectedInputs: [{ type: 'text', languages: ['en'] }], expectedOutputs: [{ type: 'text', languages: ['en'] }] } } });
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const esc = (s: unknown) => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
 const FLAGS: Record<string, string> = { deposit_over_3x_rent: 'Deposit over 3x rent', escalation_over_10pct: 'Rent rise over 10%', notice_under_15_days: 'Notice under 15 days', notice_one_sided: 'One-sided notice', lockin_binds_lessee_only: 'Lock-in binds tenant only' };
