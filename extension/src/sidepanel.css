@@ -23,3 +23,11 @@ button:disabled { opacity: .55; cursor: default; }
 .tags { display: flex; flex-wrap: wrap; gap: .3rem; margin: .3rem 0; } .tags span { padding: .15rem .45rem; border-radius: 6px; background: var(--risk-tint); color: var(--risk); font-size: .75rem; }
 .asks { padding: .5rem .7rem; border-radius: 7px; background: var(--ok-tint); } .asks ul { margin: .3rem 0 0; padding-left: 1.1rem; }
 .small { font-size: .8rem; color: var(--mute); }
+
+.tabs { display: flex; gap: .3rem; padding: .5rem 1rem 0; border-bottom: 1px solid var(--line); }
+.tabs button { border: 0; border-bottom: 3px solid transparent; border-radius: 0; background: none; min-height: 2.4rem; }
+.tabs button[aria-selected='true'] { border-bottom-color: var(--brand); color: var(--brand); }
+#paneApp { display: flex; flex-direction: column; height: calc(100vh - 7.5rem); }
+#paneApp[hidden] { display: none; }
+.app-bar { margin: .5rem 1rem; }
+#appHost { flex: 1; } #appHost iframe { width: 100%; height: 100%; border: 0; }

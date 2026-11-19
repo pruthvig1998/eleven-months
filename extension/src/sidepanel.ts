@@ -61,7 +61,28 @@ async function check(fromPage = false) {
 // Hand-off: the text travels in the URL fragment, which browsers do not send to the server; the web app reads it,
 // puts it in the agreement box and removes it from the address bar.
 const b64url = (s: string) => { const b = new TextEncoder().encode(s); let bin = ''; for (const x of b) bin += String.fromCharCode(x); return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
-$('full').onclick = () => { const t = ($('text') as HTMLTextAreaElement).value.trim(); chrome.tabs.create({ url: t ? `${APP_URL}#lease=${b64url(t)}` : APP_URL }); };
+// Full app tab: the web app framed in the panel (its own origin, so App Check and the masked cloud path work as on
+// the site). Created on first use. language-model lets Gemini Nano run inside the frame.
+let frame: HTMLIFrameElement | null = null;
+const showTab = (app: boolean) => {
+  $('tabDev').setAttribute('aria-selected', String(!app)); $('tabApp').setAttribute('aria-selected', String(app));
+  $('paneDev').hidden = app; $('paneApp').hidden = !app;
+};
+const openApp = (text = '') => {
+  const hash = text ? `#lease=${b64url(text)}` : '';
+  if (!frame) {
+    frame = document.createElement('iframe');
+    frame.title = 'Eleven Months web app';
+    frame.allow = 'language-model; clipboard-write';
+    frame.src = `${APP_URL}?embed=1${hash}`;
+    $('appHost').appendChild(frame);
+  } else if (hash) frame.src = `${APP_URL}?embed=1${hash}`; // only the fragment changes, so the page does not reload
+  ($('appNew') as HTMLAnchorElement).href = `${APP_URL}${hash}`;
+  showTab(true);
+};
+$('tabDev').onclick = () => showTab(false);
+$('tabApp').onclick = () => openApp();
+$('full').onclick = () => openApp(($('text') as HTMLTextAreaElement).value.trim());
 $('check').onclick = () => check();
 // Open a PDF file: read on this device (pdf.js, bundled). Covers PDFs that Chrome or another extension's viewer blocks.
 $('pdf').onclick = () => ($('pdfFile') as HTMLInputElement).click();

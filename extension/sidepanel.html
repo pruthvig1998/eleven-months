@@ -4,12 +4,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Eleven Months</title>
 <header><span class="logo" aria-hidden="true">11</span><div><b>Eleven Months</b><span id="pill" class="pill">On-device model: checking</span></div></header>
-<main>
+<nav class="tabs" role="tablist" aria-label="Mode"><button id="tabDev" role="tab" aria-selected="true" aria-controls="paneDev" type="button">On this device</button><button id="tabApp" role="tab" aria-selected="false" aria-controls="paneApp" type="button">Full app</button></nav>
+<main id="paneDev" role="tabpanel" aria-labelledby="tabDev">
   <label for="text" class="lab">Clause or agreement</label>
   <textarea id="text" rows="8" spellcheck="false" placeholder="Press Scan this page to check the agreement open in this tab. Or select a clause, right-click and choose &quot;Check this clause with Eleven Months&quot;, or paste text here."></textarea>
-  <div class="row"><button id="page" class="primary" type="button">Scan this page</button><button id="check" type="button">Check on this device</button><button id="pdf" type="button">Open a PDF file</button><input id="pdfFile" type="file" accept="application/pdf,.pdf" hidden><button id="full" type="button">Full scan in Eleven Months</button></div>
+  <div class="row"><button id="page" class="primary" type="button">Scan this page</button><button id="check" type="button">Check on this device</button><button id="pdf" type="button">Open a PDF file</button><input id="pdfFile" type="file" accept="application/pdf,.pdf" hidden><button id="full" type="button">Full scan in the app</button></div>
   <p id="status" role="status" aria-live="polite"></p>
   <div id="out"></div>
-  <p class="small">Runs on this device only: fixed rules and Chrome's built-in Gemini Nano. This extension makes no cloud calls. When a clause needs a second opinion, "Full scan" opens the web app, where it can be masked and checked by cloud Gemini under App Check. The text goes in the address fragment, which the browser does not send to the server. A screening aid, not legal advice.</p>
+  <p class="small">This tab runs on this device only: fixed rules and Chrome's built-in Gemini Nano, with no network access. "Full scan in the app" moves the text to the Full app tab, which is the Eleven Months web app itself: there a clause that needs a second opinion is masked and checked by cloud Gemini under App Check. The text travels in the address fragment, which the browser does not send to the server. A screening aid, not legal advice.</p>
 </main>
+<section id="paneApp" role="tabpanel" aria-labelledby="tabApp" hidden>
+  <p class="small app-bar">The Eleven Months web app: full scan with the masked cloud second opinion, photos and scans, the signing sheet, Deposit Shield, viral claims, guides and law notes. <a id="appNew" href="https://eleven-months-nano.web.app/" target="_blank" rel="noopener noreferrer">Open in a new tab</a></p>
+  <div id="appHost"></div>
+</section>
 <script type="module" src="/src/sidepanel.ts"></script>

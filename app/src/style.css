@@ -345,3 +345,7 @@ body[data-scanning='true'] .sg-fab { opacity: 0; pointer-events: none; }
 .vcard .mta-line { color: var(--mute); }
 @media (max-width: 60rem) { .shield-grid, .viral-grid { grid-template-columns: 1fr; } }
 @media print { .shield, .viral { display: none !important; } }
+
+/* Framed in the Chrome extension's side panel (?embed=1): the tool sections only, no hero or floating button. */
+body.embed .hero, body.embed .how, body.embed .sg-fab, body.embed .links { display: none !important; }
+body.embed .check-in, body.embed .more-in { padding-top: 1.5rem; }

@@ -103,7 +103,11 @@ const scanning = (i: number, text: string) => `
 
 // Hand-off from the Chrome extension: the agreement text arrives in the URL fragment (never sent to the server).
 // It is put in the box and removed from the address bar; nothing is scanned until the user presses Scan lease.
-if (location.hash.startsWith('#lease=')) {
+// In the extension's side panel the page runs framed (?embed=1), and later hand-offs change only the fragment.
+const embedded = new URLSearchParams(location.search).has('embed');
+if (embedded) document.body.classList.add('embed');
+const takeHandoff = () => {
+  if (!location.hash.startsWith('#lease=')) return;
   try {
     const b = atob(location.hash.slice(7).replace(/-/g, '+').replace(/_/g, '/'));
     ($('lease') as HTMLTextAreaElement).value = new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0)));
@@ -111,7 +115,9 @@ if (location.hash.startsWith('#lease=')) {
   } catch { status('The text from the extension could not be read. Paste it into the box instead.', 'error'); }
   history.replaceState(null, '', location.pathname + location.search + '#check');
   setTimeout(() => $('check').scrollIntoView(), 0);
-}
+};
+takeHandoff();
+addEventListener('hashchange', takeHandoff);
 $('sample').onclick = () => { ($('lease') as HTMLTextAreaElement).value = SAMPLE; status('Sample loaded. Press Scan lease.'); };
 $('upload').onclick = () => ($('file') as HTMLInputElement).click();
 ($('file') as HTMLInputElement).onchange = async e => {
