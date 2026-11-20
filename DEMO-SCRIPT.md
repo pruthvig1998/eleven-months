@@ -36,7 +36,7 @@ Times are for the finished video, after I cut the waits.
 | 0:32 | Scroll to the verdict: "6 of 11 clauses need attention." | "Six of eleven clauses need attention." |
 | 0:38 | Clause 2: "Deposit is 10 months' rent", "Deposit can be forfeited", and the "Ask for this instead" box | "Ten months' deposit the owner can keep for any reason, and exactly what to ask for instead." |
 | 0:50 | The chip on a clear clause, "On device … s · nothing sent", then on Clause 2 or 3 the lit CLOUD tag and its chip "On device … s + Cloud … s · masked text sent". Then the scan summary: "Cloud calls" and "Stayed on device" | "Every clause says where it ran. Most stay on this laptop. One goes to cloud Gemini only when there's a reason, like the rules and the model disagreeing, and only after masking." |
-| 1:03 | Select all in the agreement box, paste the test clause, **Scan lease**. Open "Sent to cloud (names and IDs masked)" | "Before anything is sent, names, Aadhaar, PAN, phones and emails are masked on the device. This is exactly what the cloud saw." |
+| 1:03 | Select all in the agreement box, paste the test clause, **Scan lease**. Open "Sent to cloud (names and IDs masked)" and point at the line under it: bytes, SHA-256, "Checked again on this device" | "Before anything is sent, names, Aadhaar, PAN, phones and emails are masked on the device, then checked a second time. This is exactly what the cloud saw." |
 | 1:20 | "Take this to the signing" sheet | "And a sheet to take to the signing." |
 | 1:26 | **Upload PDF or photo**, pick the phone photo, the text appears | "A photo of the agreement is read on the device too. It never leaves the laptop." |
 | 1:36 | Nav: **Deposit Shield**. **Load made-up example**, **Check deductions**. Scroll the table | "Moving out? Paste the landlord's deductions. Thirty-two thousand for AC servicing: not in your agreement. Each line is checked against your own contract." |
@@ -44,13 +44,15 @@ Times are for the finished video, after I cut the waits.
 | 2:02 | Nav: **Law or forward?** Point at "Model Tenancy Act proposal, not adopted here", then click **Karnataka** | "And the viral 'new rent rules': checked state by state, each with its source. Most of it is a model law Telangana never adopted." |
 | 2:15 | Second tab (the sample agreement on GitHub). Highlight clause 8, right-click, **Check this clause with Eleven Months**. The side panel shows the result. Then click the **Full app** tab | "In Chrome, highlight any clause, right-click, and it's checked on the device. The full app is one tab away." |
 | 2:32 | (Your phone clip, if recorded) | "And on Android, the same app installs from the web." |
-| 2:40 | Footer line "Thresholds in use ... Source: Firebase Remote Config" | "Thresholds come from Remote Config, and App Check protects every cloud call." |
+| 2:40 | Scroll up to the agreement box, tick **Keep everything on this device**; the top pill changes to "Cloud: off, everything stays on this device". Then the footer line "Thresholds in use ... Source: Firebase Remote Config" | "One tick keeps everything on the laptop. Thresholds come from Remote Config, and App Check protects every cloud call." |
 | 2:45 | Back to the top | "A screening aid, not legal advice. On 96 clauses it had never seen, it caught 67 of 70 harmful ones. Eleven Months: read all eleven months before you sign them." |
 
 Notes:
 - The number of clauses sent to the cloud in the sample can be 2 or 3 between runs, because the on-device model does not answer the same way every time. The script does not say a number.
 - If the drafts show "plain templates" instead of "Written by cloud Gemini", the cloud quota is used up; record that shot another day or say "it writes a firm message and a formal notice" over the template.
 - No Android clip? Cut the 2:32 line; the video ends at about 2:47.
+- The 2:40 tick adds about 3 seconds. If the cut runs over 3:00, drop the Android clip first.
+- Untick **Keep everything on this device** after the 2:40 shot, or the next scan will send nothing to the cloud.
 - Do not switch the network off during the recording. That path has not been tested.
 - If the 96-clause re-run (scheduled for 20 Nov) gives a different clean number, I will update the last line before you record.
 

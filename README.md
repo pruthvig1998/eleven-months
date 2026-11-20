@@ -66,6 +66,21 @@ It also:
 
 Every model call goes through the Firebase AI Logic Web SDK (`firebase/ai`). See [`app/src/ai.ts`](app/src/ai.ts).
 
+| Feature | `InferenceMode` | Model | What leaves the device |
+|---|---|---|---|
+| Judge each clause, read its figures | `ONLY_ON_DEVICE` | Gemini Nano | nothing |
+| Find names to mask | `ONLY_ON_DEVICE` | Gemini Nano | nothing |
+| Read a photo or scanned page | `ONLY_ON_DEVICE` (image input) | Gemini Nano | nothing, ever: an image cannot be masked before it is read |
+| Second opinion on a clause, only on one of four triggers | `ONLY_IN_CLOUD`, JSON schema | `gemini-3.5-flash-lite` (Remote Config `cloud_model`) | that one clause, masked, after a second check |
+| No on-device model, user ticked the cloud check | `ONLY_IN_CLOUD`, JSON schema | same | each clause, pattern-masked, after a second check |
+| Move-out drafts (Deposit Shield) | `ONLY_IN_CLOUD`, JSON schema | same | the deduction facts, masked, after a second check; never the agreement |
+| Chrome extension's own panel | `ONLY_ON_DEVICE` | Gemini Nano | nothing (`connect-src 'self'`) |
+| "Keep everything on this device" ticked | on-device rows only | Gemini Nano | nothing |
+
+**Checked twice before anything leaves.** After masking, a second, independent check on the device scans the outgoing text for any run of 10 or more digits, any email, a PAN, and every word of every name the on-device model found. If one is still there, the text is not sent and the clause says why. The "Sent to cloud" box shows the exact text, its size in bytes and a SHA-256 fingerprint. See `leaks()` in [`app/src/mask.ts`](app/src/mask.ts).
+
+**Keep everything on this device.** One tick under the agreement box turns every cloud call off, for the scan and the drafts. The fixed rules and Gemini Nano still give the full report; clauses that would have had a second opinion are marked for a closer look.
+
 ```
  clause ──► 1. Rules          deterministic: amounts, months, days, percentages, 27 topic rules
             │

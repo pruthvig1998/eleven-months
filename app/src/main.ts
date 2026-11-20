@@ -8,7 +8,7 @@ import { readLeaseFile } from './pdf.ts';
 import { SAMPLE } from './sample.ts';
 import { decide, finalize, present, hasFigures, FIELDS, type Model } from '../../rules/pipeline.ts';
 import { extract, LIMITS } from '../../rules/extract.ts';
-import { mask } from './mask.ts';
+import { mask, leaks } from './mask.ts';
 import { routes, clean, githubUrl, gformUrl, sendWorker, sendFirestore, renderTurnstile, type Bucket } from './suggest.ts';
 import { coverage } from '../../rules/topics.ts';
 import { noteById, searchNotes, BASIS_LABEL, OPEN_QUESTIONS, type Note } from '../../rules/knowledge.ts';
@@ -48,7 +48,21 @@ const srcLinks = (n: Note) => n.sources.map(x => safeUrl(x.url) ? `<a href="${es
 const noteHtml = (n: Note) => `<div class="note-card"><div class="nh"><b>${esc(n.title)}</b><span class="nstat ${n.status}">${esc(STATUS[n.status])}</span></div><p>${esc(n.summary)}</p><p class="trust"><span class="basis ${n.basis}">${esc(BASIS_LABEL[n.basis])}</span><span class="scope">${n.scope === 'telangana' ? 'Telangana' : 'All India'}</span></p>${n.unverified ? `<p class="unv"><b>Not verified:</b> ${esc(n.unverified)}</p>` : ''}<p class="nsrc">Source: ${srcLinks(n) || 'none (practical tip)'} &middot; checked ${esc(n.checked)}</p></div>`;
 const pill = (id: string, state: string, text: string) => { $(id).dataset.state = state; $(id).querySelector('span')!.textContent = text; };
 const status = (text: string, kind = '') => { $('status').textContent = text; $('status').dataset.kind = kind; };
-if (cloudConfigured) pill('pillCloud', 'cloud', 'Cloud: masked clauses only'); else pill('pillCloud', 'idle', 'Cloud: off');
+// "Keep everything on this device": no cloud call anywhere on the page (scan and drafts). It also shows how the page
+// behaves when the cloud is down: the rules and Gemini Nano still give the full report.
+const local = () => ($('local') as HTMLInputElement).checked;
+const cloudPill = () => { if (!cloudConfigured) pill('pillCloud', 'idle', 'Cloud: off'); else if (local()) pill('pillCloud', 'idle', 'Cloud: off, everything stays on this device'); else pill('pillCloud', 'cloud', 'Cloud: masked clauses only'); };
+($('local') as HTMLInputElement).hidden = !cloudConfigured; $('localOpt').hidden = !cloudConfigured;
+$('local').addEventListener('change', cloudPill); cloudPill();
+// What the user sees about a payload that left: its size, a short fingerprint, and that the second check passed.
+const sentInfo = async (s: string, namesChecked: boolean) => {
+  const b = new TextEncoder().encode(s);
+  const h = [...new Uint8Array(await crypto.subtle.digest('SHA-256', b))].slice(0, 6).map(x => x.toString(16).padStart(2, '0')).join('');
+  return `${b.length} bytes, SHA-256 ${h}... Checked again on this device just before sending: no long numbers, emails or PAN${namesChecked ? ', and none of the names found on the device' : ''}.`;
+};
+const sentHtml = (sent: string, info: string) => sent ? `<details><summary>Sent to cloud (names and IDs masked)</summary><p>${esc(sent)}</p><p class="nsrc">${esc(info)}</p></details>` : '';
+// Blocks a send when the second check finds a personal detail that masking missed. Returns the note to show, or ''.
+const blocked = (sent: string, names: string[]) => { const l = leaks(sent, names); return l.length ? `Not sent to cloud: the masked text still contained ${l.join(', ')}, so it stayed on this device.` : ''; };
 
 // Printable sheet: what to ask the landlord to change, what the lease omits, and what to check at the flat.
 interface SheetAsk { no: string; excerpt: string; title: string; ask: string }
@@ -157,10 +171,10 @@ $('analyze').onclick = async () => {
     if (!rulesOnly) { $('hudState').textContent = 'loading model'; if (!(await ensureNano())) rulesOnly = true; $('hudState').textContent = 'scanning'; }
     if (rulesOnly) pill('pillNano', 'error', 'On-device model: not available here');
     // Opt-in for devices with no on-device model: every clause goes to cloud after regex masking (no on-device names check is possible).
-    const cloudAll = rulesOnly && cloudConfigured && ($('cloudOk') as HTMLInputElement).checked;
+    const cloudAll = rulesOnly && cloudConfigured && !local() && ($('cloudOk') as HTMLInputElement).checked;
     await settingsReady;
     const rent = extract(lease).rent ?? undefined;
-    let risky = 0, cloudCalls = 0, checks = 0, unmatched = 0;
+    let risky = 0, cloudCalls = 0, checks = 0, unmatched = 0, keptLocal = 0;
     const sheetAsks: SheetAsk[] = [];
     hud(0, clauses.length, 0, 0, 0);
     for (const [i, text] of clauses.entries()) {
@@ -174,16 +188,17 @@ $('analyze').onclick = async () => {
       if (!rulesOnly) try { nano = await nanoJudge(text, hasFigures(text)); } catch (e) { note = `On-device model failed: ${(e as Error).message}`; }
       clearInterval(tick);
       const d = decide(text, nano, { rent, mediumToCloud: settings.cloudOnMedium });
-      let cloud: Model | null = null, sent = '';
-      if (cloudAll) try { sent = mask(text, []); asked = true; cloud = await cloudLabel(sent); cloudCalls++; } catch (e) { note ||= `Cloud check failed: ${(e as Error).message}`; sent = ''; }
+      let cloud: Model | null = null, sent = '', info = '';
+      if (cloudAll) { sent = mask(text, []); const b = blocked(sent, []); if (b) { note ||= b; sent = ''; } else try { asked = true; info = await sentInfo(sent, false); cloud = await cloudLabel(sent); cloudCalls++; } catch (e) { note ||= `Cloud check failed: ${(e as Error).message}`; sent = ''; } }
       if (d.needsCloud && !rulesOnly) {
         if (!cloudConfigured) note ||= 'Needs a cloud check, but cloud is not configured.';
+        else if (local()) { keptLocal++; note ||= 'This clause would get a masked cloud second opinion, but you chose to keep everything on this device, so it was decided on this device.'; }
         else {
           // Fail closed: if the on-device names check fails, the clause stays on the device instead of going out unchecked.
           let names: string[] | null = null;
           try { names = await nanoNames(text); } catch { note ||= 'Names could not be checked on this device, so the clause was not sent to cloud.'; }
-          if (names) try { sent = mask(text, names); asked = true; cloud = await cloudJudge(sent); cloudCalls++; }
-          catch (e) { note ||= `Cloud check failed: ${(e as Error).message}`; sent = ''; }
+          if (names) { sent = mask(text, names); const b = blocked(sent, names); if (b) { note ||= b; sent = ''; } else try { asked = true; info = await sentInfo(sent, true); cloud = await cloudJudge(sent); cloudCalls++; }
+          catch (e) { note ||= `Cloud check failed: ${(e as Error).message}`; sent = ''; } }
         }
       }
       const fin = present(d, finalize(d, nano, cloud), cloud, rulesOnly), { unresolved, look } = fin, label = fin.label ?? 'unknown';
@@ -229,7 +244,7 @@ $('analyze').onclick = async () => {
           ${tags ? `<div class="tags">${tags}</div>` : ''}
           ${asksHtml}
           ${findings}
-          ${sent ? `<details><summary>Sent to cloud (names and IDs masked)</summary><p>${esc(sent)}</p></details>` : ''}
+          ${sentHtml(sent, info)}
           ${note ? `<p class="note">${esc(note)}</p>` : ''}
         </div>`;
       hud(i + 1, clauses.length, risky, cloudCalls, checks);
@@ -249,7 +264,7 @@ $('analyze').onclick = async () => {
     const issues = [...new Set(sheetAsks.map(a => a.title))].slice(0, 3);
     const head = risky ? `${risky} of ${clauses.length} clauses need attention.` : checks ? `${checks} of ${clauses.length} clauses are worth a closer look.` : rulesOnly ? 'No fixed rule was triggered.' : 'No risky clauses found.';
     const detail = (issues.length ? `Biggest issues: ${issues.join('; ')}. ` : '') + `${sheetAsks.length} points to raise with the landlord` + (cov.some(c => !c.present) ? `, and ${cov.filter(c => !c.present).length} things the lease does not mention.` : '.') + (whole.length ? ` ${whole.length} whole-agreement ${whole.length === 1 ? 'problem' : 'problems'} listed at the end.` : '');
-    $('out').insertAdjacentHTML('afterbegin', `<section class="verdict ${risky || checks ? 'bad' : 'good'}"><h2>${esc(head)}</h2><p>${esc(detail)}</p>${dc.warnings.map(w => `<p class="note">${esc(w)}</p>`).join('')}${cloudAll ? `<p class="note">This browser has no on-device model. Every clause was checked by the fixed rules and by the cloud model, after masking. ${cloudCalls} of ${clauses.length} cloud checks succeeded.</p>` : rulesOnly ? `<p class="note">Rules-only scan: this browser has no on-device model. ${unmatched} of ${clauses.length} clauses matched no rule. That does not mean they are fine: read those yourself, tick the cloud check under the text box, or open this page in desktop Chrome for the full scan.</p>` : ''}<p class="nsrc">A screening aid, not legal advice.</p></section>`);
+    $('out').insertAdjacentHTML('afterbegin', `<section class="verdict ${risky || checks ? 'bad' : 'good'}"><h2>${esc(head)}</h2><p>${esc(detail)}</p>${dc.warnings.map(w => `<p class="note">${esc(w)}</p>`).join('')}${cloudAll ? `<p class="note">This browser has no on-device model. Every clause was checked by the fixed rules and by the cloud model, after masking. ${cloudCalls} of ${clauses.length} cloud checks succeeded.</p>` : rulesOnly ? `<p class="note">Rules-only scan: this browser has no on-device model. ${unmatched} of ${clauses.length} clauses matched no rule. That does not mean they are fine: read those yourself, tick the cloud check under the text box, or open this page in desktop Chrome for the full scan.</p>` : ''}${local() && !rulesOnly ? `<p class="note">Kept on this device: nothing was sent to the cloud. ${keptLocal} ${keptLocal === 1 ? 'clause' : 'clauses'} would have had a masked cloud second opinion; ${keptLocal === 1 ? 'it is' : 'they are'} marked for a closer look where the rules and the model were unsure.</p>` : ''}<p class="nsrc">A screening aid, not legal advice.</p></section>`);
     lastScan = { lease, asks: sheetAsks }; $('tools').hidden = false;
     $('hudState').textContent = 'complete';
     status(`Done: ${clauses.length} clauses, ${risky} risky, ${cloudCalls} sent to cloud, ${checks} to check.`, 'done');
@@ -393,10 +408,10 @@ savedUi(); missUi();
     ($('draftRun') as HTMLButtonElement).disabled = false;
     dstat(`${a.lines.length} deductions checked: ${money(a.totals.out)} not in your agreement, ${money(a.totals.bill)} to ask bills for.`, 'done');
   };
-  const draftHtml = (d: { whatsapp: string; notice: string }, how: string, sent = '') => `<p class="nsrc">${esc(how)}</p>
+  const draftHtml = (d: { whatsapp: string; notice: string }, how: string, sent = '', info = '') => `<p class="nsrc">${esc(how)}</p>
     <div class="draft"><label class="field" for="dWa"><b>Firm message (WhatsApp)</b></label><textarea id="dWa">${esc(d.whatsapp)}</textarea><div class="actions"><button type="button" data-copy="dWa">Copy message</button></div></div>
     <div class="draft"><label class="field" for="dNo"><b>Formal notice</b></label><textarea id="dNo">${esc(d.notice)}</textarea><div class="actions"><button type="button" data-copy="dNo">Copy notice</button></div></div>
-    ${sent ? `<details><summary>Sent to cloud (names and IDs masked)</summary><p>${esc(sent)}</p></details>` : ''}
+    ${sentHtml(sent, info)}
     <p class="nsrc">Fill in every gap in square brackets yourself, and read the draft before you send it. Not legal advice.</p>`;
   $('drafts').addEventListener('click', e => { const b = (e.target as HTMLElement).closest('button[data-copy]') as HTMLElement | null; if (b) copy(($(b.dataset.copy!) as HTMLTextAreaElement).value, 'Copied. Fill in the gaps before sending.'); });
   $('draftRun').onclick = async () => {
@@ -407,17 +422,20 @@ savedUi(); missUi();
     try {
       const nanoOk = 'LanguageModel' in self && (await (self as any).LanguageModel.availability().catch(() => 'unavailable')) === 'available';
       if (!cloudConfigured) { $('drafts').innerHTML = draftHtml(tpl, 'Cloud is off on this site, so these are plain templates written on this device.'); return; }
+      if (local()) { $('drafts').innerHTML = draftHtml(tpl, 'You chose to keep everything on this device, so nothing was sent. These are plain templates written on this device.'); return; }
       if (!nanoOk || !(await ensureNano(true))) { $('drafts').innerHTML = draftHtml(tpl, 'Names cannot be checked on this device (no on-device model), so nothing was sent. These are plain templates written on this device.'); return; }
       dstat('Checking names on this device, then asking cloud Gemini for the drafts...', 'busy');
       const facts = factsText(f);
       let names: string[] | null = null;
       try { names = await nanoNames(facts); } catch { /* fail closed below */ }
       if (!names) { $('drafts').innerHTML = draftHtml(tpl, 'The names check failed on this device, so nothing was sent. These are plain templates written on this device.'); return; }
-      const sent = mask(facts, names);
+      const sent = mask(facts, names), b = blocked(sent, names);
+      if (b) { $('drafts').innerHTML = draftHtml(tpl, `${b} These are plain templates written on this device.`); return; }
+      const info = await sentInfo(sent, true);
       const d = await cloudDrafts(sent).catch(() => null);
-      if (!d) { $('drafts').innerHTML = draftHtml(tpl, 'The cloud draft failed, so these are plain templates written on this device.', sent); return; }
-      if (citesLaw(d.whatsapp) || citesLaw(d.notice)) { $('drafts').innerHTML = draftHtml(tpl, 'The cloud draft cited a law, which this page does not allow without a checked source, so it was discarded. These are plain templates written on this device.', sent); return; }
-      $('drafts').innerHTML = draftHtml(d, 'Written by cloud Gemini from the masked facts shown below. It was told to use only your agreement and these facts, and to cite no law.', sent);
+      if (!d) { $('drafts').innerHTML = draftHtml(tpl, 'The cloud draft failed, so these are plain templates written on this device.', sent, info); return; }
+      if (citesLaw(d.whatsapp) || citesLaw(d.notice)) { $('drafts').innerHTML = draftHtml(tpl, 'The cloud draft cited a law, which this page does not allow without a checked source, so it was discarded. These are plain templates written on this device.', sent, info); return; }
+      $('drafts').innerHTML = draftHtml(d, 'Written by cloud Gemini from the masked facts shown below. It was told to use only your agreement and these facts, and to cite no law.', sent, info);
     } finally { btn.disabled = false; dstat('Drafts ready below.', 'done'); }
   };
   const showLadder = (s: 'telangana' | 'other') => {

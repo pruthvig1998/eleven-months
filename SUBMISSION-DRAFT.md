@@ -44,9 +44,19 @@ Built for Telangana tenants: the clause checks work on English agreements from a
 ### How Firebase AI Logic is used
 Every model call goes through the Firebase AI Logic Web SDK (`firebase/ai`) at runtime; see `app/src/ai.ts`. There are no direct calls to any other model API.
 
+| Feature | `InferenceMode` | Model | What leaves the device |
+|---|---|---|---|
+| Judge each clause, read its figures, find names | `ONLY_ON_DEVICE` | Gemini Nano | nothing |
+| Read a photo or scanned page | `ONLY_ON_DEVICE` (image input) | Gemini Nano | nothing, ever |
+| Second opinion on a clause (four triggers) | `ONLY_IN_CLOUD`, JSON schema | `gemini-3.5-flash-lite`, from Remote Config | that clause, masked and checked again |
+| Move-out drafts | `ONLY_IN_CLOUD`, JSON schema | same | deduction facts, masked and checked again |
+| Chrome extension panel | `ONLY_ON_DEVICE` | Gemini Nano | nothing (`connect-src 'self'`) |
+
 - **On the device, Gemini Nano** (`InferenceMode.ONLY_ON_DEVICE`) judges each clause, reads its figures, finds the names in it, and reads photos and scanned pages. The full agreement text and every image stay in the browser.
 - **In the cloud, Gemini** (`gemini-3.5-flash-lite`, `InferenceMode.ONLY_IN_CLOUD`, answers held to a JSON schema) gives a second opinion on a clause only when one of four triggers holds: Gemini Nano's answer is unusable, the rules are unsure of a figure, the rules and Gemini Nano disagree, or Gemini Nano says "ok" while a rule raised a risk or a concern.
 - **Masking before the cloud.** Before a clause is sent, names (found on the device by Gemini Nano, plus titles such as Mr/Smt and "S/o"), Aadhaar, PAN, phone numbers and emails are replaced with tokens. If the on-device names check fails, the clause is not sent at all. The page shows, under each clause, the exact masked text that left the device.
+- **Checked again before sending.** A second, independent check on the device scans the masked text for any run of 10 or more digits, any email, a PAN, and every word of every name the on-device model found. If one is still there, nothing is sent and the clause says why. The "Sent to cloud" box shows the exact text, its size in bytes and a SHA-256 fingerprint.
+- **Keep everything on this device.** One tick turns every cloud call off, for the scan and the drafts; the rules and Gemini Nano still give the full report, and clauses that would have had a second opinion are marked for a closer look.
 - **Where each answer came from.** Every clause card shows where it ran and how long it took ("On device 3.9 s · nothing sent", or "+ Cloud 1.8 s · masked text sent"), using the SDK's `inferenceSource`. Each on-device call has a 60-second limit, so a stalled model becomes an unusable answer and the clause goes to the cloud second opinion instead of freezing the scan.
 - **App Check** with reCAPTCHA Enterprise protects every cloud call.
 - **Remote Config** holds the thresholds (deposit months, rent rise, notice days), the cloud model name and the switch for the cloud second opinion. Each value is range-checked and falls back to a built-in default.
@@ -58,7 +68,7 @@ Every model call goes through the Firebase AI Logic Web SDK (`firebase/ai`) at r
 Browsers with no on-device model (phones, Safari, Firefox) get a rules-only scan, and the user can opt in to send every clause to the cloud. The page explains before they tick the box that masking is then by pattern only.
 
 ### The rest of the stack
-Deterministic rules run before any model: they extract the numbers (small models get arithmetic wrong, so a model never overrides a figure the rules extracted) and apply 27 topic rules, each shipped with examples that the tests enforce. Photo reading is checked against a second, plain text recogniser (Tesseract.js): the model's reading is used only if the two share at least 90% of their words, because a model can skip a line silently. TypeScript and Vite, with pdf.js for PDFs. 204 automated tests.
+Deterministic rules run before any model: they extract the numbers (small models get arithmetic wrong, so a model never overrides a figure the rules extracted) and apply 27 topic rules, each shipped with examples that the tests enforce. Photo reading is checked against a second, plain text recogniser (Tesseract.js): the model's reading is used only if the two share at least 90% of their words, because a model can skip a line silently. TypeScript and Vite, with pdf.js for PDFs. 206 automated tests.
 
 ## Challenges we ran into
 - **Gemini Nano alone is not enough.** On 40 clauses it labelled 34 correctly but missed 5 of 20 risky ones, and read "ten months' rent" as one month. So numbers come from the rules, and disagreements go to the cloud.

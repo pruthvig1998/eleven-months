@@ -49,3 +49,23 @@ test('every ID the precise detector finds is removed by the mask', () => {
   for (const id of [...detectAadhaar(text), ...detectPan(text)]) assert.ok(!out.replace(/\s/g, '').includes(id), `${id} survived masking`);
   assert.equal(detectAadhaar(out).length + detectPan(out).length, 0);
 });
+
+test('leaks: masked text passes; anything mask() missed is caught', async () => {
+  const { leaks } = await import('./mask.ts');
+  const raw = 'The Lessee, Ms. Anitha Rao (phone 98480 12345, anitha.rao@example.com), paid Mr. Ravi Kumar Reddy (Aadhaar 1821 7365 9017, PAN ABCPM1234K) Rs. 1,80,000.';
+  const names = ['Anitha Rao', 'Ravi Kumar Reddy'];
+  assert.deepEqual(leaks(mask(raw, names), names), []);
+  assert.deepEqual(leaks('Rao signed it.', names), ['a name']); // bare surname: mask() replaces only the full name
+  assert.deepEqual(leaks('call 9848012345', []), ['a long number (ID or phone)']);
+  assert.deepEqual(leaks('mail a@b.in', []), ['an email address']);
+  assert.deepEqual(leaks('PAN abcpm1234k', []), ['a PAN']);
+  assert.deepEqual(leaks('The Lessor and the Lessee agree.', ['the Lessor']), []);
+});
+
+test('leaks: no false block on the sample or the 96 unseen clauses', async () => {
+  const { leaks } = await import('./mask.ts');
+  const { SAMPLE } = await import('./sample.ts');
+  const { readFileSync } = await import('node:fs');
+  const { items } = JSON.parse(readFileSync(new URL('../../rules/data/unseen.json', import.meta.url), 'utf8'));
+  for (const t of [...SAMPLE.split(/\n\n+/), ...items.map((x: { text: string }) => x.text)]) assert.deepEqual(leaks(mask(t, []), []), [], t);
+});

@@ -25,3 +25,17 @@ export function mask(text: string, names: string[]): string {
   t = t.replace(new RegExp(`\\b(${HON}\\.?)\\s+${NAME}`, 'g'), (_m, hon, name) => `${hon} [NAME]${trail(name)}`);
   return t;
 }
+
+// Second, independent look at text about to leave the device, so a gap in mask() cannot slip through unseen.
+// Deliberately cruder and stricter than mask(): it does not reuse mask()'s patterns. Any hit blocks the send.
+const NOT_NAME = new Set(['the', 'lessor', 'lessee', 'landlord', 'tenant', 'owner', 'licensor', 'licensee', 'party', 'mr', 'mrs', 'ms', 'miss', 'dr', 'smt', 'sri', 'shri', 'kum', 'late']);
+export function leaks(sent: string, names: string[]): string[] {
+  const found: string[] = [];
+  if (/\d{10,}/.test(sent.replace(/[\s-]/g, ''))) found.push('a long number (ID or phone)');
+  if (sent.includes('@')) found.push('an email address');
+  if (/\b[A-Za-z]{5}\d{4}[A-Za-z]\b/.test(sent)) found.push('a PAN');
+  const low = ` ${sent.toLowerCase().replace(/[^a-z]+/g, ' ')} `;
+  const words = names.flatMap(n => n.toLowerCase().split(/[^a-z]+/)).filter(w => w.length >= 3 && !NOT_NAME.has(w));
+  if (words.some(w => low.includes(` ${w} `))) found.push('a name');
+  return found;
+}
